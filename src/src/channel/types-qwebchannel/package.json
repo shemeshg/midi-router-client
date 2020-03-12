@@ -1,0 +1,11 @@
+{
+  "name": "@types/qwebchannel",
+  "version": "1.0.0",
+  "description": "TypeScript definitions for QT WebChannel API",
+  "scripts": {},
+  "author": "Volume Graphics GmbH",
+  "homepage": "https://www.volumegraphics.com/",
+  "license": "MIT",
+  "types": "index",
+  "typeScriptVersion": "3.0"
+}
