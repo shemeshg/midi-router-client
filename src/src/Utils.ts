@@ -30,10 +30,10 @@ export function downloadFileAsString(filename:  string, text: string) {
   export function readFileAsString(el: HTMLInputElement): Promise<any> {
 
     return new Promise( (resolve)=>{
+
         // eslint-disable-next-line
         const files:any = el.files;
-        if (files.length === 0) {
-            console.log('No file is selected');
+        if (files.length === 0) {            
             return;
         }
 

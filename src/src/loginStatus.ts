@@ -19,6 +19,7 @@ export class LoginStatus {
         try {
             this.userDataConfig.setChanges(str);
         } catch(err) {
+            // eslint-disable-next-line
             console.error(err);
             throw (err)
         }
