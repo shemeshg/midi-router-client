@@ -119,7 +119,7 @@ export class KeyboardZone {
         data1Filter = [[zoneRange.fromKey, zoneRange.toKey,  zoneRange.fromKey + this.transpose]]
       }
 
-      if (this.isShowData1Filed){
+      if (this.isShowData1Filed && this.fromData1 !== -1){
         data1Filter= [[this.fromData1, this.toData1]]
       }
       const midiRouterChain = new MidiRouterChain("Easyconfig");
