@@ -76,7 +76,6 @@ export class UserDataConfig {
                     const inputID = parseInt(easyConfigRoutesKeys[easyConfigInputId])
     
                     midiRoutePreset.easyConfig.ensureEasyConfigInputExists(inputID)
-                    debugger;
                     const keyboardSplitAry = jsonPreset.easyConfig.inputZonesAndRoutes[inputID].keyboardSplits
                     for (let spltKdbId = 0; spltKdbId < keyboardSplitAry.length; spltKdbId++) {
                         midiRoutePreset.easyConfig.addKeyboardSplit(inputID, keyboardSplitAry[spltKdbId].splitPosition);
