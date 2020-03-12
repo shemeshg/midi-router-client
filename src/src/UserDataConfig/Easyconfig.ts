@@ -1,6 +1,6 @@
-import { BaseMidiRouteInput } from "./MidiRoutePreset";
+import { BaseMidiRouteInput } from "./MidiRoutePreset/BaseMidiRouteInput";
 import * as Connection from "../connection";
-import { MidiRouterChain } from "../UserDataConfig/MidiRoutePreset"
+import { MidiRouterChain } from "./MidiRoutePreset/MidiRouterChain"
 import {MIDI_FILTER_ACTION_IF_NOT} from "../channel/WcMidiIn"
 
 
@@ -64,7 +64,9 @@ export class KeyboardZone {
     ]
 
   class EasyConfigRoute extends  BaseMidiRouteInput{
-     
+     constructor(midiInputId: number, midiInputName: string){
+       super(midiInputId, midiInputName)
+     }
 
     
 
@@ -84,7 +86,7 @@ export class KeyboardZone {
       const ret: MidiRouterChain[] = [];
       const isAllValid = this.toDestinationId !== ""
 
-      const inputZonesAndRoute: InputZonesAndRoutes = Connection.loginStatus.userDataConfig.easyConfig.inputZonesAndRoutes[this.midiInputId]
+      const inputZonesAndRoute: InputZonesAndRoutes = Connection.loginStatus.userDataConfig.activePreset.easyConfig.inputZonesAndRoutes[this.midiInputId]
       if (!isAllValid){return ret;}
 
       

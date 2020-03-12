@@ -57,7 +57,7 @@ import { mapGetters } from "vuex";
 
 import {LoginStatus} from '../../src/loginStatus'
 import * as Connection from "../../src/connection";
-import * as MidiRoutePreset from "../../src/UserDataConfig/MidiRoutePreset"
+import {BaseMidiRouteInput} from "../../src/UserDataConfig/MidiRoutePreset/BaseMidiRouteInput"
 
 @Component({
   computed: {
@@ -71,7 +71,7 @@ export default class AddNetworkDestinationComponent extends Vue {
   serverName = ""
   portNumber = 12345
   destinationMidiId = ""
-  remoteMidiPorts: MidiRoutePreset.BaseMidiRouteInput[] = []
+  remoteMidiPorts: BaseMidiRouteInput[] = []
 
 
   get filterid(){
@@ -122,7 +122,7 @@ export default class AddNetworkDestinationComponent extends Vue {
     
     for (let i = 0;i<keys.length;i++){
       const ikey= parseInt(keys[i]);
-      this.remoteMidiPorts.push(new MidiRoutePreset.BaseMidiRouteInput(ikey, l.inPorts[ikey]) )
+      this.remoteMidiPorts.push(new BaseMidiRouteInput(ikey, l.inPorts[ikey]) )
     }
 
 

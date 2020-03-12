@@ -1,13 +1,15 @@
-import * as MRP from './UserDataConfig/MidiRoutePreset'
+import {MidiRoutePreset} from './UserDataConfig/MidiRoutePreset/MidiRoutePreset'
+import * as MRF from './UserDataConfig/MidiRoutePreset/MidiRoutersFilter'
+import {MidiRouteInput} from './UserDataConfig/MidiRoutePreset/MidiRouteInput'
 import { UserControl } from "./UserDataConfig/userControl"
 import { Channel } from './channel/Channel'
 import { RangeMap } from './channel/WcMidiIn'
-import { EasyConfig } from "./UserDataConfig/Easyconfig"
+
 
 export class UserDataConfig {
     activePresetID = 0;
-    midiRoutePresets = [new MRP.MidiRoutePreset("Default preset")];
-    easyConfig = new EasyConfig();
+    midiRoutePresets = [new MidiRoutePreset("Default preset")];
+    
 
     uniqueId = (new Date()).getTime();
 
@@ -23,18 +25,18 @@ export class UserDataConfig {
 
 
     addPreset(name: string) {
-        this.midiRoutePresets.push(new MRP.MidiRoutePreset(name));
+        this.midiRoutePresets.push(new MidiRoutePreset(name));
     }
 
     get activePreset() {
         return this.midiRoutePresets[this.activePresetID];
     }
 
-    getMidiRouteInput(inputId: number, presetId = this.activePresetID): MRP.MidiRouteInput {
+    getMidiRouteInput(inputId: number, presetId = this.activePresetID): MidiRouteInput {
         const activePreset = this.midiRoutePresets[presetId];
         if (activePreset.midiRouteInputs[inputId] === undefined) {
             const inputName = this.inPorts[inputId];
-            activePreset.midiRouteInputs[inputId] = new MRP.MidiRouteInput(this.inPorts, inputId, inputName)
+            activePreset.midiRouteInputs[inputId] = new MidiRouteInput(this.inPorts, inputId, inputName)
             activePreset.midiRouteInputs[inputId].addMidiRouterChain("First Chain")
         }
         return activePreset.midiRouteInputs[inputId];
@@ -49,30 +51,7 @@ export class UserDataConfig {
     // eslint-disable-next-line
     setChanges(jsonData: any) {
 
-        if (jsonData.easyConfig !== undefined) {
-            const easyConfigRoutesKeys = Object.keys(jsonData.easyConfig.inputZonesAndRoutes)
-            for (let easyConfigInputId = 0; easyConfigInputId < easyConfigRoutesKeys.length; easyConfigInputId++) {
-                const inputID = parseInt(easyConfigRoutesKeys[easyConfigInputId])
 
-                this.easyConfig.ensureEasyConfigInputExists(inputID)
-                
-                const keyboardSplitAry = jsonData.easyConfig.inputZonesAndRoutes[inputID].keyboardSplits
-                for (let spltKdbId = 0; spltKdbId < keyboardSplitAry.length; spltKdbId++) {
-                    this.easyConfig.addKeyboardSplit(inputID, keyboardSplitAry[spltKdbId].splitPosition);
-                }
-
-
-                this.easyConfig.inputZonesAndRoutes[inputID].zoneNames = jsonData.easyConfig.inputZonesAndRoutes[inputID].zoneNames
-
-                const easyConfigRoutesAry = jsonData.easyConfig.inputZonesAndRoutes[inputID].easyConfigRoutes
-                for (let easyConfigRoutesAryId = 0; easyConfigRoutesAryId < easyConfigRoutesAry.length; easyConfigRoutesAryId++) {
-                    const easyConfigRoute = this.easyConfig.addRoute(inputID);
-                    Object.assign(easyConfigRoute, easyConfigRoutesAry[easyConfigRoutesAryId])
-                }
-
-
-            }
-        }
         
         if (jsonData.midiRoutePresets === undefined) { return; }
 
@@ -89,6 +68,33 @@ export class UserDataConfig {
             if (this.midiRoutePresets[presetIdx] === undefined) { this.addPreset(""); }
             const midiRoutePreset = this.midiRoutePresets[presetIdx];
             midiRoutePreset.name = jsonPreset.name;
+
+
+            if (jsonPreset.easyConfig !== undefined) {
+                const easyConfigRoutesKeys = Object.keys(jsonPreset.easyConfig.inputZonesAndRoutes)
+                for (let easyConfigInputId = 0; easyConfigInputId < easyConfigRoutesKeys.length; easyConfigInputId++) {
+                    const inputID = parseInt(easyConfigRoutesKeys[easyConfigInputId])
+    
+                    midiRoutePreset.easyConfig.ensureEasyConfigInputExists(inputID)
+                    debugger;
+                    const keyboardSplitAry = jsonPreset.easyConfig.inputZonesAndRoutes[inputID].keyboardSplits
+                    for (let spltKdbId = 0; spltKdbId < keyboardSplitAry.length; spltKdbId++) {
+                        midiRoutePreset.easyConfig.addKeyboardSplit(inputID, keyboardSplitAry[spltKdbId].splitPosition);
+                    }
+    
+    
+                    midiRoutePreset.easyConfig.inputZonesAndRoutes[inputID].zoneNames = jsonPreset.easyConfig.inputZonesAndRoutes[inputID].zoneNames
+    
+                    const easyConfigRoutesAry = jsonPreset.easyConfig.inputZonesAndRoutes[inputID].easyConfigRoutes
+                    for (let easyConfigRoutesAryId = 0; easyConfigRoutesAryId < easyConfigRoutesAry.length; easyConfigRoutesAryId++) {
+                        const easyConfigRoute = midiRoutePreset.easyConfig.addRoute(inputID);
+                        Object.assign(easyConfigRoute, easyConfigRoutesAry[easyConfigRoutesAryId])
+                    }
+    
+    
+                }
+            }
+
 
 
             for (let i = 0; i < jsonPreset.userControls.length; i++) {
@@ -135,19 +141,19 @@ export class UserDataConfig {
                     for (let filterId = 0; filterId < jsonChain.midiRoutersFilters.length; filterId++) {
                         const jsonFilter = jsonChain.midiRoutersFilters[filterId]
 
-                        if (jsonFilter.filterType === MRP.FilterType.TO_MIDI_DESTINATION) {
+                        if (jsonFilter.filterType === MRF.FilterType.TO_MIDI_DESTINATION) {
                             configChain.addFilterMidiDestination(jsonFilter.baseMidiRouteInput);
                         }
-                        if (jsonFilter.filterType === MRP.FilterType.TO_CONSOLE) {
+                        if (jsonFilter.filterType === MRF.FilterType.TO_CONSOLE) {
                             configChain.addFilterToConsle(jsonFilter.logTo)
                         }
-                        if (jsonFilter.filterType === MRP.FilterType.TO_NETWORK) {
+                        if (jsonFilter.filterType === MRF.FilterType.TO_NETWORK) {
                             configChain.addFilterNetworkDestination(jsonFilter.serverName, jsonFilter.serverPort, jsonFilter.baseMidiRouteInput)
                         }
-                        if (jsonFilter.filterType === MRP.FilterType.SCHEDULE_TO) {
+                        if (jsonFilter.filterType === MRF.FilterType.SCHEDULE_TO) {
                             configChain.addFilterSchedule(jsonFilter.defferedType, jsonFilter.defferedTo)
                         }
-                        if (jsonFilter.filterType === MRP.FilterType.FILTER_AND_TRANSFORM) {
+                        if (jsonFilter.filterType === MRF.FilterType.FILTER_AND_TRANSFORM) {
                             configChain.addFilterFilterAndTransform(jsonFilter.name, jsonFilter.conditionAction, jsonFilter.filterChannel, jsonFilter.filterEvents, jsonFilter.filterData1, jsonFilter.filterData2)
                         }
 
@@ -181,8 +187,8 @@ export class UserDataConfig {
             // Clear prevou
             configPort.midiRouterChains = configPort.midiRouterChains.filter((row) => { return !row.isEasyConfig })
             // routes from easy config
-            if (this.easyConfig.inputZonesAndRoutes[inputIdx] !== undefined) {
-                this.easyConfig.inputZonesAndRoutes[inputIdx].easyConfigRoutes.forEach((row) => {
+            if (this.activePreset.easyConfig.inputZonesAndRoutes[inputIdx] !== undefined) {
+                this.activePreset.easyConfig.inputZonesAndRoutes[inputIdx].easyConfigRoutes.forEach((row) => {
                     configPort.midiRouterChains = configPort.midiRouterChains.concat(row.getMidiRouterChains)
                 })
             }
@@ -206,24 +212,24 @@ export class UserDataConfig {
                 for (let filterIdx = 0; filterIdx < configChain.midiRoutersFilters.length; filterIdx++) {
                     const configFilter = configChain.midiRoutersFilters[filterIdx];
 
-                    if (configFilter.filterType === MRP.FilterType.TO_MIDI_DESTINATION) {
+                    if (configFilter.filterType === MRF.FilterType.TO_MIDI_DESTINATION) {
                         const filter = configChain.getFilterMidiDestination(filterIdx);
 
                         await chain.routingActionAddSendPortByNumber(filter.baseMidiRouteInput.midiInputId);
                     }
-                    if (configFilter.filterType === MRP.FilterType.TO_CONSOLE) {
+                    if (configFilter.filterType === MRF.FilterType.TO_CONSOLE) {
                         const filter = configChain.getFilterToConsle(filterIdx);
                         await chain.routingActionAddLogData(filter.logTo)
                     }
-                    if (configFilter.filterType === MRP.FilterType.TO_NETWORK) {
+                    if (configFilter.filterType === MRF.FilterType.TO_NETWORK) {
                         const filter = configChain.getFilterNetworkDestination(filterIdx);
                         await chain.routingActionAddSendRemoteServer(filter.serverName, filter.serverPort, filter.baseMidiRouteInput.midiInputId)
                     }
-                    if (configFilter.filterType === MRP.FilterType.SCHEDULE_TO) {
+                    if (configFilter.filterType === MRF.FilterType.SCHEDULE_TO) {
                         const filter = configChain.getFilterSchedule(filterIdx);
                         await chain.routingActionAddDeferedEvent(filter.defferedType, filter.defferedTo)
                     }
-                    if (configFilter.filterType === MRP.FilterType.FILTER_AND_TRANSFORM) {
+                    if (configFilter.filterType === MRF.FilterType.FILTER_AND_TRANSFORM) {
                         const filter = configChain.getFilterFilterAndTransform(filterIdx)
 
                         const channels = new RangeMap()

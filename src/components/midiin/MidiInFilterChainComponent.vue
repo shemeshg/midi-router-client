@@ -50,12 +50,19 @@
 
 
 <script lang="ts">
+import {MidiRouterChain} from "../../src/UserDataConfig/MidiRoutePreset/MidiRouterChain"
+
+import * as MRF from '../../src/UserDataConfig/MidiRoutePreset/MidiRoutersFilter'
+
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapState } from 'vuex';
 import { mapGetters } from 'vuex'
 
+
+
 import * as Connection from '../../src/connection';
-import * as Preset from '../../src/UserDataConfig/MidiRoutePreset';
+
+
 import * as Utils from "../../src/Utils"
 
 @Component({
@@ -69,7 +76,7 @@ import * as Utils from "../../src/Utils"
   },
 })
 export default class MidiInFilterChain extends Vue {
-    @Prop() private chainItem!: Preset.MidiRouterChain;
+    @Prop() private chainItem!: MidiRouterChain;
     @Prop() private chainIdx!: number;
     @Prop() private midiId!: string;
     filterSelected = ""
@@ -114,19 +121,19 @@ export default class MidiInFilterChain extends Vue {
     editChainFilter(){
         if (this.filterSelected === ""){return;}
         const filterSelectedObj = this.midiRouteInput.midiRouterChains[this.chainIdx].midiRoutersFilters[parseInt(this.filterSelected)];
-        if (filterSelectedObj.filterType === Preset.FilterType.TO_MIDI_DESTINATION){
+        if (filterSelectedObj.filterType === MRF.FilterType.TO_MIDI_DESTINATION){
             this.$router.push(`/addFilter/AddMidiDestination/${this.midiId}/${this.chainIdx}/${this.filterSelected}`)
         }
-        if (filterSelectedObj.filterType === Preset.FilterType.TO_CONSOLE){
+        if (filterSelectedObj.filterType === MRF.FilterType.TO_CONSOLE){
           this.$router.push(`/addFilter/AddConsoleLog/${this.midiId}/${this.chainIdx}/${this.filterSelected}`)
         }
-        if (filterSelectedObj.filterType === Preset.FilterType.TO_NETWORK){
+        if (filterSelectedObj.filterType === MRF.FilterType.TO_NETWORK){
           this.$router.push(`/addFilter/AddNetworkDestination/${this.midiId}/${this.chainIdx}/${this.filterSelected}`)
         }
-        if (filterSelectedObj.filterType === Preset.FilterType.SCHEDULE_TO){
+        if (filterSelectedObj.filterType === MRF.FilterType.SCHEDULE_TO){
           this.$router.push(`/addFilter/AddSchedule/${this.midiId}/${this.chainIdx}/${this.filterSelected}`)
         }
-        if (filterSelectedObj.filterType === Preset.FilterType.FILTER_AND_TRANSFORM){
+        if (filterSelectedObj.filterType === MRF.FilterType.FILTER_AND_TRANSFORM){
           this.$router.push(`/addFilter/AddFilterTransform/${this.midiId}/${this.chainIdx}/${this.filterSelected}`)
         }
     }

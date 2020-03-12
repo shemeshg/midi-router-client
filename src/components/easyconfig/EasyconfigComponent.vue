@@ -101,7 +101,7 @@ export default class EasyconfigComponent extends Vue {
   routeToAdd = "";
 
   get easyConfig(){
-    return Connection.loginStatus.userDataConfig.easyConfig
+    return Connection.loginStatus.userDataConfig.activePreset.easyConfig
   }
    
   inputZonesAndRoutes =  this.easyConfig.inputZonesAndRoutes
