@@ -113,10 +113,13 @@ export class KeyboardZone {
 
       let data1Filter = [[0,127,0]]
       const data2Filter = [[0,127,0]]
-
-      if (this.splitRangeId !== -1 && this.isShowSplitRanges){
+      if (this.isShowSplitRanges){
+      if (this.splitRangeId !== -1 ){
         const zoneRange =  inputZonesAndRoute.getZoneRanges[this.splitRangeId ]
         data1Filter = [[zoneRange.fromKey, zoneRange.toKey,  zoneRange.fromKey + this.transpose]]
+      } else {
+        data1Filter = [[0,127,0  + this.transpose]]
+      }
       }
 
       if (this.isShowData1Filed && this.fromData1 !== -1){
