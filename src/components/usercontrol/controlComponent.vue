@@ -15,16 +15,27 @@
 
             <div class="w3-right">
             <span  @click="item.isEditMode = !item.isEditMode">
-                Edit
+                <a v-if="!item.isEditMode" href="#" class="router-link-exact-active router-link-active">Edit</a>
+                <a v-if="item.isEditMode" href="#" class="router-link-exact-active router-link-active">Hide details</a>
             </span> 
+            &nbsp;
             <span @click="doSend">
-                Send
+                <a href="#" class="router-link-exact-active router-link-active">Send</a>                
             </span> 
             </div>
         </label>
         <input class="w3-input" type="range" v-bind:min="item.minVal" v-bind:max="item.maxVal" v-model="item.inputVal">  
         <div v-if="item.isEditMode" class="w3-card-4 w3-margin-top w3-container" >
         
+
+        <p>
+        <label>Output</label>
+        <select class="w3-select" v-model="item.outputPortId">
+        <option value="" selected>Disabled</option>
+        <option v-for="(item, idx) in outPorts" v-bind:key="item.midiOutputId" v-bind:value="idx"  >{{idx}} - {{item}}</option>
+        </select>
+        </p>
+
         <p>
         <label>Event type</label>
         <select class="w3-select" v-model="item.eventType">
@@ -45,13 +56,6 @@
         <input class="w3-check" type="checkbox" v-model="item.is64Mode">
         <label>64 + - mode </label>
 
-        <p>
-        <label>Output</label>
-        <select class="w3-select" v-model="item.outputPortId">
-        <option value="" selected>Disabled</option>
-        <option v-for="(item, idx) in outPorts" v-bind:key="item.midiOutputId" v-bind:value="idx"  >{{idx}} - {{item}}</option>
-        </select>
-        </p>
 
         <label>Channel</label>
         <input class="w3-input" type="number" v-model="item.channelId" >
@@ -63,6 +67,9 @@
 
         <input class="w3-check" type="checkbox" v-model="item.isShowDropdown">
         <label>Show Dropdown </label>
+
+
+
 
         <p v-if="item.isShowDropdown">
         <label>Custom dropdown items description one per line</label>
