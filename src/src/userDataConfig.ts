@@ -58,7 +58,7 @@ export class UserDataConfig {
         this.virtualInPorts = jsonData.virtualInPorts;
         this.virtualOutPorts = jsonData.virtualOutPorts;
         this.activePresetID = jsonData.activePresetID
-
+        this.dropdownlists = jsonData.dropdownlists
 
 
 
