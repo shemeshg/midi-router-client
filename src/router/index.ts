@@ -32,6 +32,11 @@ const routes = [
     component: () => import('../views/Usercontrols.vue')
   },  
   {
+    path: '/dropdownlists',
+    name: 'dropdownlists',
+    component: () => import('../views/Dropdownlists.vue')
+  },  
+  {
     path: '/easyconfig',
     name: 'easyconfig',
     component: () => import('../views/Easyconfig.vue')

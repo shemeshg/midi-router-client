@@ -69,14 +69,22 @@
         <label>Show Dropdown </label>
 
 
+        <div class="w3-container" v-if="item.isShowDropdown">
+            <div class="w3-cell">
+                <label>Selecct list of values</label>
+            </div>
+            <div class="w3-container w3-cell">
+                <select class="w3-select" v-model="item.dropdownListId">
+                <option v-for="(item, idx) in dropdownlists" v-bind:key="idx" v-bind:value="idx"  >{{idx}} - {{item.name}}</option>
+                </select>
+            </div>
+            <div class="w3-container  w3-cell">
+                <router-link to="/dropdownlists">Manage dropdown lists</router-link>
+            </div>
+        </div>
 
 
-        <p v-if="item.isShowDropdown">
-        <label>Custom dropdown items description one per line</label>
-            <textarea class="w3-input w3-border"  style="resize:none;" v-model="item.dropDownDecriptions">
-            
-            </textarea>
-        </p>
+
     
 
         </div>
@@ -117,6 +125,9 @@ export default class ControlComponent extends Vue {
       this.doSend();
   }
 
+    get dropdownlists(){
+        return Connection.loginStatus.userDataConfig.dropdownlists
+    }
 
     get getDropdownDescriptions(){
         const ary: string[] = [];

@@ -21,7 +21,13 @@ export class UserControl {
     ccId = "7"
     outputPortId = ""
     isShowDropdown = false
-    dropDownDecriptions = ""
+    dropdownListId = 0;
+
+    get dropDownDecriptions() {
+        const obj =  Connection.loginStatus.userDataConfig.dropdownlists[this.dropdownListId]
+        if (obj === undefined){return "";}
+        return obj.data
+    }
 
 
 

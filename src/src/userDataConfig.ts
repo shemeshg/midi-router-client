@@ -4,12 +4,12 @@ import {MidiRouteInput} from './UserDataConfig/MidiRoutePreset/MidiRouteInput'
 import { UserControl } from "./UserDataConfig/userControl"
 import { Channel } from './channel/Channel'
 import { RangeMap } from './channel/WcMidiIn'
-
+import {Dropdownlist} from "./UserDataConfig/dropdownlists"
 
 export class UserDataConfig {
     activePresetID = 0;
     midiRoutePresets = [new MidiRoutePreset("Default preset")];
-    
+    dropdownlists: Dropdownlist[] = []
 
     uniqueId = (new Date()).getTime();
 
