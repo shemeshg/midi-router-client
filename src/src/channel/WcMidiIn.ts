@@ -223,11 +223,13 @@ export class WcMidiIn {
     }
 
     private _msgToClient(str: string) {
+        // eslint-disable-next-line
         console.log("from server:" + str)
     }
 
     //This should be overload by logic
     private _dataToClient(str: string) {
+        // eslint-disable-next-line
         console.log(str)
     }
 

@@ -1,4 +1,4 @@
-// eslint-disable-next-line
+/* eslint-disable */
 export function arrayMove(arr: any[], oldIndex: number, newIndex: number) {
     while (oldIndex < 0) {
         oldIndex += arr.length;
@@ -26,14 +26,10 @@ export function downloadFileAsString(filename:  string, text: string) {
     document.body.removeChild(element);
   }
 
-  // eslint-disable-next-line
-  export function readFileAsString(el: HTMLInputElement): Promise<any> {
-
+  export function readFileAsString(el: any): Promise<any> {
     return new Promise( (resolve)=>{
 
-        // eslint-disable-next-line
-        const files:any = el.files;
-        if (files.length === 0) {            
+        if (el.files.length === 0) {            
             return;
         }
 
@@ -41,8 +37,7 @@ export function downloadFileAsString(filename:  string, text: string) {
         reader.onload = function(event) {
             resolve(event.target?.result);
         };
-        reader.readAsText(files[0]);
-
+        reader.readAsText(el.files[0]);
     })
 
 }

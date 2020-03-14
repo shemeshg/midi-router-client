@@ -282,6 +282,7 @@ export class WcMidiOut {
     }
 
     private _msgToClient(str: string) {
+        // eslint-disable-next-line
         console.log("from server:" + str);
     }
 
