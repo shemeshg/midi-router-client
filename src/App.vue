@@ -12,15 +12,16 @@
   <router-link class="w3-bar-item w3-button" to="/presets" v-if="isLoggedIn">Presets</router-link> 
   <router-link class="w3-bar-item w3-button" to="/usercontrols" v-if="isLoggedIn">User Controls</router-link> 
   <router-link class="w3-bar-item w3-button" to="/easyconfig" v-if="isLoggedIn">Easyconfig</router-link> 
-  <a class="w3-bar-item w3-button" href="#" v-if="isLoggedIn" @click="applyChanges">Apply changes</a> 
+  <a class="w3-bar-item w3-button"  v-if="isLoggedIn" @click="applyChanges">Apply changes</a> 
   <router-link class="w3-bar-item w3-button" to="/about">About</router-link>
 
 
 </div>
 
 
-    <div id="nav" class="w3-bar" @click="sidebarOpen()">
-      <span > &#9776;</span>
+    <div id="nav" class="w3-teal w3-bar w3-container" @click="sidebarOpen()" style="position: fixed;" >
+      
+      <span >&#9776;</span>
     </div>
 
 
@@ -42,7 +43,7 @@ import * as Connection from './src/connection'
 
 export default {
   methods: {
-    applyChanges(){
+    applyChanges(){      
       Connection.loginStatus.userDataConfig.applyChanges(Connection.connection);
     },
     sidebarOpen(){

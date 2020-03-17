@@ -1,6 +1,9 @@
 <template>
   <div class="about">
-    <h1>This is an about page</h1>
+
+<header class="w3-container w3-teal">
+  <h1>About</h1>
+</header>
     <p>SPP is quater note divided by 24 <br/>
     SPP and bar are decimal</p>
 

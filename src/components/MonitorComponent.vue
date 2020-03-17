@@ -22,7 +22,7 @@
         
          <p>
 
-          <select class="w3-select w3-input" name="option" v-model.number="inputToMonitor">
+          <select class="w3-select w3-input" name="option" v-model.number="inputToMonitor" @change="inputToMonitorChanged()">
             <option value="-1"></option>
             <option v-for="(item, idx) in inPorts" v-bind:key="idx" v-bind:value="idx"  >{{idx}} - {{item}}</option>
           </select>
@@ -70,7 +70,11 @@ export default class MonitorComponent extends Vue {
         return Connection.loginStatus.inPorts
     }
 
-    
+    async inputToMonitorChanged(){
+      if (this.isMonitoring === true){
+        await this.startMonitoring()
+      }
+    }
 
     @Watch('dataToClient')
     onPropertyChanged(value: string) {
