@@ -41,6 +41,11 @@ const routes = [
     name: 'easyconfig',
     component: () => import('../views/Easyconfig.vue')
   },  
+  {
+    path: '/monitor',
+    name: 'monitor',
+    component: () => import('../views/Monitor.vue')
+  },    
   { path: '/preset/:id', component: () => import('../components/Presets/AddPresetComponent.vue') },
 
   { path: '/midiin/:id', component: () => import('../views/Midiin.vue') },

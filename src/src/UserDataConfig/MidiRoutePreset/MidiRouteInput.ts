@@ -52,7 +52,9 @@ export class MidiRouteInput extends BaseMidiRouteInput{
     }
 
     addMidiRouterChain(name: string){
-        this.midiRouterChains.push( new MidiRouterChain(name) )
+        const chain = new MidiRouterChain(name) 
+        this.midiRouterChains.push( chain )
+        return chain
     }
 
 

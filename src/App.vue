@@ -4,6 +4,7 @@
       <router-link to="/">Home</router-link> |
       <router-link to="/midiinlist" v-if="isLoggedIn">in ports</router-link> <span v-if="isLoggedIn">|</span>
 <!--  <router-link to="/virtualports" v-if="isLoggedIn">virtual ports</router-link> <span v-if="isLoggedIn">|</span> -->
+      <router-link to="/monitor" v-if="isLoggedIn">Monitor</router-link> <span v-if="isLoggedIn">|</span>
       <router-link to="/presets" v-if="isLoggedIn">Presets</router-link> <span v-if="isLoggedIn">|</span>
       <router-link to="/usercontrols" v-if="isLoggedIn">User Controls</router-link> <span v-if="isLoggedIn">|</span>
       <router-link to="/easyconfig" v-if="isLoggedIn">Easyconfig</router-link> <span v-if="isLoggedIn">|</span>

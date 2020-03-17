@@ -1,3 +1,4 @@
+import store from '../../store'
 
 export enum LOG_TO {
     CLIENT,
@@ -227,10 +228,9 @@ export class WcMidiIn {
         console.log("from server:" + str)
     }
 
-    //This should be overload by logic
+
     private _dataToClient(str: string) {
-        // eslint-disable-next-line
-        console.log(str)
+        store.commit("setDataToClient", str)
     }
 
     sendMsg(msg: string) {

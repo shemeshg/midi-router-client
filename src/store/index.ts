@@ -9,7 +9,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    loginStatus: Connection.loginStatus
+    loginStatus: Connection.loginStatus,
+    dataToClient: "",
   },
   mutations: {
     setLoginStatusRedirect (state, loginStatus: LoginStatus) {
@@ -23,6 +24,9 @@ export default new Vuex.Store({
     setLoginStatusNoRedirect (state, loginStatus: LoginStatus) {
       state.loginStatus = loginStatus
     },
+    setDataToClient (state, str: string){
+      state.dataToClient = str;
+    }
   },
   actions: {
   },
