@@ -25,7 +25,7 @@ export class Cc14Bit {
 
 export class MidiRouteInput extends BaseMidiRouteInput{
 
-    ignoreTypes = {midiSysex: true, midiTime: true, midiSense: true};
+    ignoreTypes = {midiSysex: true, midiTime: true, midiSense: false};
     midiRouteClock = new MidiRouteClock;
     cc14bitAry: Cc14Bit[] = [];
     midiRouterChains: MidiRouterChain[] = [];
