@@ -7,20 +7,7 @@
     <div class="w3-container w3-margin-top">
        
        <div> 
-        <div class="w3-container  w3-cell w3-cell-middle">
-
-          <select class="w3-select" name="option" v-model.number="inputToMonitor">
-            <option value="-1"></option>
-            <option v-for="(item, idx) in inPorts" v-bind:key="idx" v-bind:value="idx"  >{{idx}} - {{item}}</option>
-          </select>
-
-        </div>
-        <div class="w3-container  w3-cell w3-cell-middle">
-            per page 
-            <input type="number" v-model.number="perPage">
-        </div>
-
-                <div class="w3-container  w3-cell ">
+        <div class="w3-container">
            <a href="#" class="router-link-exact-active router-link-active" v-if="!isMonitoring" @click="startMonitoring()">
             Start
           </a>    
@@ -32,6 +19,21 @@
             Clear
           </a>   
         </div>
+        
+         <p>
+
+          <select class="w3-select w3-input" name="option" v-model.number="inputToMonitor">
+            <option value="-1"></option>
+            <option v-for="(item, idx) in inPorts" v-bind:key="idx" v-bind:value="idx"  >{{idx}} - {{item}}</option>
+          </select>
+          <label>input</label>
+        </p>
+        <p>
+            
+            <input class="w3-input"  type="number" v-model.number="perPage">
+            <label>per page </label>
+        </p>
+
   
         </div>
 
