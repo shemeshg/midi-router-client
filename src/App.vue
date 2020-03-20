@@ -12,16 +12,22 @@
   <router-link class="w3-bar-item w3-button" to="/presets" v-if="isLoggedIn">Presets</router-link> 
   <router-link class="w3-bar-item w3-button" to="/usercontrols" v-if="isLoggedIn">User Controls</router-link> 
   <router-link class="w3-bar-item w3-button" to="/easyconfig" v-if="isLoggedIn">Easyconfig</router-link> 
-  <a class="w3-bar-item w3-button"  v-if="isLoggedIn" @click="applyChanges">Apply changes</a> 
   <router-link class="w3-bar-item w3-button" to="/about">About</router-link>
 
 
 </div>
 
 
-    <div id="nav" class="w3-teal w3-bar w3-container" @click="sidebarOpen()" style="position: fixed;" >
-      
-      <span >&#9776;</span>
+    <div id="nav" class="w3-teal w3-bar w3-container w3-row" v-if="isLoggedIn"  style="position: fixed;" >
+
+        <div class="w3-col " style="width:50%" @click="sidebarOpen()">
+          <span>&#9776;</span>
+        </div>
+        <div class="w3-col" style="width:50%" @click="applyChanges">
+          <span class="w3-right">Apply {{defaultPresetName}}</span>
+        </div>
+
+
     </div>
 
 
@@ -44,6 +50,7 @@ import * as Connection from './src/connection'
 export default {
   methods: {
     applyChanges(){      
+      window.Connection = Connection;
       Connection.loginStatus.userDataConfig.applyChanges(Connection.connection);
     },
     sidebarOpen(){
@@ -62,6 +69,9 @@ export default {
     // display the item from store state.
     isLoggedIn () {
       return this.$store.getters.isLoggedIn;
+    },
+    defaultPresetName(){
+      return Connection.loginStatus.userDataConfig.activePreset.name.substring(0,15)
     }
   },
 }

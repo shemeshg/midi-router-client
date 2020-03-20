@@ -5,21 +5,6 @@
       <h1>Presets</h1>      
     </header>
 
-
-
-    <div class="w3-container w3-margin-top">
-        <div class="w3-card-4">
-            <button
-              class="w3-button w3-section w3-teal w3-ripple w3-margin-left"
-              @click="applyChanges"
-            >
-                Apply changes
-            </button>
-
-            
-            </div>
-    </div>
-
     <div class="w3-container w3-margin-top">
         <div class="w3-card-4">
           <header class="w3-container w3-blue">

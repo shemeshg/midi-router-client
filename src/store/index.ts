@@ -16,7 +16,7 @@ export default new Vuex.Store({
     setLoginStatusRedirect (state, loginStatus: LoginStatus) {
       state.loginStatus = loginStatus
       if (state.loginStatus ){
-        router.push('/midiinlist')
+        router.push('/easyconfig')
       } else {
         router.push('/')
       }
