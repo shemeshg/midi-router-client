@@ -39,7 +39,6 @@ export default new Vuex.Store({
     },
     defaultPresetName: state => {
       if (state.loginStatus.isLoggedIn){
-        console.log(Connection.loginStatus.userDataConfig)
         return  Connection.loginStatus.userDataConfig.activePreset.name;
       }
       return ""
