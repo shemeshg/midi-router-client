@@ -71,7 +71,8 @@ export default {
       return this.$store.getters.isLoggedIn;
     },
     defaultPresetName(){
-      return Connection.loginStatus.userDataConfig.activePreset.name.substring(0,15)
+      return this.$store.getters.defaultPresetName.substring(0,15);
+      
     }
   },
 }
