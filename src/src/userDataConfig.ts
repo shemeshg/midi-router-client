@@ -7,8 +7,23 @@ import { RangeMap } from './channel/WcMidiIn'
 import {Dropdownlist} from "./UserDataConfig/dropdownlists"
 
 export class UserDataConfig {
-    activePresetID = 0;
+    _activePresetID = 0;
+
+    set activePresetID(id: number){
+        this._activePresetID = id;
+        for (let i=0;i < this.midiRoutePresets.length; i++){
+            this.midiRoutePresets[i].isEnabled =  (this._activePresetID === i)
+        }
+    }
+
+    get activePresetID(){
+        return this._activePresetID
+    }
+
     midiRoutePresets = [new MidiRoutePreset("Default preset")];
+
+
+
     dropdownlists: Dropdownlist[] = []
 
     uniqueId = (new Date()).getTime();
@@ -19,7 +34,7 @@ export class UserDataConfig {
     private inPorts: string[];
     constructor(inPorts: string[]) {
         this.inPorts = inPorts;
-
+        this.midiRoutePresets[0].isEnabled = true;
     }
 
 
@@ -59,6 +74,7 @@ export class UserDataConfig {
         this.virtualOutPorts = jsonData.virtualOutPorts;
         this.activePresetID = jsonData.activePresetID
         this.dropdownlists = jsonData.dropdownlists
+        this._activePresetID = jsonData._activePresetID
 
 
 
@@ -68,7 +84,7 @@ export class UserDataConfig {
             if (this.midiRoutePresets[presetIdx] === undefined) { this.addPreset(""); }
             const midiRoutePreset = this.midiRoutePresets[presetIdx];
             midiRoutePreset.name = jsonPreset.name;
-
+            midiRoutePreset.isEnabled = jsonPreset.isEnabled;
 
             if (jsonPreset.easyConfig !== undefined) {
                 const easyConfigRoutesKeys = Object.keys(jsonPreset.easyConfig.inputZonesAndRoutes)
@@ -186,13 +202,18 @@ export class UserDataConfig {
             // Clear prevou
             configPort.midiRouterChains = configPort.midiRouterChains.filter((row) => { return !row.isEasyConfig })
             // routes from easy config
-            if (this.activePreset.easyConfig.inputZonesAndRoutes[inputIdx] !== undefined) {
-                this.activePreset.easyConfig.inputZonesAndRoutes[inputIdx].easyConfigRoutes.forEach((row) => {
-                    configPort.midiRouterChains = configPort.midiRouterChains.concat(row.getMidiRouterChains)
-                })
+            
+            for (let presetId = 0;presetId<this.midiRoutePresets.length;presetId++){
+                if (this.midiRoutePresets[presetId].isEnabled) {
+                    const enabledPreset = this.midiRoutePresets[presetId]
+                    if (enabledPreset.easyConfig.inputZonesAndRoutes[inputIdx] !== undefined) {
+                        enabledPreset.easyConfig.inputZonesAndRoutes[inputIdx].easyConfigRoutes.forEach((row) => {
+                            configPort.midiRouterChains = configPort.midiRouterChains.concat(row.getMidiRouterChains)
+                        })
+                    }
+                }
+
             }
-
-
 
             await midiPort.ignoreTypes(configPort.ignoreTypes.midiSysex, configPort.ignoreTypes.midiTime, configPort.ignoreTypes.midiSense)
             await midiPort.setTimeSig(configPort.midiRouteClock.timeSig, configPort.midiRouteClock.timeSigDivBy, configPort.midiRouteClock.fromSppPos)

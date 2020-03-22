@@ -13,6 +13,13 @@
   <div class="w3-container">
           <p  v-for="(itemPreset, indexPreset) in midiRoutePresets" v-bind:key="indexPreset">
             <input class="w3-radio" type="radio"  v-model="activePresetID" :value="indexPreset" />
+
+            <label class="switch w3-right">
+              <input type="checkbox" v-model="itemPreset.isEnabled" @change="doUpdate">
+              <span class="slider round"></span>
+            </label>
+
+            
             <label>{{indexPreset}} {{itemPreset.name}}</label>
           </p>
 
@@ -104,6 +111,13 @@ export default class PresetsComponent extends Vue {
       Connection.loginStatus.userDataConfig.applyChanges(Connection.connection);
     }
   }
+
+  doUpdate(){
+    if (this.changeAndApplay){
+      Connection.loginStatus.userDataConfig.applyChanges(Connection.connection);
+    }
+  }
+
   doDelete(){
     Connection.loginStatus.userDataConfig.midiRoutePresets.splice(this.activePresetID, 1)
     this.activePresetID = 0;

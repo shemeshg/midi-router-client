@@ -9,6 +9,8 @@ export class MidiRoutePreset{
     userControls: UserControl[] = []
     easyConfig = new EasyConfig();
 
+    isEnabled = false;
+
 
     constructor(name: string){
         this.name = name;
