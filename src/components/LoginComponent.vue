@@ -20,11 +20,6 @@
 </div>
 <p v-if="isLoggedIn">
 <button class="w3-button w3-section w3-teal w3-ripple w3-margin-left" @click="doShutdown">Shutdown Server</button>
-
-<button class="w3-button w3-section w3-teal w3-ripple w3-margin-left" @click="doRestart">Restart Server</button>
-
-
-
 </p>
 </div>
 
