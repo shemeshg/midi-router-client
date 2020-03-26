@@ -1,5 +1,6 @@
 import * as MRF from "./MidiRoutersFilter"
 import {BaseMidiRouteInput} from "./BaseMidiRouteInput"
+import {ToConsoleUserdata} from "src/src/UserDataConfig/MidiRoutePreset/ToConsoleUserdata"
 
 export class MidiRouterChain {
     name: string;
@@ -44,7 +45,7 @@ export class MidiRouterChain {
         this.midiRoutersFilters.push( new MRF.FilterMidiDestination(baseMidiRouteInput) );
     }
 
-    addFilterToConsle(logTo: number, userdata: string){
+    addFilterToConsle(logTo: number, userdata: ToConsoleUserdata){
         this.midiRoutersFilters.push( new MRF.FilterToConsle(logTo, userdata ));
     }
 

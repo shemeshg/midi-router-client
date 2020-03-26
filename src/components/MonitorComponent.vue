@@ -54,6 +54,8 @@ import { FilterType } from "../src/UserDataConfig/MidiRoutePreset/MidiRoutersFil
 
 import * as Connection from "../src/connection";
 
+import {ToConsoleUserdata} from "src/src/UserDataConfig/MidiRoutePreset/ToConsoleUserdata"
+
 @Component({
   computed: {
     ...mapState(["loginStatus","dataToClient"]),
@@ -80,7 +82,8 @@ export default class MonitorComponent extends Vue {
     onPropertyChanged(value: string) {
         const json = JSON.parse(value);
         if (json.portNumber === this.inputToMonitor && this.isMonitoring){
-          if ( JSON.parse(json.userdata).action === "monitor"   )
+          const userdata: ToConsoleUserdata = JSON.parse(json.userdata)
+          if ( userdata.action === "monitor" )
             this.data.unshift(value);
             this.data.splice(this.perPage)
         }
@@ -108,12 +111,12 @@ export default class MonitorComponent extends Vue {
         if (hasLogToConsole) {return ;}
         const configChain = input.addMidiRouterChain("EAsyConfig log client")
         configChain.isEasyConfig = true;
-        configChain.addFilterToConsle(0, JSON.stringify({action: "monitor"}));
+        configChain.addFilterToConsle(0, {action: "monitor"});
 
 
         const midiPort = await Connection.connection.wcmidiin.port(this.inputToMonitor )
         const chain = await midiPort.routingMidiChainsAaddChain();
-        await chain.routingActionAddLogData(0, JSON.stringify({action: "monitor"}))
+        await chain.routingActionAddLogData(0, {action: "monitor"})
     }
 
     stopMonitoring(){

@@ -1,4 +1,5 @@
 import {BaseMidiRouteInput} from "./BaseMidiRouteInput"
+import {ToConsoleUserdata} from "./ToConsoleUserdata"
 
 export enum FilterType {
     TO_MIDI_DESTINATION,
@@ -17,10 +18,12 @@ export class MidiRoutersFilter {
     }    
 }
 
+
+
 export class FilterToConsle extends MidiRoutersFilter {
     logTo: number;
-    userdata: string;
-    constructor(logTo: number, userdata: string){
+    userdata: ToConsoleUserdata;
+    constructor(logTo: number, userdata: ToConsoleUserdata){
         super(FilterType.TO_CONSOLE);
         this.logTo = logTo;
         const d = ["Client","Server"]
@@ -28,7 +31,7 @@ export class FilterToConsle extends MidiRoutersFilter {
         this.userdata = userdata;
     }
 
-    setVal(logTo: number, userdata: string){
+    setVal(logTo: number, userdata: ToConsoleUserdata){
         this.logTo = logTo;
         const d = ["Client","Server"]
         this.name = "Log to " + d[logTo];  

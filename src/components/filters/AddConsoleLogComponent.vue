@@ -74,14 +74,14 @@ export default class AddConsoleLogComponent extends Vue {
   mounted() {
     if (this.filterid === "-1"){return;}
     this.destinationId = this.filterObj.logTo
-    this.userdata = this.filterObj.userdata
+    this.userdata = JSON.stringify( this.filterObj.userdata )
   }
 
   doOk(){
     if (this.filterid === "-1"){
-      this.midiRouteInput.midiRouterChains[parseInt(this.chainid)].addFilterToConsle(this.destinationId, this.userdata);
+      this.midiRouteInput.midiRouterChains[parseInt(this.chainid)].addFilterToConsle(this.destinationId, JSON.parse(this.userdata));
     } else {
-      this.filterObj.setVal(this.destinationId, this.userdata)
+      this.filterObj.setVal(this.destinationId, JSON.parse(this.userdata))
     }
     this.$router.push(`/midiin/${this.midiinid}`)
 

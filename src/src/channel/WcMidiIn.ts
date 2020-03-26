@@ -1,4 +1,6 @@
 import store from '../../store'
+import {ToConsoleUserdata} from "src/src/UserDataConfig/MidiRoutePreset/ToConsoleUserdata"
+
 
 export enum LOG_TO {
     CLIENT,
@@ -78,9 +80,9 @@ class RoutingMidiChain {
         })
     }
 
-    routingActionAddLogData(logto: LOG_TO, userdata: string) {
+    routingActionAddLogData(logto: LOG_TO, userdata: ToConsoleUserdata) {
         return new Promise((resolve) => {
-            this.wcmidiinWs.routingActionAddLogData(this.portNumber, this.chainId, logto, userdata, (arg: number) => {
+            this.wcmidiinWs.routingActionAddLogData(this.portNumber, this.chainId, logto, JSON.stringify(userdata), (arg: number) => {
                 resolve(arg);
             })
         })
