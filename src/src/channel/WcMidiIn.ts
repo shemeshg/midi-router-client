@@ -78,9 +78,9 @@ class RoutingMidiChain {
         })
     }
 
-    routingActionAddLogData(logto: LOG_TO) {
+    routingActionAddLogData(logto: LOG_TO, userdata: string) {
         return new Promise((resolve) => {
-            this.wcmidiinWs.routingActionAddLogData(this.portNumber, this.chainId, logto, (arg: number) => {
+            this.wcmidiinWs.routingActionAddLogData(this.portNumber, this.chainId, logto, userdata, (arg: number) => {
                 resolve(arg);
             })
         })

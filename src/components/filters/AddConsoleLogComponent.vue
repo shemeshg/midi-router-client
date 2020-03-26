@@ -19,6 +19,12 @@
 
 
         </p>
+        <p>
+          <label>Userdata</label>
+          <input class="w3-input" v-model="userdata">
+        </p>
+
+
         </div>
       </div>
 
@@ -56,6 +62,7 @@ import * as Connection from "../../src/connection";
 })
 export default class AddConsoleLogComponent extends Vue {
   destinationId = 0;
+  userdata =  "{}"
   loginStatus!: LoginStatus;
 
   get filterid(){
@@ -67,13 +74,14 @@ export default class AddConsoleLogComponent extends Vue {
   mounted() {
     if (this.filterid === "-1"){return;}
     this.destinationId = this.filterObj.logTo
+    this.userdata = this.filterObj.userdata
   }
 
   doOk(){
     if (this.filterid === "-1"){
-      this.midiRouteInput.midiRouterChains[parseInt(this.chainid)].addFilterToConsle(this.destinationId);
+      this.midiRouteInput.midiRouterChains[parseInt(this.chainid)].addFilterToConsle(this.destinationId, this.userdata);
     } else {
-      this.filterObj.setVal(this.destinationId)
+      this.filterObj.setVal(this.destinationId, this.userdata)
     }
     this.$router.push(`/midiin/${this.midiinid}`)
 

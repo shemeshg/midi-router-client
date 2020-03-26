@@ -19,17 +19,20 @@ export class MidiRoutersFilter {
 
 export class FilterToConsle extends MidiRoutersFilter {
     logTo: number;
-    constructor(logTo: number){
+    userdata: string;
+    constructor(logTo: number, userdata: string){
         super(FilterType.TO_CONSOLE);
         this.logTo = logTo;
         const d = ["Client","Server"]
         this.name = "Log to " + d[logTo];
+        this.userdata = userdata;
     }
 
-    setVal(logTo: number){
+    setVal(logTo: number, userdata: string){
         this.logTo = logTo;
         const d = ["Client","Server"]
-        this.name = "Log to " + d[logTo];     
+        this.name = "Log to " + d[logTo];  
+        this.userdata = userdata;   
     }
 }
 

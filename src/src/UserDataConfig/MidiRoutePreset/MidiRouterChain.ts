@@ -44,8 +44,8 @@ export class MidiRouterChain {
         this.midiRoutersFilters.push( new MRF.FilterMidiDestination(baseMidiRouteInput) );
     }
 
-    addFilterToConsle(logTo: number){
-        this.midiRoutersFilters.push( new MRF.FilterToConsle(logTo) );
+    addFilterToConsle(logTo: number, userdata: string){
+        this.midiRoutersFilters.push( new MRF.FilterToConsle(logTo, userdata ));
     }
 
     addFilterNetworkDestination(serverName: string, serverPort: number,  baseMidiRouteInput: BaseMidiRouteInput){

@@ -160,7 +160,7 @@ export class UserDataConfig {
                             configChain.addFilterMidiDestination(jsonFilter.baseMidiRouteInput);
                         }
                         if (jsonFilter.filterType === MRF.FilterType.TO_CONSOLE) {
-                            configChain.addFilterToConsle(jsonFilter.logTo)
+                            configChain.addFilterToConsle(jsonFilter.logTo, jsonFilter.userdata )
                         }
                         if (jsonFilter.filterType === MRF.FilterType.TO_NETWORK) {
                             configChain.addFilterNetworkDestination(jsonFilter.serverName, jsonFilter.serverPort, jsonFilter.baseMidiRouteInput)
@@ -239,7 +239,7 @@ export class UserDataConfig {
                     }
                     if (configFilter.filterType === MRF.FilterType.TO_CONSOLE) {
                         const filter = configChain.getFilterToConsle(filterIdx);
-                        await chain.routingActionAddLogData(filter.logTo)
+                        await chain.routingActionAddLogData(filter.logTo, filter.userdata)
                     }
                     if (configFilter.filterType === MRF.FilterType.TO_NETWORK) {
                         const filter = configChain.getFilterNetworkDestination(filterIdx);
