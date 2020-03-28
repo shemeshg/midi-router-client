@@ -84,6 +84,8 @@ export class UserDataConfig {
             if (this.midiRoutePresets[presetIdx] === undefined) { this.addPreset(""); }
             const midiRoutePreset = this.midiRoutePresets[presetIdx];
             midiRoutePreset.name = jsonPreset.name;
+            midiRoutePreset.midiControlOn = jsonPreset.midiControlOn
+            midiRoutePreset.midiControlOff = jsonPreset.midiControlOff
             midiRoutePreset.isEnabled = jsonPreset.isEnabled;
 
             if (jsonPreset.easyConfig !== undefined) {
@@ -96,8 +98,7 @@ export class UserDataConfig {
                     for (let spltKdbId = 0; spltKdbId < keyboardSplitAry.length; spltKdbId++) {
                         midiRoutePreset.easyConfig.addKeyboardSplit(inputID, keyboardSplitAry[spltKdbId].splitPosition);
                     }
-    
-    
+        
                     midiRoutePreset.easyConfig.inputZonesAndRoutes[inputID].zoneNames = jsonPreset.easyConfig.inputZonesAndRoutes[inputID].zoneNames
     
                     const easyConfigRoutesAry = jsonPreset.easyConfig.inputZonesAndRoutes[inputID].easyConfigRoutes
@@ -105,8 +106,6 @@ export class UserDataConfig {
                         const easyConfigRoute = midiRoutePreset.easyConfig.addRoute(inputID);
                         Object.assign(easyConfigRoute, easyConfigRoutesAry[easyConfigRoutesAryId])
                     }
-    
-    
                 }
             }
 

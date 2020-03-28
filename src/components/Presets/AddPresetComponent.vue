@@ -13,6 +13,12 @@
         </div>
       </div>
 
+
+      <h5>Midi controller (optional) </h5>
+      <AddPresetMidiOnOffComponent description="ON" v-bind:presetMidiControl="midiOn"></AddPresetMidiOnOffComponent>
+      <AddPresetMidiOnOffComponent description="OFF" v-bind:presetMidiControl="midiOff"></AddPresetMidiOnOffComponent>
+
+
       <div class="w3-card-4">
         <div class="w3-container">
           <button class="w3-button w3-section w3-teal w3-ripple" @click="doOk">OK</button>
@@ -32,8 +38,12 @@ import { mapState } from "vuex";
 import { mapGetters } from "vuex";
 
 import * as Connection from "../../src/connection";
+import AddPresetMidiOnOffComponent from "./AddPresetMidiOnOffComponent.vue"
+
+import { PresetMidiControl } from "../../src/UserDataConfig/MidiRoutePreset/MidiRoutePreset"
 
 @Component({
+  components: { AddPresetMidiOnOffComponent},
   computed: {
     ...mapState(["loginStatus"]),
     ...mapGetters(["isLoggedIn"])
@@ -41,6 +51,10 @@ import * as Connection from "../../src/connection";
 })
 export default class AddPresetComponent extends Vue {
   presetName = "";
+  midiOn = new PresetMidiControl()
+  midiOff = new PresetMidiControl()
+
+
   get routeId() {
     return this.$route.params.id;
   }
@@ -55,6 +69,8 @@ export default class AddPresetComponent extends Vue {
       return;
     }
     this.presetName = this.routeObj.name;
+    this.midiOn = this.routeObj.midiControlOn
+    this.midiOff = this.routeObj.midiControlOff
   }
 
   doOk() {
@@ -64,7 +80,7 @@ export default class AddPresetComponent extends Vue {
     if (this.routeId === "-1") {
       Connection.loginStatus.userDataConfig.addPreset(this.presetName);
     } else {
-      this.routeObj.setVal(this.presetName)
+      this.routeObj.setVal(this.presetName, this.midiOn,  this.midiOff)
     }
     this.$router.push(`/presets`);
   }
@@ -74,7 +90,7 @@ export default class AddPresetComponent extends Vue {
   }
 
   get headrMsg() {
-    return "Add preset";
+    return "Edit preset";
   }
 }
 </script>
