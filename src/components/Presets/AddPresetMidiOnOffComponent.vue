@@ -6,7 +6,6 @@
       </header>
       <div class="w3-container">
         <p>
-          {{presetMidiControl}}
           <label>Midi input</label>
           <select class="w3-select" name="option" v-model.number="presetMidiControl.port">
             <option value="-1"></option>
