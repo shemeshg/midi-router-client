@@ -40,7 +40,7 @@ import { mapGetters } from "vuex";
 import * as Connection from "../../src/connection";
 import AddPresetMidiOnOffComponent from "./AddPresetMidiOnOffComponent.vue"
 
-import { PresetMidiControl } from "../../src/UserDataConfig/MidiRoutePreset/MidiRoutePreset"
+import { PresetMidiControl, PresetMidiType } from "../../src/UserDataConfig/MidiRoutePreset/MidiRoutePreset"
 
 @Component({
   components: { AddPresetMidiOnOffComponent},
@@ -51,8 +51,8 @@ import { PresetMidiControl } from "../../src/UserDataConfig/MidiRoutePreset/Midi
 })
 export default class AddPresetComponent extends Vue {
   presetName = "";
-  midiOn = new PresetMidiControl()
-  midiOff = new PresetMidiControl()
+  midiOn = new PresetMidiControl(PresetMidiType.PRESET_ON,"")
+  midiOff = new PresetMidiControl(PresetMidiType.PRESET_OFF,"")
 
 
   get routeId() {
@@ -78,7 +78,8 @@ export default class AddPresetComponent extends Vue {
       return;
     }
     if (this.routeId === "-1") {
-      Connection.loginStatus.userDataConfig.addPreset(this.presetName);
+      const newPreset = Connection.loginStatus.userDataConfig.addPreset(this.presetName);
+      newPreset.setVal(this.presetName, this.midiOn,  this.midiOff)
     } else {
       this.routeObj.setVal(this.presetName, this.midiOn,  this.midiOff)
     }

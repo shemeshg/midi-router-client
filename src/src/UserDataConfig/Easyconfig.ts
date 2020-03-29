@@ -36,7 +36,7 @@ export class KeyboardZone {
   }
 
 
-  enum EventTypes {
+  export enum EventTypes {
     noteoff = 8,    
     noteon = 9,
     keyaftertouch = 10,

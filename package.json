@@ -14,9 +14,13 @@
   "main": "background.js",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.12.1",
+    "@types/lodash": "^4.14.149",
+    "@types/uuid": "^7.0.2",
     "core-js": "^3.6.4",
     "electron-builder": "^22.4.1",
+    "lodash": "^4.17.15",
     "qwebchannel": "^5.9.0",
+    "uuid": "^7.0.2",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.2",
     "vue-property-decorator": "^8.3.0",

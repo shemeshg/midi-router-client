@@ -6,6 +6,7 @@
       </header>
       <div class="w3-container">
         <p>
+          {{presetMidiControl}}
           <label>Midi input</label>
           <select class="w3-select" name="option" v-model.number="presetMidiControl.port">
             <option value="-1"></option>
@@ -22,7 +23,6 @@
             class="w3-select"
             name="option"
             v-model.number="presetMidiControl.eventTypeId"
-            @change="eventTypeChanged(idx)"
           >
             <option
               v-for="(item) in dropdownMidiEventType"
@@ -39,7 +39,7 @@
           </select>
         </p>
         <p v-if="presetMidiControl.port !== -1">
-          <labe>data1</labe>
+          <label>data1</label>
           <select class="w3-select" name="option" v-model.number="presetMidiControl.data1">
             <option value="-1">-</option>
             <option v-for="(item) in range127" v-bind:key="item" v-bind:value="item">{{item}}</option>
@@ -47,7 +47,7 @@
         </p>
 
         <p v-if="presetMidiControl.port !== -1">
-          <labe>data2</labe>
+          <label>data2</label>
           <select class="w3-select" name="option" v-model.number="presetMidiControl.data2">
             <option value="-1">-</option>
             <option v-for="(item) in range127" v-bind:key="item" v-bind:value="item">{{item}}</option>
@@ -81,11 +81,6 @@ export default class AddPresetMidiOnOffComponent extends Vue {
 
 
   dropdownMidiEventType = dropdownMidiEventType;
-
-  eventTypeChanged(idx: number) {
-    console.log(idx);
-    //debugger;
-  }
 
   get inPorts() {
     return Connection.loginStatus.inPorts;

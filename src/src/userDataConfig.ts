@@ -1,10 +1,12 @@
-import {MidiRoutePreset} from './UserDataConfig/MidiRoutePreset/MidiRoutePreset'
+import {MidiRoutePreset, PresetMidiControl, PresetMidiType} from './UserDataConfig/MidiRoutePreset/MidiRoutePreset'
 import * as MRF from './UserDataConfig/MidiRoutePreset/MidiRoutersFilter'
 import {MidiRouteInput} from './UserDataConfig/MidiRoutePreset/MidiRouteInput'
 import { UserControl } from "./UserDataConfig/userControl"
 import { Channel } from './channel/Channel'
 import { RangeMap } from './channel/WcMidiIn'
 import {Dropdownlist} from "./UserDataConfig/dropdownlists"
+import { ToConsoleUserdata } from './UserDataConfig/MidiRoutePreset/ToConsoleUserdata'
+import * as Connection from "../src/connection";
 
 export class UserDataConfig {
     _activePresetID = 0;
@@ -38,9 +40,38 @@ export class UserDataConfig {
     }
 
 
+    setPresetOnOffByClientEvent(str: string){
+        const userData: ToConsoleUserdata = JSON.parse( JSON.parse(str).userdata )
+        if (userData.action === "presetOnOff"){
+            // eslint-disable-next-line 
+            const userDataData: any = userData.data;
+            const data: PresetMidiControl = JSON.parse( userDataData )
+            const selectedPreset = this.midiRoutePresets.filter( (row)=>{return row.uuid === data.presetUuid})[0]
+           
+            if (selectedPreset.midiControlOn.isMidiParamsEqual(selectedPreset.midiControlOff)){
+                // ir nore OFF, use ON for toggle
+                if (data.presetMidiType === PresetMidiType.PRESET_OFF){return;}
+                
+                selectedPreset.isEnabled = !selectedPreset.isEnabled;
+                Connection.loginStatus.userDataConfig.applyChanges(Connection.connection);
+                return;
+            }
+            
+            if (selectedPreset.isEnabled && data.presetMidiType === PresetMidiType.PRESET_ON ||
+                !selectedPreset.isEnabled && data.presetMidiType === PresetMidiType.PRESET_OFF ){
+                    return;
+                }
+
+            selectedPreset.isEnabled = (data.presetMidiType === PresetMidiType.PRESET_ON)
+            Connection.loginStatus.userDataConfig.applyChanges(Connection.connection);
+
+        }
+    }
 
     addPreset(name: string) {
-        this.midiRoutePresets.push(new MidiRoutePreset(name));
+        const newPreset = new MidiRoutePreset(name)
+        this.midiRoutePresets.push(newPreset);
+        return newPreset;
     }
 
     get activePreset() {
@@ -84,8 +115,9 @@ export class UserDataConfig {
             if (this.midiRoutePresets[presetIdx] === undefined) { this.addPreset(""); }
             const midiRoutePreset = this.midiRoutePresets[presetIdx];
             midiRoutePreset.name = jsonPreset.name;
-            midiRoutePreset.midiControlOn = jsonPreset.midiControlOn
-            midiRoutePreset.midiControlOff = jsonPreset.midiControlOff
+            midiRoutePreset.uuid = jsonPreset.uuid;
+            Object.assign(midiRoutePreset.midiControlOn,jsonPreset.midiControlOn)
+            Object.assign(midiRoutePreset.midiControlOff,jsonPreset.midiControlOff)
             midiRoutePreset.isEnabled = jsonPreset.isEnabled;
 
             if (jsonPreset.easyConfig !== undefined) {
@@ -203,6 +235,14 @@ export class UserDataConfig {
             // routes from easy config
             
             for (let presetId = 0;presetId<this.midiRoutePresets.length;presetId++){
+                // add preset onoff easyconfig                
+                configPort.midiRouterChains = 
+                    configPort.midiRouterChains.concat(this.midiRoutePresets[presetId].midiControlOff.getOnOffMidiRouterChains(inputIdx));
+                configPort.midiRouterChains = 
+                    configPort.midiRouterChains.concat(this.midiRoutePresets[presetId].midiControlOn.getOnOffMidiRouterChains(inputIdx));                
+                
+
+                // add easyconfig routes
                 if (this.midiRoutePresets[presetId].isEnabled) {
                     const enabledPreset = this.midiRoutePresets[presetId]
                     if (enabledPreset.easyConfig.inputZonesAndRoutes[inputIdx] !== undefined) {

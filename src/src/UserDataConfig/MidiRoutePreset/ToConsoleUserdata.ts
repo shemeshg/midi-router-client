@@ -1,3 +1,4 @@
 export interface ToConsoleUserdata {
-    action?: string;
+    action?: "monitor"|"presetOnOff";
+    data?: string;
 }
