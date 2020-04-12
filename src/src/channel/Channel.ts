@@ -23,8 +23,13 @@ export class Channel{
     }
 
     open(): Promise<void>{
-        this.socket = new WebSocket(this.wsUri);
+
+            
+
+        
         return new Promise<void>( (resolve, reject)=>{
+            this.socket = new WebSocket(this.wsUri);
+            
             this.socket.onclose = ()=> {
                 return this._onclose();
             };

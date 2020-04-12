@@ -43,6 +43,7 @@ export async function login(serverName: string, port: number){
     } catch(e){
         loginStatus.isLoggedIn = false;
         loginStatus.errMsg =  "Could not connect";
+        throw(e);
     }
     return loginStatus;
 }
