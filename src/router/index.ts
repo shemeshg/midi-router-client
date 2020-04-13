@@ -45,7 +45,12 @@ const routes = [
     path: '/monitor',
     name: 'monitor',
     component: () => import('../views/Monitor.vue')
-  },    
+  }, 
+  {
+    path: '/jsclient',
+    name: 'jsclient',
+    component: () => import('../views/Jsclient.vue')
+  },      
   { path: '/preset/:id', component: () => import('../components/Presets/AddPresetComponent.vue') },
 
   { path: '/midiin/:id', component: () => import('../views/Midiin.vue') },
