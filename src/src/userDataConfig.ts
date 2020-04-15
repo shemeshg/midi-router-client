@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid'; 
 import {MidiRoutePreset, PresetMidiControl, PresetMidiType} from './UserDataConfig/MidiRoutePreset/MidiRoutePreset'
 import * as MRF from './UserDataConfig/MidiRoutePreset/MidiRoutersFilter'
 import {MidiRouteInput} from './UserDataConfig/MidiRoutePreset/MidiRouteInput'
@@ -28,7 +29,7 @@ export class UserDataConfig {
 
     dropdownlists: Dropdownlist[] = []
 
-    uniqueId = (new Date()).getTime();
+    uniqueId = uuidv4();
 
     virtualInPorts: string[] = []
     virtualOutPorts: string[] = [];
