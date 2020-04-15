@@ -1,6 +1,8 @@
 import { v4 as uuidv4 } from 'uuid'; 
 import WebMidi from "webmidi"
 
+import * as Connection from "./connection";
+
 export enum JS_TO_SERVER_TYPE {
     TO_SERVER,
     FROM_SERVER
@@ -27,15 +29,41 @@ class JsToServer {
 export class JsRouter {
     jsToServers: JsToServer[] = [];
 
-    addJsServer( jsToServerType: JS_TO_SERVER_TYPE, fromId: number, toId: number, fromName: string, toName: string){
+     addJsServer( jsToServerType: JS_TO_SERVER_TYPE, fromId: number, toId: number, fromName: string, toName: string){
         if ( this.jsToServers.filter( (row)=>{ return row.fromInt === fromId && row.toInt === toId }).length > 0) {return ;}
         this.jsToServers.push( new  JsToServer(jsToServerType, fromId, toId, fromName, toName) )
+        
+        this.applayChanges()
     }
 
     removeJsToServer(uuid: string){
-        console.log(this.jsToServers.filter( (row)=>{return row.id !== uuid}).length )
         this.jsToServers = this.jsToServers.filter( (row)=>{return row.id !== uuid})
-        console.log(this.jsToServers.filter( (row)=>{return row.id !== uuid}).length )
+        this.applayChanges()
+    }
+
+    async applayChanges(){
+        WebMidi.inputs.forEach ( (i)=>{
+            i.removeListener();
+        })
+
+        const toServer = this.jsToServers.filter( (row)=>{return row.jsToServerType === JS_TO_SERVER_TYPE.TO_SERVER})
+
+        for (let i=0;i<toServer.length;i++){
+            const tos = toServer[i]
+            // eslint-disable-next-line
+            const int: any = WebMidi.getInputById(tos.fromInt.toString());
+
+            const serverPort = await Connection.connection.wcmidiout.port( tos.toInt )
+
+            // eslint-disable-next-line
+            int.addListener("midimessage","all",(m: any)=>{  
+                const msg: number[] = []
+                for (let ic=0; ic<m.data.length;ic++){
+                    msg.push( m.data[ic] )
+                }              
+                serverPort.sendMessage(msg)                
+            })
+        }
     }
 
     get inPorts(){

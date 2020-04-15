@@ -12,7 +12,7 @@
               <select class="w3-select" v-model.number="routeJsOutPort">
                 <option value="-1">-</option>
                 <option
-                  v-for="(item,idx) in jsOutPorts"  
+                  v-for="(item,idx) in jsInPorts"  
                   v-bind:key="item.id"
                   v-bind:value="item.id"
                 >{{idx}} - {{item.name}}</option>
@@ -24,7 +24,7 @@
               <select class="w3-select" v-model.number="routeServerInPort">
                 <option value="-1">-</option>
            <option
-                  v-for="(item) in serverInPorts"
+                  v-for="(item) in serverOutPorts"
                   v-bind:key="item.id"            
                   v-bind:value="item.id"
                 >{{item.id}} - {{item.name}}</option>
@@ -57,7 +57,7 @@
               <select class="w3-select" v-model.number="routeServerOutPort">
                 <option value="-1">-</option>
                 <option
-                  v-for="(item) in serverOutPorts"
+                  v-for="(item) in serverInPorts"
                   v-bind:key="item.id"
                   v-bind:value="item.id"
                 >{{item.id}} - {{item.name}}</option>
@@ -68,7 +68,7 @@
               <select class="w3-select" v-model.number="routeJsInPort">
                 <option value="-1">-</option>
                 <option
-                  v-for="(item,idx) in jsInPorts"
+                  v-for="(item,idx) in jsOutPorts"
                   v-bind:key="item.id"
                   v-bind:value="item.id"
                 >{{idx}} - {{item.name}}</option>
@@ -154,7 +154,7 @@ export default class JsclientComponent extends Vue {
   addToServer(){
     
     if ( this.routeJsOutPort === -1 || this.routeServerInPort === -1){return;}
-    const fromStr = this.jsOutPorts.filter( (row)=>{return row.id ===  this.routeJsOutPort})[0].name
+    const fromStr = this.jsInPorts.filter( (row)=>{return row.id ===  this.routeJsOutPort})[0].name
     const toStr = this.serverInPorts.filter( (row)=>{ return row.id === this.routeServerInPort })[0].name 
 
 
@@ -165,7 +165,7 @@ export default class JsclientComponent extends Vue {
   addFromServer(){
     if ( this.routeJsInPort === -1 || this.routeServerOutPort === -1){return;}
     const fromStr = this.serverOutPorts.filter( (row)=>{ return row.id === this.routeServerOutPort})[0].name  
-    const toStr = this.jsInPorts.filter( (row)=>{return row.id ===  this.routeJsInPort})[0].name
+    const toStr = this.jsOutPorts.filter( (row)=>{return row.id ===  this.routeJsInPort})[0].name
     jsRouter.addJsServer(JS_TO_SERVER_TYPE.FROM_SERVER, this.routeServerOutPort, this.routeJsInPort, fromStr, toStr )
     this.jsToServers = jsRouter.jsToServers
   }
