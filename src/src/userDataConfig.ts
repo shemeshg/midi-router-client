@@ -9,6 +9,8 @@ import {Dropdownlist} from "./UserDataConfig/dropdownlists"
 import { ToConsoleUserdata } from './UserDataConfig/MidiRoutePreset/ToConsoleUserdata'
 import * as Connection from "../src/connection";
 
+
+
 export class UserDataConfig {
     _activePresetID = 0;
 
@@ -24,12 +26,16 @@ export class UserDataConfig {
     }
 
     midiRoutePresets = [new MidiRoutePreset("Default preset")];
-
+    
 
 
     dropdownlists: Dropdownlist[] = []
 
     uniqueId = uuidv4();
+    get computerUuid(){
+        if (!localStorage.computerUuid) { localStorage.computerUuid = uuidv4();}
+        return localStorage.computerUuid;
+    }
 
     virtualInPorts: string[] = []
     virtualOutPorts: string[] = [];
@@ -107,7 +113,7 @@ export class UserDataConfig {
         this.activePresetID = jsonData.activePresetID
         this.dropdownlists = jsonData.dropdownlists
         this._activePresetID = jsonData._activePresetID
-
+        
 
 
         for (let presetIdx = 0; presetIdx < jsonData.midiRoutePresets.length; presetIdx++) {
@@ -119,6 +125,7 @@ export class UserDataConfig {
             midiRoutePreset.uuid = jsonPreset.uuid;
             Object.assign(midiRoutePreset.midiControlOn,jsonPreset.midiControlOn)
             Object.assign(midiRoutePreset.midiControlOff,jsonPreset.midiControlOff)
+            midiRoutePreset.jsRouter.jsToServers = jsonPreset.jsRouter.jsToServers
             midiRoutePreset.isEnabled = jsonPreset.isEnabled;
 
             if (jsonPreset.easyConfig !== undefined) {

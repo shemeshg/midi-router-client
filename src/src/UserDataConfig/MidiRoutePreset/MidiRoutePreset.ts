@@ -3,6 +3,7 @@ import { EasyConfig, EventTypes, dropdownMidiEventType } from "../Easyconfig"
 import { MidiRouteInput } from "./MidiRouteInput"
 import { MidiRouterChain } from "./MidiRouterChain"
 import { MIDI_FILTER_ACTION_IF_NOT } from "../../channel/WcMidiIn"
+import {JsRouter} from "./jsRouter"
 import { v4 as uuidv4 } from 'uuid'; 
 
 export enum PresetMidiType {
@@ -101,6 +102,7 @@ export class MidiRoutePreset {
 
     userControls: UserControl[] = []
     easyConfig = new EasyConfig();
+    jsRouter = new JsRouter();
 
     isEnabled = false;
 

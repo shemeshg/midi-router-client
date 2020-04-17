@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'; 
 import WebMidi from "webmidi"
 
-import * as Connection from "./connection";
+import * as Connection from "../../connection";
 
 export enum JS_TO_SERVER_TYPE {
     TO_SERVER,
@@ -15,12 +15,13 @@ class JsToServer {
     toInt: number;
     fromName: string;
     toName: string;
+    computerUuid = Connection.loginStatus.userDataConfig.computerUuid
     constructor( jsToServerType: JS_TO_SERVER_TYPE, fromId: number, toId: number, fromName: string, toName: string){
         this.jsToServerType = jsToServerType
         this.fromInt = fromId;
         this.toInt = toId;
         this.fromName = fromName;
-        this.toName = toName;
+        this.toName = toName;        
     }
 
 
@@ -30,7 +31,8 @@ export class JsRouter {
     jsToServers: JsToServer[] = [];
 
      addJsServer( jsToServerType: JS_TO_SERVER_TYPE, fromId: number, toId: number, fromName: string, toName: string){
-        if ( this.jsToServers.filter( (row)=>{ return row.fromInt === fromId && row.toInt === toId }).length > 0) {return ;}
+        if ( this.jsToServers.filter( (row)=>{ return row.fromInt === fromId && row.toInt === toId &&
+                                                    row.computerUuid === Connection.loginStatus.userDataConfig.computerUuid}).length > 0) {return ;}
         this.jsToServers.push( new  JsToServer(jsToServerType, fromId, toId, fromName, toName) )
         
         this.applayChanges()
@@ -46,7 +48,8 @@ export class JsRouter {
             i.removeListener();
         })
 
-        const toServer = this.jsToServers.filter( (row)=>{return row.jsToServerType === JS_TO_SERVER_TYPE.TO_SERVER})
+        const toServer = this.jsToServers.filter( (row)=>{return row.jsToServerType === JS_TO_SERVER_TYPE.TO_SERVER &&
+            row.computerUuid === Connection.loginStatus.userDataConfig.computerUuid})
 
         for (let i=0;i<toServer.length;i++){
             const tos = toServer[i]
@@ -92,4 +95,3 @@ export class JsRouter {
         });
     }
 }
-export const jsRouter = new JsRouter();

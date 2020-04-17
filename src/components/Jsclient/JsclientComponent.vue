@@ -42,7 +42,7 @@
             </header>
             <div class="w3-container">            
               <p v-for="(item) in routesToServer" v-bind:key="item.id">
-                {{item.fromName }} to {{ item.toName }} 
+                {{ item.computerUuid.substr(-4) }} {{item.fromName }} to {{ item.toName }}  
                 <a @click="removeJsToServer(item.id)"
                   href="#"
                   class="router-link-exact-active router-link-active w3-right"
@@ -85,7 +85,7 @@
             </header>
             <div class="w3-container">
               <p v-for="(item) in routesFromServer" v-bind:key="item.id">
-                {{item.fromName }} to {{ item.toName }} 
+                {{ item.computerUuid.substr(-4) }} {{item.fromName }} to {{ item.toName }} 
                 <a @click="removeJsToServer(item.id)"
                   href="#"
                   class="router-link-exact-active router-link-active w3-right"
@@ -111,7 +111,9 @@ import { mapState } from "vuex";
 import { mapGetters } from "vuex";
 
 import * as Connection from "../../src/connection";
-import {jsRouter, JS_TO_SERVER_TYPE} from "../../src/jsRouter"
+import {JS_TO_SERVER_TYPE} from "../../src/UserDataConfig/MidiRoutePreset/jsRouter"
+
+
 
 @Component({
   computed: {
@@ -130,7 +132,8 @@ export default class JsclientComponent extends Vue {
   jsInPorts: { id: number; name: string}[] = []
   jsOutPorts: { id: number; name: string}[] = []
 
-  jsToServers = jsRouter.jsToServers
+  
+  jsToServers = Connection.loginStatus.userDataConfig.activePreset.jsRouter.jsToServers
 
   get routesFromServer(){
     return this.jsToServers.filter( (row)=>{return row.jsToServerType === JS_TO_SERVER_TYPE.FROM_SERVER})
@@ -140,19 +143,22 @@ export default class JsclientComponent extends Vue {
     return this.jsToServers.filter( (row)=>{return row.jsToServerType === JS_TO_SERVER_TYPE.TO_SERVER})
   }
 
-  async mounted(){    
+  async mounted(){  
+    const jsRouter = Connection.loginStatus.userDataConfig.activePreset.jsRouter  
     await jsRouter.doOpen()      
     this.jsInPorts = jsRouter.inPorts
     this.jsOutPorts = jsRouter.outPorts
   }
 
   removeJsToServer(id: string){
+    const jsRouter = Connection.loginStatus.userDataConfig.activePreset.jsRouter 
     jsRouter.removeJsToServer( id );
     this.jsToServers = jsRouter.jsToServers
   }
 
   addToServer(){
-    
+    const jsRouter = Connection.loginStatus.userDataConfig.activePreset.jsRouter  
+
     if ( this.routeJsOutPort === -1 || this.routeServerInPort === -1){return;}
     const fromStr = this.jsInPorts.filter( (row)=>{return row.id ===  this.routeJsOutPort})[0].name
     const toStr = this.serverInPorts.filter( (row)=>{ return row.id === this.routeServerInPort })[0].name 
@@ -163,6 +169,8 @@ export default class JsclientComponent extends Vue {
   }
 
   addFromServer(){
+    const jsRouter = Connection.loginStatus.userDataConfig.activePreset.jsRouter  
+
     if ( this.routeJsInPort === -1 || this.routeServerOutPort === -1){return;}
     const fromStr = this.serverOutPorts.filter( (row)=>{ return row.id === this.routeServerOutPort})[0].name  
     const toStr = this.jsOutPorts.filter( (row)=>{return row.id ===  this.routeJsInPort})[0].name
