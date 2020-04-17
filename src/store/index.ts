@@ -27,7 +27,7 @@ export default new Vuex.Store({
     setDataToClient (state, str: string){
       state.dataToClient = str;
       state.loginStatus.userDataConfig.setPresetOnOffByClientEvent(str)
-
+      state.loginStatus.userDataConfig.activePreset.jsRouter.parseClientEvent(str)      
     }
   },
   actions: {

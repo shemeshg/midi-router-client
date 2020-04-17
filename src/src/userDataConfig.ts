@@ -248,7 +248,9 @@ export class UserDataConfig {
                     configPort.midiRouterChains.concat(this.midiRoutePresets[presetId].midiControlOff.getOnOffMidiRouterChains(inputIdx));
                 configPort.midiRouterChains = 
                     configPort.midiRouterChains.concat(this.midiRoutePresets[presetId].midiControlOn.getOnOffMidiRouterChains(inputIdx));                
-                
+                // jsRouting from server
+                configPort.midiRouterChains = 
+                    configPort.midiRouterChains.concat(this.midiRoutePresets[presetId].jsRouter.getMidiRouterChains(inputIdx));                      
 
                 // add easyconfig routes
                 if (this.midiRoutePresets[presetId].isEnabled) {
@@ -318,7 +320,7 @@ export class UserDataConfig {
 
         }
 
-
+        await this.activePreset.jsRouter.applayChanges()
     }
 
 }

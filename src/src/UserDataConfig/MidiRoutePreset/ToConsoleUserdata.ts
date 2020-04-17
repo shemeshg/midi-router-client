@@ -1,4 +1,4 @@
 export interface ToConsoleUserdata {
-    action?: "monitor"|"presetOnOff";
+    action?: "monitor"|"presetOnOff"|"jsRoute";
     data?: string;
 }

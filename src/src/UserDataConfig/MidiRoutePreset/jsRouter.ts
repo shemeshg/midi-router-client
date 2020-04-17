@@ -2,6 +2,8 @@ import { v4 as uuidv4 } from 'uuid';
 import WebMidi from "webmidi"
 
 import * as Connection from "../../connection";
+import { MidiRouterChain } from "./MidiRouterChain"
+import { ToConsoleUserdata } from './ToConsoleUserdata'
 
 export enum JS_TO_SERVER_TYPE {
     TO_SERVER,
@@ -35,13 +37,47 @@ export class JsRouter {
                                                     row.computerUuid === Connection.loginStatus.userDataConfig.computerUuid}).length > 0) {return ;}
         this.jsToServers.push( new  JsToServer(jsToServerType, fromId, toId, fromName, toName) )
         
-        this.applayChanges()
     }
 
     removeJsToServer(uuid: string){
         this.jsToServers = this.jsToServers.filter( (row)=>{return row.id !== uuid})
-        this.applayChanges()
     }
+
+    getMidiRouterChains(inputIdx: number): MidiRouterChain[] {
+        const ret: MidiRouterChain[] = [];        
+
+        const routeFromServer = this.jsToServers.filter( (row)=>{return row.jsToServerType === JS_TO_SERVER_TYPE.FROM_SERVER &&
+                                            row.fromInt === inputIdx})
+        // the bullshit to correctn
+        if (routeFromServer.length === 0 ) return ret;
+
+        const midiRouterChain = new MidiRouterChain("Easyconfig - Preset log");
+        midiRouterChain.isEasyConfig = true   
+
+        midiRouterChain.addFilterToConsle(0, {action: "jsRoute",data:JSON.stringify(routeFromServer)});
+        ret.push( midiRouterChain )
+      
+        return ret
+    }
+
+    async parseClientEvent(str: string) {
+        const userData: ToConsoleUserdata = JSON.parse( JSON.parse(str).userdata )
+        if (userData.action === "jsRoute"){  
+            // eslint-disable-next-line          
+            const data: JsToServer[] = JSON.parse( userData.data! )
+            const clientData = data.filter( ( row )=>{ return row.computerUuid === Connection.loginStatus.userDataConfig.computerUuid})
+            if (clientData.length === 0){return;}
+            const ints = clientData.map( (row)=>{ return row.toInt})
+            for (let i = 0; i<ints.length; i++){
+                /* eslint-disable */ 
+                const int: any = WebMidi.getOutputById(ints[i].toString());
+                const midiData: number[] = JSON.parse(str).data
+                int.send (midiData[0], midiData.slice(1))                                           
+            }
+ 
+        }
+    }
+
 
     async applayChanges(){
         WebMidi.inputs.forEach ( (i)=>{
