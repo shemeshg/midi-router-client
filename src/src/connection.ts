@@ -14,7 +14,8 @@ class AppChannel extends Channel {
         //console.log(obj);
 
         if (loginStatus.userDataConfig.uniqueId !== obj.uniqueId){
-            store.commit('setLoginStatusRedirect', false);
+            loginStatus.resetUserDataConfig(obj)
+            store.commit('doReload');
         }
     }
 

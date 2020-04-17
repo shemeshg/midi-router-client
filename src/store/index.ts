@@ -21,6 +21,15 @@ export default new Vuex.Store({
         router.push('/')
       }
     },
+    doReload (){
+      router.push('/')
+      .then( ()=>{
+        return router.go(-1)
+      }).catch( () => {
+        return;
+      })
+      
+    },
     setLoginStatusNoRedirect (state, loginStatus: LoginStatus) {
       state.loginStatus = loginStatus
     },
