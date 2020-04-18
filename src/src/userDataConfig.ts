@@ -38,7 +38,7 @@ export class UserDataConfig {
     }
 
     virtualInPorts: string[] = []
-    virtualOutPorts: string[] = [];
+    //virtualOutPorts: string[] = [];
 
     private inPorts: string[];
     constructor(inPorts: string[]) {
@@ -109,7 +109,6 @@ export class UserDataConfig {
         if (jsonData.midiRoutePresets === undefined) { return; }
 
         this.virtualInPorts = jsonData.virtualInPorts;
-        this.virtualOutPorts = jsonData.virtualOutPorts;
         this.activePresetID = jsonData.activePresetID
         this.dropdownlists = jsonData.dropdownlists
         this._activePresetID = jsonData._activePresetID
@@ -223,15 +222,27 @@ export class UserDataConfig {
         await this.postChanges(ch)
         await ch.wcmidiin.restart()
         await ch.wcmidiout.restart()
+        Connection.loginStatus.inPorts =  await ch.wcmidiin.getPorts()
+        Connection.loginStatus.outPorts =  await ch.wcmidiout.getPorts()
+        this.inPorts = Connection.loginStatus.inPorts
+        
+        
 
         for (let i = 0; i < this.virtualInPorts.length; i++) {
             const p = this.virtualInPorts[i];
-            ch.wcmidiin.openVirtualPort(p);
+            
+            if (Object.values(this.inPorts).indexOf(p) === -1 ){
+                ch.wcmidiin.openVirtualInOutPort(p);
+            }
+            
         }
+
+        /*
         for (let i = 0; i < this.virtualOutPorts.length; i++) {
             const p = this.virtualOutPorts[i];
             ch.wcmidiout.openVirtualPort(p);
         }
+        */
 
         const keys = Object.keys(this.inPorts);
         for (let inputIdx = 0; inputIdx < keys.length; inputIdx++) {

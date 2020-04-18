@@ -8,6 +8,7 @@
 
   <router-link class="w3-bar-item w3-button" to="/">Home</router-link> 
   <router-link class="w3-bar-item w3-button" to="/midiinlist" v-if="isLoggedIn">in ports</router-link> 
+  <router-link class="w3-bar-item w3-button" to="/virtualports" v-if="isLoggedIn">Virtual ports</router-link> 
   <router-link class="w3-bar-item w3-button" to="/monitor" v-if="isLoggedIn">Monitor</router-link> 
   <router-link class="w3-bar-item w3-button" to="/jsclient" v-if="isLoggedIn">JS routing</router-link> 
   <router-link class="w3-bar-item w3-button" to="/presets" v-if="isLoggedIn">Presets</router-link> 

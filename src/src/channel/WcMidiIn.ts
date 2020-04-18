@@ -275,6 +275,9 @@ export class WcMidiIn {
         })
     }
 
+
+
+
     openPort(portNumber: number) {
         return new Promise((resolve) => {
             this.wcmidiinWs.openPort(portNumber, () => {
@@ -300,6 +303,15 @@ export class WcMidiIn {
         })
     }
 
+
+
+    openVirtualInOutPort(portName: string): Promise<void> {
+        return new Promise((resolve) => {
+            this.wcmidiinWs.openVirtualInOutPort(portName, () => {
+                resolve();
+            })
+        })
+    }
 
 
     openVirtualPort(portName: string) {
