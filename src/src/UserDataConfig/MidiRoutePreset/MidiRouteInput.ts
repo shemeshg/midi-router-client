@@ -1,6 +1,6 @@
 import {MidiRouterChain} from "./MidiRouterChain"
 import {BaseMidiRouteInput} from "./BaseMidiRouteInput"
-
+import * as Connection from "../../connection"
 
 export class MidiRouteClock {
     timeSig = 4
@@ -30,18 +30,23 @@ export class MidiRouteInput extends BaseMidiRouteInput{
     cc14bitAry: Cc14Bit[] = [];
     midiRouterChains: MidiRouterChain[] = [];
 
-    inPortsWithoutSelf: BaseMidiRouteInput[] = [];
-
-
-    constructor(inPorts: string[], midiInputId: number, midiInputName: string){
-        super(midiInputId, midiInputName);
-
+    get inPortsWithoutSelf(): BaseMidiRouteInput[] {
+        const ret: BaseMidiRouteInput[] = []
+        const inPorts = Connection.loginStatus.inPorts
         const keys = Object.keys(inPorts);
         keys.forEach(key => {
-            if ( parseInt(key) !== midiInputId){
-                this.inPortsWithoutSelf.push( new BaseMidiRouteInput( parseInt(key), inPorts[parseInt(key)]))
+            if ( parseInt(key) !== this.midiInputId){
+                ret.push( new BaseMidiRouteInput( parseInt(key), inPorts[parseInt(key)]))
             }
         })
+        return ret;
+    }
+
+
+    constructor(midiInputId: number, midiInputName: string){
+        super(midiInputId, midiInputName);
+
+
     }
 
 

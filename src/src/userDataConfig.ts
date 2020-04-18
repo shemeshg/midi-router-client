@@ -89,7 +89,7 @@ export class UserDataConfig {
         const activePreset = this.midiRoutePresets[presetId];
         if (activePreset.midiRouteInputs[inputId] === undefined) {
             const inputName = this.inPorts[inputId];
-            activePreset.midiRouteInputs[inputId] = new MidiRouteInput(this.inPorts, inputId, inputName)
+            activePreset.midiRouteInputs[inputId] = new MidiRouteInput(inputId, inputName)
             activePreset.midiRouteInputs[inputId].addMidiRouterChain("First Chain")
         }
         return activePreset.midiRouteInputs[inputId];
