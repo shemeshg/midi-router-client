@@ -1,55 +1,53 @@
 <template>
-  <div>
-    <PageHeader text="Easy config" />
-    <div class="w3-container w3-margin-top">
+    <Page text="Easy config">
       <div>
-        <div class="w3-container w3-cell w3-cell-middle">
+        <RowCell>
           <ServerInOutPortsSelect v-model.number="inputToAdd" mode="in"  />
-        </div>
-        <div class="w3-container w3-cell w3-cell-middle">
+        </RowCell>
+        <RowCell>
           <button
             class="w3-button w3-section w3-teal w3-ripple w3-margin-left"
             @click="addSplitedKeyboard()"
           >Add zone split</button>
-        </div>
+        </RowCell>
       </div>
 
       <div class="w3-card-4">
-        <div class="w3-container">
+      
           <div v-for="(inputItem, inputIdx) in inputZonesAndRoutes" v-bind:key="inputIdx">            
             <SplitedInputComponent v-bind:inputVal="inputItem" v-if="inputItem.keyboardSplits.length > 0 "/>
           </div>
-        </div>
+
       </div>
 
       <div>
-        <div class="w3-container w3-cell w3-cell-middle">
+        <RowCell>
           <ServerInOutPortsSelect v-model.number="routeToAdd" mode="in"  />
-        </div>
-        <div class="w3-container w3-cell w3-cell-middle">
+        </RowCell>
+        <RowCell>
           <button
             class="w3-button w3-section w3-teal w3-ripple w3-margin-left"
             @click="addRoute()"
           >Add Route</button>
-        </div>
+        </RowCell>
       </div>
 
 
       <div class="w3-card-4">
-        <div class="w3-container">
+       
             
 
           <div v-for="(inputItem, inputIdx) in inputZonesAndRoutes" v-bind:key="inputIdx">        
             <EasyConfigRoutesComponent v-bind:inputVal="inputItem" v-if="inputItem.easyConfigRoutes.length > 0 "/>
           </div>
 
-        </div>
+       
       </div>
 
 
-      <p>&nbsp;</p>
-    </div>
-  </div>
+     
+    </Page>
+
 </template>
 
 <script lang="ts">
@@ -62,7 +60,10 @@ import * as Connection from "../../src/connection";
 
 
 
-import PageHeader from "../a/PageHeader.vue"
+
+import Page from "../a/Page.vue"
+import RowCell from "../a/RowCell.vue"
+
 import ServerInOutPortsSelect from "../a/ServerInOutPortsSelect.vue"
 import SplitedInputComponent from "./SplitedInputComponent.vue";
 import EasyConfigRoutesComponent from "./EasyConfigRoutesComponent.vue"
@@ -76,7 +77,8 @@ import EasyConfigRoutesComponent from "./EasyConfigRoutesComponent.vue"
     ...mapGetters(["isLoggedIn"])
   },
   components: {
-    PageHeader,
+    Page,
+    RowCell,
     ServerInOutPortsSelect,
     SplitedInputComponent,
     EasyConfigRoutesComponent
@@ -106,9 +108,6 @@ export default class EasyconfigComponent extends Vue {
     this.$forceUpdate()
   }
 
-  get inPorts(){
-    return Connection.loginStatus.inPorts;          
-  }
 
 }
 </script>

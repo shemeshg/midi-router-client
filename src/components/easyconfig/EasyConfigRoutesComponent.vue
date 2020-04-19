@@ -3,7 +3,7 @@
     <header class="w3-container w3-blue">
       <h5>{{inputVal.midiInputId}} - {{inputVal.midiInputName}}</h5>
     </header>
-
+ <div class="w3-container">
     <div v-for="(easyConfigRoute, idx) in easyConfigRoutes" v-bind:key="idx">
       <div>
         <div class="w3-container">
@@ -114,6 +114,7 @@
         <hr style="border-top: 1px dotted red;  " />
       </div>
     </div>
+ </div>
   </div>
 </template>
 
