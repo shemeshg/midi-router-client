@@ -1,19 +1,10 @@
 <template>
   <div>
-    <header class="w3-container w3-teal">
-      <h1>Easy config</h1>
-    </header>
+    <PageHeader text="Easy config" />
     <div class="w3-container w3-margin-top">
       <div>
         <div class="w3-container w3-cell w3-cell-middle">
-          <select class="w3-select" name="option" v-model="inputToAdd">
-            <option value></option>
-            <option
-              v-for="(item,idx) in inPorts"
-              v-bind:key="idx"
-              v-bind:value="idx"
-            >{{idx}} - {{item}}</option>
-          </select>
+          <ServerInOutPortsSelect v-model.number="inputToAdd" mode="in"  />
         </div>
         <div class="w3-container w3-cell w3-cell-middle">
           <button
@@ -33,14 +24,7 @@
 
       <div>
         <div class="w3-container w3-cell w3-cell-middle">
-          <select class="w3-select" name="option" v-model="routeToAdd">
-            <option value></option>
-            <option
-              v-for="(item,idx) in inPorts"
-              v-bind:key="idx"
-              v-bind:value="idx"
-            >{{idx}} - {{item}}</option>
-          </select>
+          <ServerInOutPortsSelect v-model.number="routeToAdd" mode="in"  />
         </div>
         <div class="w3-container w3-cell w3-cell-middle">
           <button
@@ -78,7 +62,8 @@ import * as Connection from "../../src/connection";
 
 
 
-
+import PageHeader from "../a/PageHeader.vue"
+import ServerInOutPortsSelect from "../a/ServerInOutPortsSelect.vue"
 import SplitedInputComponent from "./SplitedInputComponent.vue";
 import EasyConfigRoutesComponent from "./EasyConfigRoutesComponent.vue"
 
@@ -91,14 +76,16 @@ import EasyConfigRoutesComponent from "./EasyConfigRoutesComponent.vue"
     ...mapGetters(["isLoggedIn"])
   },
   components: {
+    PageHeader,
+    ServerInOutPortsSelect,
     SplitedInputComponent,
     EasyConfigRoutesComponent
   }
 })
 export default class EasyconfigComponent extends Vue {
   loginStatus!: LoginStatus;
-  inputToAdd = "";
-  routeToAdd = "";
+  inputToAdd = -1;
+  routeToAdd = -1;
 
   get easyConfig(){
     return Connection.loginStatus.userDataConfig.activePreset.easyConfig
@@ -108,21 +95,19 @@ export default class EasyconfigComponent extends Vue {
 
   
   addRoute(){
-    if (this.routeToAdd === "" ){return; }
-    this.easyConfig.addRoute( parseInt(this.routeToAdd))
+    if (this.routeToAdd === -1 ){return; }
+    this.easyConfig.addRoute( this.routeToAdd) 
     this.$forceUpdate()
   }
 
   addSplitedKeyboard(){
-    if (this.inputToAdd === "" ){return; }
-    this.easyConfig.addKeyboardSplit( parseInt(this.inputToAdd), 60)
+    if (this.inputToAdd === -1 ){return; }
+    this.easyConfig.addKeyboardSplit( this.inputToAdd, 60)
     this.$forceUpdate()
   }
 
   get inPorts(){
-    return Connection.loginStatus.inPorts;
-      
-    
+    return Connection.loginStatus.inPorts;          
   }
 
 }
