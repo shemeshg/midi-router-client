@@ -1,12 +1,10 @@
 <template>
-  <div>
-    <header class="w3-container w3-blue">
-      <h5>{{inputVal.midiInputId}} - {{inputVal.midiInputName}}</h5>
-    </header>
+  <div> 
+    <CardHeader>{{inputVal.midiInputId}} - {{inputVal.midiInputName}}</CardHeader>
  <div class="w3-container">
     <div v-for="(easyConfigRoute, idx) in easyConfigRoutes" v-bind:key="idx">
       <div>
-        <div class="w3-container">
+        <div >
           <div class="w3-container w3-cell w3-cell-middle w3-right">
             <a
               href="#"
@@ -126,9 +124,12 @@ import {
   dropdownMidiEventType
 } from "../../src/UserDataConfig/Easyconfig";
 import * as Connection from "../../src/connection";
+import CardHeader from "../a/CardHeader.vue"
 
 @Component({
-  components: {}
+  components: {
+    CardHeader
+  }
 })
 export default class EasyConfigRoutesComponent extends Vue {
   @Prop() inputVal!: InputZonesAndRoutes;

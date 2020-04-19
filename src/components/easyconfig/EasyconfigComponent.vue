@@ -1,48 +1,36 @@
 <template>
     <Page text="Easy config">
-      <div>
+      <Row>
         <RowCell>
           <ServerInOutPortsSelect v-model.number="inputToAdd" mode="in"  />
         </RowCell>
         <RowCell>
-          <button
-            class="w3-button w3-section w3-teal w3-ripple w3-margin-left"
-            @click="addSplitedKeyboard()"
-          >Add zone split</button>
+          <Btn @click="addSplitedKeyboard()">Add zone split</Btn>
         </RowCell>
-      </div>
+      </Row>
 
-      <div class="w3-card-4">
-      
+      <Card>            
           <div v-for="(inputItem, inputIdx) in inputZonesAndRoutes" v-bind:key="inputIdx">            
             <SplitedInputComponent v-bind:inputVal="inputItem" v-if="inputItem.keyboardSplits.length > 0 "/>
           </div>
 
-      </div>
+      </Card>
 
-      <div>
+      <Row>
         <RowCell>
           <ServerInOutPortsSelect v-model.number="routeToAdd" mode="in"  />
         </RowCell>
         <RowCell>
-          <button
-            class="w3-button w3-section w3-teal w3-ripple w3-margin-left"
-            @click="addRoute()"
-          >Add Route</button>
+          <Btn @click="addRoute()">Add Route</Btn>
         </RowCell>
-      </div>
+      </Row>
 
 
-      <div class="w3-card-4">
-       
-            
-
+      <Card>
           <div v-for="(inputItem, inputIdx) in inputZonesAndRoutes" v-bind:key="inputIdx">        
             <EasyConfigRoutesComponent v-bind:inputVal="inputItem" v-if="inputItem.easyConfigRoutes.length > 0 "/>
-          </div>
-
-       
-      </div>
+          </div>       
+      </Card>
 
 
      
@@ -63,6 +51,9 @@ import * as Connection from "../../src/connection";
 
 import Page from "../a/Page.vue"
 import RowCell from "../a/RowCell.vue"
+import Btn from "../a/Btn.vue"
+import Card from "../a/Card.vue"
+import Row from "../a/Row.vue"
 
 import ServerInOutPortsSelect from "../a/ServerInOutPortsSelect.vue"
 import SplitedInputComponent from "./SplitedInputComponent.vue";
@@ -78,7 +69,10 @@ import EasyConfigRoutesComponent from "./EasyConfigRoutesComponent.vue"
   },
   components: {
     Page,
+    Row,
     RowCell,
+    Btn,
+    Card,
     ServerInOutPortsSelect,
     SplitedInputComponent,
     EasyConfigRoutesComponent

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <PageHeader v-bind:text="text" />
+    <PageHeader>{{text}} </PageHeader>
     <div class="w3-container w3-margin-top">
       <slot></slot>
        <p>&nbsp;</p>

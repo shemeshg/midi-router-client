@@ -1,19 +1,19 @@
 <template>
-    <header class="w3-container w3-teal">
-      <h1>
-        <slot></slot>
-      </h1>
+    <header class="w3-container w3-blue">
+      <h5>
+         <slot></slot>
+      </h5>
     </header>
     
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue} from "vue-property-decorator";
 
 
 @Component({
 })
-export default class PageHeader extends Vue {
+export default class CardHeader extends Vue {
 }
 </script>
 
