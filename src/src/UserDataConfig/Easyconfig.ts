@@ -79,12 +79,12 @@ export class KeyboardZone {
     toSelectedMidiEventTypeId = 0;
     toChannel = -1
     toData1 = -1
-    toDestinationId = ""
+    toDestinationId = -1
 
     get getMidiRouterChains(): MidiRouterChain[]{
       // GGGG
       const ret: MidiRouterChain[] = [];
-      const isAllValid = this.toDestinationId !== ""
+      const isAllValid = this.toDestinationId !== -1
 
       const inputZonesAndRoute: InputZonesAndRoutes = Connection.loginStatus.userDataConfig.activePreset.easyConfig.inputZonesAndRoutes[this.midiInputId]
       if (!isAllValid){return ret;}
@@ -135,7 +135,7 @@ export class KeyboardZone {
                     JSON.stringify(data2Filter)) 
       }
 
-      const midiOutId = parseInt( this.toDestinationId )
+      const midiOutId = this.toDestinationId 
       const midioutObj = new BaseMidiRouteInput(midiOutId,  Connection.loginStatus.inPorts[ midiOutId ])
 
       midiRouterChain.addFilterMidiDestination(midioutObj);

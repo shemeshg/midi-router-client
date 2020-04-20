@@ -1,118 +1,114 @@
 <template>
-  <div> 
+  <div>
     <CardHeader>{{inputVal.midiInputId}} - {{inputVal.midiInputName}}</CardHeader>
- <div class="w3-container">
-    <div v-for="(easyConfigRoute, idx) in easyConfigRoutes" v-bind:key="idx">
-      <div>
-        <div >
-          <div class="w3-container w3-cell w3-cell-middle w3-right">
-            <a
-              href="#"
-              class="router-link-exact-active router-link-active"
+    <CardBody>
+      <div v-for="(easyConfigRoute, idx) in easyConfigRoutes" v-bind:key="idx">
+        <Row>
+          <RowCellRight>
+            <BtnHref
               @click="deleteSelf(idx)"
-            >Delete</a>
-          </div>
+            >Delete</BtnHref>
+          </RowCellRight>
           <label>Desstination</label>
-          <select class="w3-select" name="option" v-model.number="easyConfigRoute.toDestinationId">
-            <option value></option>
-            <option
-              v-for="(item) in outPortsWithoutSelf"
-              v-bind:key="item.midiInputId"
-              v-bind:value="item.midiInputId"
-            >{{item.midiInputId}} - {{item.midiInputName}}</option>
-          </select>
-        </div>
+          <ServerInOutPortsSelect v-model.number="easyConfigRoute.toDestinationId" mode="out" 
+          :excludeId="inputVal.midiInputId" />
 
-        <div class="w3-container w3-cell w3-cell-middle">
-          <label>From event</label>
-          <select
-            class="w3-select"
-            name="option"
-            v-model="easyConfigRoute.fromSelectedMidiEventTypeId"
-            @change="fromEventTypeChanged(idx)"
-          >
-            <option
-              v-for="(item) in dropdownMidiEventType"
-              v-bind:key="item.id"
-              v-bind:value="item.id"
-            >{{item.eventTypes}} - {{item.name}}</option>
-          </select>
-        </div>
-        <div class="w3-container w3-cell w3-cell-middle">
-          <label>channel</label>
-          <select
-            class="w3-select"
-            name="option"
-            v-model.number="easyConfigRoute.fromChannel"
-            @change="fromChannelChange(idx)"
-          >
-            <option value="-1">-</option>
-            <option v-for="(item) in channels" v-bind:key="item" v-bind:value="item">{{item}}</option>
-          </select>
-        </div>
-        <div class="w3-container w3-cell w3-cell-middle" v-if="easyConfigRoute.isShowSplitRanges">
-          <label>Zone</label>
-          <select class="w3-select" name="option" v-model.number="easyConfigRoute.splitRangeId">
-            <option value="-1">-</option>
-            <option v-for="(item, idx) in zoneNames" v-bind:key="idx" v-bind:value="idx">{{item}}</option>
-          </select>
-        </div>
-        <div class="w3-container w3-cell w3-cell-middle" v-if="easyConfigRoute.isShowData1Filed">
-          <label>{{easyConfigRoute.getData1Description}}</label>
-          <select class="w3-select" name="option" v-model.number="easyConfigRoute.fromData1">
-            <option value="-1">-</option>
-            <option v-for="(item) in range127" v-bind:key="item" v-bind:value="item">{{item}}</option>
-          </select>
-        </div>
-        <div class="w3-container w3-cell w3-cell-middle" v-if="easyConfigRoute.isShowSplitRanges">
-          <label>Transpose</label>
-          <select class="w3-select" name="option" v-model.number="easyConfigRoute.transpose">
-            <option value="-1">-</option>
-            <option v-for="(item) in transposeRange" v-bind:key="item" v-bind:value="item">{{item}}</option>
-          </select>
-        </div>
+        </Row>
+
+        <Row>
+          <RowCell>
+            <label>From event</label>
+            <select
+              class="w3-select"
+              v-model="easyConfigRoute.fromSelectedMidiEventTypeId"
+              @change="fromEventTypeChanged(idx)"
+            >
+              <option
+                v-for="(item) in dropdownMidiEventType"
+                v-bind:key="item.id"
+                v-bind:value="item.id"
+              >{{item.eventTypes}} - {{item.name}}</option>
+            </select>
+          </RowCell>
+          <RowCell>
+            <label>channel</label>
+            <select
+              class="w3-select"
+              name="option"
+              v-model.number="easyConfigRoute.fromChannel"
+              @change="fromChannelChange(idx)"
+            >
+              <option value="-1">-</option>
+              <option v-for="(item) in channels" v-bind:key="item" v-bind:value="item">{{item}}</option>
+            </select>
+          </RowCell>
+          <RowCell v-if="easyConfigRoute.isShowSplitRanges">
+            <label>Zone</label>
+            <select class="w3-select" name="option" v-model.number="easyConfigRoute.splitRangeId">
+              <option value="-1">-</option>
+              <option v-for="(item, idx) in zoneNames" v-bind:key="idx" v-bind:value="idx">{{item}}</option>
+            </select>
+          </RowCell>
+          <RowCell v-if="easyConfigRoute.isShowData1Filed">
+            <label>{{easyConfigRoute.getData1Description}}</label>
+            <select class="w3-select" name="option" v-model.number="easyConfigRoute.fromData1">
+              <option value="-1">-</option>
+              <option v-for="(item) in range127" v-bind:key="item" v-bind:value="item">{{item}}</option>
+            </select>
+          </RowCell>
+          <RowCell v-if="easyConfigRoute.isShowSplitRanges">
+            <label>Transpose</label>
+            <select class="w3-select" name="option" v-model.number="easyConfigRoute.transpose">
+              <option value="-1">-</option>
+              <option
+                v-for="(item) in transposeRange"
+                v-bind:key="item"
+                v-bind:value="item"
+              >{{item}}</option>
+            </select>
+          </RowCell>
+        </Row>
+
+        <Row>
+          <RowCell>
+            <label>To event</label>
+            <select
+              class="w3-select"
+              name="option"
+              v-model="easyConfigRoute.toSelectedMidiEventTypeId"
+              @change="toEventTypeChanged(idx)"
+            >
+              <option
+                v-for="(item) in dropdownMidiEventType"
+                v-bind:key="item.id"
+                v-bind:value="item.id"
+              >{{item.eventTypes}} - {{item.name}}</option>
+            </select>
+          </RowCell>
+          <RowCell>
+            <label>channel</label>
+            <select
+              class="w3-select"
+              name="option"
+              v-model.number="easyConfigRoute.toChannel"
+              @change="toChannelChange(idx)"
+            >
+              <option value="-1">-</option>
+              <option v-for="(item) in channels" v-bind:key="item" v-bind:value="item">{{item}}</option>
+            </select>
+          </RowCell>
+          <RowCell v-if="easyConfigRoute.isShowToData1Filed">
+            <label>{{easyConfigRoute.getToData1Description}}</label>
+            <select class="w3-select" name="option" v-model.number="easyConfigRoute.toData1">
+              <option value="-1">-</option>
+              <option v-for="(item) in range127" v-bind:key="item" v-bind:value="item">{{item}}</option>
+            </select>
+          </RowCell>
+
+          <hr style="border-top: 1px dotted red;  " />
+        </Row>
       </div>
-
-      <div>
-        <div class="w3-container w3-cell w3-cell-middle">
-          <label>To event</label>
-          <select
-            class="w3-select"
-            name="option"
-            v-model="easyConfigRoute.toSelectedMidiEventTypeId"
-            @change="toEventTypeChanged(idx)"
-          >
-            <option
-              v-for="(item) in dropdownMidiEventType"
-              v-bind:key="item.id"
-              v-bind:value="item.id"
-            >{{item.eventTypes}} - {{item.name}}</option>
-          </select>
-        </div>
-        <div class="w3-container w3-cell w3-cell-middle">
-          <label>channel</label>
-          <select
-            class="w3-select"
-            name="option"
-            v-model.number="easyConfigRoute.toChannel"
-            @change="toChannelChange(idx)"
-          >
-            <option value="-1">-</option>
-            <option v-for="(item) in channels" v-bind:key="item" v-bind:value="item">{{item}}</option>
-          </select>
-        </div>
-        <div class="w3-container w3-cell w3-cell-middle" v-if="easyConfigRoute.isShowToData1Filed">
-          <label>{{easyConfigRoute.getToData1Description}}</label>
-          <select class="w3-select" name="option" v-model.number="easyConfigRoute.toData1">
-            <option value="-1">-</option>
-            <option v-for="(item) in range127" v-bind:key="item" v-bind:value="item">{{item}}</option>
-          </select>
-        </div>
-
-        <hr style="border-top: 1px dotted red;  " />
-      </div>
-    </div>
- </div>
+    </CardBody>
   </div>
 </template>
 
@@ -123,12 +119,25 @@ import {
   InputZonesAndRoutes,
   dropdownMidiEventType
 } from "../../src/UserDataConfig/Easyconfig";
-import * as Connection from "../../src/connection";
-import CardHeader from "../a/CardHeader.vue"
+
+import CardHeader from "../a/CardHeader.vue";
+import CardBody from "../a/CardBody.vue";
+
+import Row from "../a/Row.vue"
+import RowCell from "../a/RowCell.vue"
+import RowCellRight from "../a/RowCellRight.vue"
+import BtnHref from "../a/BtnHref.vue"
+import ServerInOutPortsSelect from "../a/ServerInOutPortsSelect.vue"
 
 @Component({
   components: {
-    CardHeader
+    ServerInOutPortsSelect,
+    CardHeader,
+    CardBody,
+    Row,
+    RowCell,
+    RowCellRight,
+    BtnHref
   }
 })
 export default class EasyConfigRoutesComponent extends Vue {
@@ -184,12 +193,6 @@ export default class EasyConfigRoutesComponent extends Vue {
         idx
       ].fromChannel;
     }
-  }
-
-  get outPortsWithoutSelf() {
-    return Connection.loginStatus.userDataConfig.getMidiRouteInput(
-      this.inputVal.midiInputId
-    ).inPortsWithoutSelf;
   }
 
   get channels() {
