@@ -1,19 +1,16 @@
 <template>
   <div>
-    <header class="w3-container w3-blue">
-      <h5>{{inputVal.midiInputId}} - {{inputVal.midiInputName}}</h5>
-    </header>
+    <CardHeader>{{inputVal.midiInputId}} - {{inputVal.midiInputName}}</CardHeader>
+    <CardBody>
+      <div v-for="(splitItem, idx) in keyboardSplits" v-bind:key="idx">
+        <SelectNoteSliderComponent v-bind:inputVal="splitItem" v-on:deleteSelf="doDelete(idx)" />
+      </div>
 
-    <div class="w3-container">
-    <div v-for="(splitItem, idx) in keyboardSplits" v-bind:key="idx">
-      <SelectNoteSliderComponent v-bind:inputVal="splitItem" v-on:deleteSelf="doDelete(idx)" />
-    </div>
-    
       <p>Zone Names</p>
       <div v-for="(name,idx) in zoneNames" v-bind:key="`${idx}-${name.id}`">
         <input type="text" class="w3-input" v-model="zoneNames[idx]" />
-    </div>
-    </div>
+      </div>
+    </CardBody>
   </div>
 </template>
 
@@ -23,9 +20,14 @@ import { Component, Vue, Prop } from "vue-property-decorator";
 import SelectNoteSliderComponent from "./SelectNoteSlider.vue";
 import { InputZonesAndRoutes } from "../../src/UserDataConfig/Easyconfig";
 
+import CardHeader from "../a/CardHeader.vue";
+import CardBody from "../a/CardBody.vue";
+
 @Component({
   components: {
-    SelectNoteSliderComponent
+    SelectNoteSliderComponent,
+    CardHeader,
+    CardBody
   }
 })
 export default class SplitedInputComponent extends Vue {

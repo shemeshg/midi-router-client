@@ -5,42 +5,30 @@
       <div v-for="(easyConfigRoute, idx) in easyConfigRoutes" v-bind:key="idx">
         <Row>
           <RowCellRight>
-            <BtnHref
-              @click="deleteSelf(idx)"
-            >Delete</BtnHref>
+            <BtnHref @click="deleteSelf(idx)">Delete</BtnHref>
           </RowCellRight>
           <label>Desstination</label>
-          <ServerInOutPortsSelect v-model.number="easyConfigRoute.toDestinationId" mode="out" 
-          :excludeId="inputVal.midiInputId" />
-
+          <ServerInOutPortsSelect
+            v-model.number="easyConfigRoute.toDestinationId"
+            mode="out"
+            :excludeId="inputVal.midiInputId"
+          />
         </Row>
 
         <Row>
           <RowCell>
             <label>From event</label>
-            <select
-              class="w3-select"
+            <SelectedMidiEventType
               v-model="easyConfigRoute.fromSelectedMidiEventTypeId"
               @change="fromEventTypeChanged(idx)"
-            >
-              <option
-                v-for="(item) in dropdownMidiEventType"
-                v-bind:key="item.id"
-                v-bind:value="item.id"
-              >{{item.eventTypes}} - {{item.name}}</option>
-            </select>
+            />
           </RowCell>
           <RowCell>
             <label>channel</label>
-            <select
-              class="w3-select"
-              name="option"
+            <SelectedMidiChannel
               v-model.number="easyConfigRoute.fromChannel"
               @change="fromChannelChange(idx)"
-            >
-              <option value="-1">-</option>
-              <option v-for="(item) in channels" v-bind:key="item" v-bind:value="item">{{item}}</option>
-            </select>
+            />
           </RowCell>
           <RowCell v-if="easyConfigRoute.isShowSplitRanges">
             <label>Zone</label>
@@ -51,10 +39,7 @@
           </RowCell>
           <RowCell v-if="easyConfigRoute.isShowData1Filed">
             <label>{{easyConfigRoute.getData1Description}}</label>
-            <select class="w3-select" name="option" v-model.number="easyConfigRoute.fromData1">
-              <option value="-1">-</option>
-              <option v-for="(item) in range127" v-bind:key="item" v-bind:value="item">{{item}}</option>
-            </select>
+            <SelectedMidiData v-model.number="easyConfigRoute.fromData1" />
           </RowCell>
           <RowCell v-if="easyConfigRoute.isShowSplitRanges">
             <label>Transpose</label>
@@ -72,37 +57,21 @@
         <Row>
           <RowCell>
             <label>To event</label>
-            <select
-              class="w3-select"
-              name="option"
+            <SelectedMidiEventType
               v-model="easyConfigRoute.toSelectedMidiEventTypeId"
               @change="toEventTypeChanged(idx)"
-            >
-              <option
-                v-for="(item) in dropdownMidiEventType"
-                v-bind:key="item.id"
-                v-bind:value="item.id"
-              >{{item.eventTypes}} - {{item.name}}</option>
-            </select>
+            />
           </RowCell>
           <RowCell>
             <label>channel</label>
-            <select
-              class="w3-select"
-              name="option"
+            <SelectedMidiChannel
               v-model.number="easyConfigRoute.toChannel"
               @change="toChannelChange(idx)"
-            >
-              <option value="-1">-</option>
-              <option v-for="(item) in channels" v-bind:key="item" v-bind:value="item">{{item}}</option>
-            </select>
+            />
           </RowCell>
           <RowCell v-if="easyConfigRoute.isShowToData1Filed">
             <label>{{easyConfigRoute.getToData1Description}}</label>
-            <select class="w3-select" name="option" v-model.number="easyConfigRoute.toData1">
-              <option value="-1">-</option>
-              <option v-for="(item) in range127" v-bind:key="item" v-bind:value="item">{{item}}</option>
-            </select>
+            <SelectedMidiData v-model.number="easyConfigRoute.toData1" />
           </RowCell>
 
           <hr style="border-top: 1px dotted red;  " />
@@ -115,22 +84,25 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
-import {
-  InputZonesAndRoutes,
-  dropdownMidiEventType
-} from "../../src/UserDataConfig/Easyconfig";
+import { InputZonesAndRoutes } from "../../src/UserDataConfig/Easyconfig";
 
 import CardHeader from "../a/CardHeader.vue";
 import CardBody from "../a/CardBody.vue";
 
-import Row from "../a/Row.vue"
-import RowCell from "../a/RowCell.vue"
-import RowCellRight from "../a/RowCellRight.vue"
-import BtnHref from "../a/BtnHref.vue"
-import ServerInOutPortsSelect from "../a/ServerInOutPortsSelect.vue"
+import Row from "../a/Row.vue";
+import RowCell from "../a/RowCell.vue";
+import RowCellRight from "../a/RowCellRight.vue";
+import BtnHref from "../a/BtnHref.vue";
+import ServerInOutPortsSelect from "../a/ServerInOutPortsSelect.vue";
+import SelectedMidiEventType from "../a/SelectedMidiEventType.vue";
+import SelectedMidiChannel from "../a/SelectedMidiChannel.vue";
+import SelectedMidiData from "../a/SelectedMidiData.vue";
 
 @Component({
   components: {
+    SelectedMidiChannel,
+    SelectedMidiEventType,
+    SelectedMidiData,
     ServerInOutPortsSelect,
     CardHeader,
     CardBody,
@@ -143,7 +115,6 @@ import ServerInOutPortsSelect from "../a/ServerInOutPortsSelect.vue"
 export default class EasyConfigRoutesComponent extends Vue {
   @Prop() inputVal!: InputZonesAndRoutes;
   easyConfigRoutes = this.inputVal.easyConfigRoutes;
-  dropdownMidiEventType = dropdownMidiEventType;
 
   zoneNames = this.inputVal.zoneNames;
 
@@ -193,22 +164,6 @@ export default class EasyConfigRoutesComponent extends Vue {
         idx
       ].fromChannel;
     }
-  }
-
-  get channels() {
-    const ret = [];
-    for (let i = 1; i <= 16; i++) {
-      ret.push(i);
-    }
-    return ret;
-  }
-
-  get range127() {
-    const ret = [];
-    for (let i = 0; i <= 127; i++) {
-      ret.push(i);
-    }
-    return ret;
   }
 
   get transposeRange() {
