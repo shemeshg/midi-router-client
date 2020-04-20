@@ -5,7 +5,7 @@
           <ServerInOutPortsSelect v-model.number="inputToAdd" mode="in"  />
         </RowCell>
         <RowCell>
-          <Btn @click="addSplitedKeyboard()">Add zone split</Btn>
+          <Btn @click="addSplitedKeyboard()" v-bind:ml="true">Add zone split</Btn>
         </RowCell>
       </Row>
 
@@ -21,7 +21,7 @@
           <ServerInOutPortsSelect v-model.number="routeToAdd" mode="in"  />
         </RowCell>
         <RowCell>
-          <Btn @click="addRoute()">Add Route</Btn>
+          <Btn @click="addRoute()" v-bind:ml="true">Add Route</Btn>
         </RowCell>
       </Row>
 

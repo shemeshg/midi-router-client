@@ -1,16 +1,19 @@
 <template>  
-    <button class="w3-button w3-section w3-teal w3-ripple w3-margin-left" @click="$emit('click')">
+    <button class="w3-button w3-section w3-teal w3-ripple" 
+    v-bind:class="{ 'w3-margin-left': ml }"
+    @click="$emit('click')">
       <slot></slot>
     </button>
 </template>
 
 <script lang="ts">
 
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Prop } from "vue-property-decorator";
 
 @Component({
 })
 export default class Btn extends Vue {
+  @Prop() ml!: boolean;
 }
 </script>
 
