@@ -11,7 +11,9 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
 import * as Connection from "../../src/connection";
 
-@Component({})
+@Component({
+  name: 'ServerInOutPortsSelect',
+})
 export default class ServerInOutPortsSelect extends Vue {
   @Prop() mode!: "in" | "out";
   @Prop() value!: number;
