@@ -1,59 +1,30 @@
 <template>
   <div>
-    <div class="w3-card-4 w3-margin-top">
-      <header class="w3-container w3-blue">
-        <h5>{{description}}</h5>
-      </header>
-      <div class="w3-container">
+    <Card :mt="true">
+      <CardHeader>{{description}}</CardHeader>
+      <CardBody>
         <p>
           <label>Midi input</label>
-          <select class="w3-select" name="option" v-model.number="presetMidiControl.port">
-            <option value="-1"></option>
-            <option
-              v-for="(item,idx) in inPorts"
-              v-bind:key="idx"
-              v-bind:value="idx"
-            >{{idx}} - {{item}}</option>
-          </select>
+          <ServerInOutPortsSelect v-model.number="presetMidiControl.port" mode="in" />
         </p>
         <p v-if="presetMidiControl.port !== -1">
           <label>Event</label>
-          <select
-            class="w3-select"
-            name="option"
-            v-model.number="presetMidiControl.eventTypeId"
-          >
-            <option
-              v-for="(item) in dropdownMidiEventType"
-              v-bind:key="item.id"
-              v-bind:value="item.id"
-            >{{item.eventTypes}} - {{item.name}}</option>
-          </select>
+          <SelectedMidiEventType v-model.number="presetMidiControl.eventTypeId" />
         </p>
         <p v-if="presetMidiControl.port !== -1">
           <label>channel</label>
-          <select class="w3-select" name="option" v-model.number="presetMidiControl.channel">
-            <option value="-1">-</option>
-            <option v-for="(item) in channels" v-bind:key="item" v-bind:value="item">{{item}}</option>
-          </select>
+          <SelectedMidiChannel v-model.number="presetMidiControl.channel" />
         </p>
         <p v-if="presetMidiControl.port !== -1">
           <label>data1</label>
-          <select class="w3-select" name="option" v-model.number="presetMidiControl.data1">
-            <option value="-1">-</option>
-            <option v-for="(item) in range127" v-bind:key="item" v-bind:value="item">{{item}}</option>
-          </select>
+          <SelectedMidiData v-model.number="presetMidiControl.data1" />
         </p>
-
         <p v-if="presetMidiControl.port !== -1">
           <label>data2</label>
-          <select class="w3-select" name="option" v-model.number="presetMidiControl.data2">
-            <option value="-1">-</option>
-            <option v-for="(item) in range127" v-bind:key="item" v-bind:value="item">{{item}}</option>
-          </select>
+          <SelectedMidiData v-model.number="presetMidiControl.data2" />
         </p>
-      </div>
-    </div>
+      </CardBody>
+    </Card>
   </div>
 </template>
 
@@ -65,19 +36,35 @@ import { mapGetters } from "vuex";
 import * as Connection from "../../src/connection";
 
 import { dropdownMidiEventType } from "../../src/UserDataConfig/Easyconfig";
-import { PresetMidiControl } from "../../src/UserDataConfig/MidiRoutePreset/MidiRoutePreset"
+import { PresetMidiControl } from "../../src/UserDataConfig/MidiRoutePreset/MidiRoutePreset";
+
+import Card from "../a/Card.vue";
+import CardHeader from "../a/CardHeader.vue";
+import CardBody from "../a/CardBody.vue";
+import ServerInOutPortsSelect from "../a/ServerInOutPortsSelect.vue";
+import SelectedMidiEventType from "../a/SelectedMidiEventType.vue";
+import SelectedMidiChannel from "../a/SelectedMidiChannel.vue";
+import SelectedMidiData from "../a/SelectedMidiData.vue";
 
 @Component({
   computed: {
     ...mapState(["loginStatus"]),
     ...mapGetters(["isLoggedIn"])
+  },
+  components: {
+    Card,
+    CardHeader,
+    CardBody,
+    ServerInOutPortsSelect,
+    SelectedMidiEventType,
+    SelectedMidiChannel,
+    SelectedMidiData
   }
 })
 export default class AddPresetMidiOnOffComponent extends Vue {
-  //@Prop() inputVal!: InputZonesAndRoutes;    
-  @Prop()  description!: string;
-  @Prop()  presetMidiControl!: PresetMidiControl;
-
+  //@Prop() inputVal!: InputZonesAndRoutes;
+  @Prop() description!: string;
+  @Prop() presetMidiControl!: PresetMidiControl;
 
   dropdownMidiEventType = dropdownMidiEventType;
 
