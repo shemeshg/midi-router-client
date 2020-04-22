@@ -3,7 +3,8 @@
     v-bind:class="{ 'w3-margin-left': ml }"
     @click="$emit('click')">
       <slot></slot>
-    </button>
+   </button>
+ 
 </template>
 
 <script lang="ts">

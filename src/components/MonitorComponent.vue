@@ -1,132 +1,121 @@
 <template>
-  <div>
+  <Page text="Input monitor">
+    <p>
+      <BtnHref v-if="!isMonitoring" @click="startMonitoring()">Start</BtnHref>
+      <BtnHref v-if="isMonitoring" @click="stopMonitoring()">Stop</BtnHref>|
+      <BtnHref @click="doClear()">Clear</BtnHref>
+    </p>
 
-    <header class="w3-container w3-teal">
-      <h1>Input monitor</h1>
-    </header>
-    <div class="w3-container w3-margin-top">
-       
-       <div> 
-        <div class="w3-container">
-           <a href="#" class="router-link-exact-active router-link-active" v-if="!isMonitoring" @click="startMonitoring()">
-            Start
-          </a>    
-           <a href="#" class="router-link-exact-active router-link-active" v-if="isMonitoring" @click="stopMonitoring()">
-            Stop
-          </a>  
-          |                         
-           <a href="#" class="router-link-exact-active router-link-active" @click="doClear()">
-            Clear
-          </a>   
-        </div>
-        
-         <p>
+    <p>
+      <ServerInOutPortsSelect v-model.number="inputToMonitor" mode="in" />
+      <label>input</label>
+    </p>
+    <p>
+      <input class="w3-input" type="number" v-model.number="perPage" />
+      <label>per page</label>
+    </p>
 
-          <select class="w3-select w3-input" name="option" v-model.number="inputToMonitor" @change="inputToMonitorChanged()">
-            <option value="-1"></option>
-            <option v-for="(item, idx) in inPorts" v-bind:key="idx" v-bind:value="idx"  >{{idx}} - {{item}}</option>
-          </select>
-          <label>input</label>
-        </p>
-        <p>
-            
-            <input class="w3-input"  type="number" v-model.number="perPage">
-            <label>per page </label>
-        </p>
-
-  
-        </div>
-
-        <pre>
+    <pre>
 {{data.join("\n")}}            
-
-        </pre>
-    </div>
-  </div>
+    </pre>
+  </Page>
 </template>
 
 
 <script lang="ts">
-import { Component,  Vue , Watch} from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import { mapState } from "vuex";
 import { mapGetters } from "vuex";
-import { FilterType } from "../src/UserDataConfig/MidiRoutePreset/MidiRoutersFilter"
 
+import { FilterType } from "../src/UserDataConfig/MidiRoutePreset/MidiRoutersFilter";
 import * as Connection from "../src/connection";
+import { ToConsoleUserdata } from "src/src/UserDataConfig/MidiRoutePreset/ToConsoleUserdata";
 
-import {ToConsoleUserdata} from "src/src/UserDataConfig/MidiRoutePreset/ToConsoleUserdata"
+import Page from "./a/Page.vue";
+import BtnHref from "./a/BtnHref.vue";
+import ServerInOutPortsSelect from "./a/ServerInOutPortsSelect.vue";
 
 @Component({
   computed: {
-    ...mapState(["loginStatus","dataToClient"]),
+    ...mapState(["loginStatus", "dataToClient"]),
     ...mapGetters(["isLoggedIn"])
+  },
+  components: {
+    Page,
+    BtnHref,
+    ServerInOutPortsSelect
   }
 })
 export default class MonitorComponent extends Vue {
-    inputToMonitor = -1
-    perPage = 2
-    data: string[] = []
-    isMonitoring = false;
+  inputToMonitor = -1;
+  perPage = 2;
+  data: string[] = [];
+  isMonitoring = false;
 
-    get inPorts(){
-        return Connection.loginStatus.inPorts
+  get inPorts() {
+    return Connection.loginStatus.inPorts;
+  }
+
+  async inputToMonitorChanged() {
+    if (this.isMonitoring === true) {
+      await this.startMonitoring();
+    }
+  }
+
+  @Watch("dataToClient")
+  onPropertyChanged(value: string) {
+    const json = JSON.parse(value);
+    if (json.portNumber === this.inputToMonitor && this.isMonitoring) {
+      const userdata: ToConsoleUserdata = JSON.parse(json.userdata);
+      if (userdata.action === "monitor") this.data.unshift(value);
+      this.data.splice(this.perPage);
+    }
+  }
+
+  async startMonitoring() {
+    if (this.inputToMonitor === -1) {
+      return;
     }
 
-    async inputToMonitorChanged(){
-      if (this.isMonitoring === true){
-        await this.startMonitoring()
+    this.isMonitoring = true;
+    this.data = [];
+
+    const input = Connection.loginStatus.userDataConfig.getMidiRouteInput(
+      this.inputToMonitor
+    );
+    const chains = input.midiRouterChains;
+
+    let hasLogToConsole = false;
+    for (let chainId = 0; chainId < chains.length; chainId++) {
+      const filters = chains[chainId].midiRoutersFilters;
+      for (let filterId = 0; filterId < filters.length; filterId++) {
+        if (filters[filterId].filterType === FilterType.TO_CONSOLE) {
+          hasLogToConsole =
+            chains[chainId].getFilterToConsle(filterId).logTo === 0;
+        }
       }
     }
-
-    @Watch('dataToClient')
-    onPropertyChanged(value: string) {
-        const json = JSON.parse(value);
-        if (json.portNumber === this.inputToMonitor && this.isMonitoring){
-          const userdata: ToConsoleUserdata = JSON.parse(json.userdata)
-          if ( userdata.action === "monitor" )
-            this.data.unshift(value);
-            this.data.splice(this.perPage)
-        }
-
+    if (hasLogToConsole) {
+      return;
     }
+    const configChain = input.addMidiRouterChain("EAsyConfig log client");
+    configChain.isEasyConfig = true;
+    configChain.addFilterToConsle(0, { action: "monitor" });
 
-    async startMonitoring(){
-         if (this.inputToMonitor === -1){return ;}
+    const midiPort = await Connection.connection.wcmidiin.port(
+      this.inputToMonitor
+    );
+    const chain = await midiPort.routingMidiChainsAaddChain();
+    await chain.routingActionAddLogData(0, { action: "monitor" });
+  }
 
-        this.isMonitoring = true;
-        this.data = []
+  stopMonitoring() {
+    this.isMonitoring = false;
+  }
 
-        const input = Connection.loginStatus.userDataConfig.getMidiRouteInput(this.inputToMonitor)
-        const chains = input.midiRouterChains
-        
-        let hasLogToConsole =false
-        for (let chainId=0;chainId<chains.length;chainId++){
-            const filters = chains[chainId].midiRoutersFilters
-            for( let filterId=0; filterId<filters.length;filterId++){
-                if (filters[filterId].filterType === FilterType.TO_CONSOLE){
-                    hasLogToConsole = chains[chainId].getFilterToConsle(filterId).logTo === 0
-                }
-            }
-        }
-        if (hasLogToConsole) {return ;}
-        const configChain = input.addMidiRouterChain("EAsyConfig log client")
-        configChain.isEasyConfig = true;
-        configChain.addFilterToConsle(0, {action: "monitor"});
-
-
-        const midiPort = await Connection.connection.wcmidiin.port(this.inputToMonitor )
-        const chain = await midiPort.routingMidiChainsAaddChain();
-        await chain.routingActionAddLogData(0, {action: "monitor"})
-    }
-
-    stopMonitoring(){
-        this.isMonitoring = false;        
-    }
-
-    doClear(){
-        this.data = []
-    }
-
+  doClear() {
+    this.data = [];
+  }
 }
 </script>
 

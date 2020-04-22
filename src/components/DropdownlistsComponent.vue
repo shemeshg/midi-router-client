@@ -1,81 +1,80 @@
 <template>
-  <div>
+  <Page text="Controls">
+    <Btn :ml="true" @click="doBack">Back</Btn>
 
-    <header class="w3-container w3-teal">
-      <h1>Controls</h1>
-    </header>
-          <button
-              class="w3-button w3-section w3-teal w3-ripple w3-margin-left"
-              @click = "doBack"
-            >Back</button>
+    <Row>
+      Custom dropdowns items description one per line
+      <RowCellRight>
+        <span @click="addItem()">
+          <BtnHref>Add</BtnHref>
+        </span>
+      </RowCellRight>
+    </Row>
 
-    <div class="w3-container w3-margin-top">
-      <div>
-        Custom dropdowns items description one per line
-
-        <div class="w3-right">
-            <span  @click="addItem()">
-                <a href="#" class="router-link-exact-active router-link-active">Add</a>
-            </span>
-        </div>
-
-      </div>
-    
-
-    <div class="w3-container w3-card-4 w3-margin-top" v-for="(item, idx) in dropdownlists" v-bind:key="idx" v-bind:value="idx">
-
-          <div class="w3-right">
-    
-                <a href="#" class="router-link-exact-active router-link-active" @click="spliceItem(idx)">Delete</a>
-
-
-        
-      </div>
-      <p>
-        <label> Name </label>
-          <input type="text"  class="w3-input w3-border" v-model="item.name"> 
+    <Card :mt="true" v-for="(item, idx) in dropdownlists" v-bind:key="idx" v-bind:value="idx">
+      <CardBody>
+        <RowCellRight>
+          <BtnHref @click="spliceItem(idx)">Delete</BtnHref>
+        </RowCellRight>
+        <p>
+          <label>Name</label>
+          <input type="text" class="w3-input w3-border" v-model="item.name" />
         </p>
         <p>
-            <label> Values </label>
-            <textarea class="w3-input w3-border"  style="resize:none;" v-model="item.data">            
-            </textarea>
+          <label>Values</label>
+          <textarea class="w3-input w3-border" style="resize:none;" v-model="item.data"></textarea>
         </p>
-    </div>
-    </div>
-  </div>
+      </CardBody>
+    </Card>
+  </Page>
 </template>
 
 
 
 <script lang="ts">
-import { Component,  Vue } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import { mapState } from "vuex";
 import { mapGetters } from "vuex";
 
 import * as Connection from "../src/connection";
-import {Dropdownlist} from "../src/UserDataConfig/dropdownlists"
+import { Dropdownlist } from "../src/UserDataConfig/dropdownlists";
 
+import Page from "./a/Page.vue";
+import Card from "./a/Card.vue";
+import CardBody from "./a/CardBody.vue";
+import Btn from "./a/Btn.vue";
+import Row from "./a/Row.vue";
+import RowCellRight from "./a/RowCellRight.vue";
+import BtnHref from "./a/BtnHref.vue";
 
 @Component({
   computed: {
     ...mapState(["loginStatus"]),
     ...mapGetters(["isLoggedIn"])
+  },
+  components: {
+    Page,
+    Card,
+    CardBody,
+    Btn,
+    Row,
+    RowCellRight,
+    BtnHref
   }
 })
 export default class DropdownlistsComponent extends Vue {
   dropdownlists = Connection.loginStatus.userDataConfig.dropdownlists;
-  addItem(){
-    this.dropdownlists.push( new Dropdownlist());
+  addItem() {
+    this.dropdownlists.push(new Dropdownlist());
   }
 
-  spliceItem(idx: number){
-    this.dropdownlists.splice(idx,1)
+  spliceItem(idx: number) {
+    this.dropdownlists.splice(idx, 1);
   }
 
-  doBack(){
+  doBack() {
     this.$router.push(`/usercontrols`);
   }
-
 }
 </script>
 

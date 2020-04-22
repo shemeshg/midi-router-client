@@ -1,54 +1,40 @@
 <template>
-  <div>
-    <header class="w3-container w3-teal">
-      <h1>Virtual ports</h1>
-    </header>
-    <div class="w3-container w3-margin-top">
-      <div class="w3-card-4">
-        <header class="w3-container w3-blue">
-          <h5>Virtual in/out ports</h5>
-        </header>
-        <div class="w3-container">
-          <div>
-            <div class="w3-container w3-cell w3-cell-middle">
-              <div class="w3-container w3-cell w3-cell-middle">
-                <label>Name</label>
-                <input
-                  class="w3-input"
-                  type="text"
-                  v-model="inPort"
-                  @focus="$event.target.select()"
-                />
-              </div>
-            </div>
-            <div class="w3-container w3-cell w3-cell-middle">
-              <button
-                class="w3-button w3-section w3-teal w3-ripple w3-margin-left"
-                @click="addInPort"
-              >+</button>
-            </div>
-          </div>
+  <Page text="Virtual ports">
+    <Card>
+      <CardHeader>Virtual in/out ports</CardHeader>
+      <CardBody>
+        <Row>
+          <RowCell>
+            <label>Name</label>
+          </RowCell>
+          <RowCell>
+            
+            <input class="w3-input" type="text" v-model="inPort" @focus="$event.target.select()" />
+          </RowCell>
+          <RowCell>
+            <Btn :ml="true" @click="addInPort">+</Btn>
+          </RowCell>
+        </Row>
 
-          <div>
-            <ul class="w3-ul w3-border w3-hoverable w3-margin-left">
-              <li
-                class="w3-display-container"
-                v-for="(inport, idx) in virtualInPorts"
-                v-bind:key="inport"
-              >
-                {{inport}}
-                <span
-                  @click="inPortSplice(idx)"
-                  class="w3-button w3-transparent w3-display-right"
-                >&times;</span>
-              </li>
-            </ul>
-          </div>
-          
-        </div>
-      </div>
-    </div>
-  </div>
+        <Row>
+          <ul class="w3-ul w3-border w3-hoverable w3-margin-left">
+            <li
+              class="w3-display-container"
+              v-for="(inport, idx) in virtualInPorts"
+              v-bind:key="inport"
+            >
+              {{inport}}
+              <span
+                @click="inPortSplice(idx)"
+                class="w3-button w3-transparent w3-display-right"
+              >&times;</span>
+            </li>
+          </ul>
+        </Row>
+        <p>&nbsp;</p>
+      </CardBody>
+    </Card>
+  </Page>
 </template>
 
 
@@ -60,10 +46,27 @@ import { LoginStatus } from "../src/loginStatus";
 
 import * as Connection from "../src/connection";
 
+import Page from "./a/Page.vue";
+import Card from "./a/Card.vue";
+import CardHeader from "./a/CardHeader.vue";
+import CardBody from "./a/CardBody.vue";
+import Row from "./a/Row.vue";
+import RowCell from "./a/RowCell.vue";
+import Btn from "./a/Btn.vue";
+
 @Component({
   computed: {
     ...mapState(["loginStatus"]),
     ...mapGetters(["isLoggedIn"])
+  },
+  components: {
+    Page,
+    Card,
+    CardHeader,
+    CardBody,
+    Row,
+    RowCell,
+    Btn
   }
 })
 export default class VirtualportsComponent extends Vue {
