@@ -1,7 +1,6 @@
 <template>
   <div>
     <Row class="unselectable">
- 
       <span @click="doInputVal(-1)">-</span>
       <span class="unselectable">{{item.description}}</span>
       <input type="number" v-model="getVal" v-if="!item.isShowDropdown" />
@@ -15,24 +14,18 @@
       </select>
 
       <span @click="doInputVal(+1)">+</span>
-     
 
       <RowCellRight>
         <span @click="item.isEditMode = !item.isEditMode">
-          <BtnHref
-            v-if="!item.isEditMode"
-          >Edit</BtnHref>
-          <BtnHref
-            v-if="item.isEditMode"
-          >Hide details</BtnHref>
+          <BtnHref v-if="!item.isEditMode">Edit</BtnHref>
+          <BtnHref v-if="item.isEditMode">Hide details</BtnHref>
         </span>
         &nbsp;
         <span @click="doSend">
-          <BtnHref >Send</BtnHref>
+          <BtnHref>Send</BtnHref>
         </span>
       </RowCellRight>
     </Row>
-
 
     <input
       class="w3-input"
@@ -42,65 +35,65 @@
       v-model="item.inputVal"
     />
 
-
     <Card v-if="item.isEditMode" :mt="true">
       <CardBody>
-      <p>
-        <label>Output</label>
-        <ServerInOutPortsSelect v-model.number="item.outputPortId" mode="out" />
-      </p>
+        <p>
+          <label>Output</label>
+          <ServerInOutPortsSelect v-model.number="item.outputPortId" mode="out" />
+        </p>
 
-      <p>
-        <label>Event type</label>
-        <select class="w3-select" v-model="item.eventType">
-          <option
-            v-for="(item) in eventTypes"
-            v-bind:key="item.id"
-            v-bind:value="item.id"
-          >{{item.name}}</option>
-        </select>
-      </p>
-
-      <label>Description</label>
-      <input class="w3-input" type="text" v-model="item.description" />
-
-      <label>Minimum value</label>
-      <input class="w3-input" type="text" v-model="item.minVal" />
-
-      <label>Maximum value</label>
-      <input class="w3-input" type="text" v-model="item.maxVal" />
-
-      <input class="w3-check" type="checkbox" v-model="item.is64Mode" />
-      <label>64 + - mode</label>
-
-      <label>Channel</label>
-      <input class="w3-input" type="number" v-model="item.channelId" />
-
-      <div v-if="item.eventType === EventType.CC">
-        <label>CC number</label>
-        <input class="w3-input" type="number" v-model="item.ccId" />
-      </div>
-
-      <input class="w3-check" type="checkbox" v-model="item.isShowDropdown" />
-      <label>Show Dropdown</label>
-
-      <Row v-if="item.isShowDropdown">
-        <RowCell>
-          <label>Selecct list of values</label>
-        </RowCell>
-        <RowCell>
-          <select class="w3-select" v-model="item.dropdownListId">
+        <p>
+          <label>Event type</label>
+          <select class="w3-select" v-model="item.eventType">
             <option
-              v-for="(item, idx) in dropdownlists"
-              v-bind:key="idx"
-              v-bind:value="idx"
-            >{{idx}} - {{item.name}}</option>
+              v-for="(item) in eventTypes"
+              v-bind:key="item.id"
+              v-bind:value="item.id"
+            >{{item.name}}</option>
           </select>
-        </RowCell>
-        <RowCell>
-          <router-link to="/dropdownlists">Manage dropdown lists</router-link>
-        </RowCell>
-      </Row>
+        </p>
+
+        <label>Description</label>
+        <input class="w3-input" type="text" v-model="item.description" />
+
+        <label>Minimum value</label>
+        <input class="w3-input" type="text" v-model="item.minVal" />
+
+        <label>Maximum value</label>
+        <input class="w3-input" type="text" v-model="item.maxVal" />
+
+        <input class="w3-check" type="checkbox" v-model="item.is64Mode" />
+        <label>64 + - mode</label>
+
+        <label>Channel</label>
+        <input class="w3-input" type="number" v-model="item.channelId" />
+
+        <div v-if="item.eventType === EventType.CC">
+          <label>CC number</label>
+          <input class="w3-input" type="number" v-model="item.ccId" />
+        </div>
+
+        <input class="w3-check" type="checkbox" v-model="item.isShowDropdown" />
+        <label>Show Dropdown</label>
+
+        <Row v-if="item.isShowDropdown">
+          <RowCell>
+            <label>Selecct list of values</label>
+          </RowCell>
+          <RowCell>
+            <select class="w3-select" v-model="item.dropdownListId">
+              <option
+                v-for="(item, idx) in dropdownlists"
+                v-bind:key="idx"
+                v-bind:value="idx"
+              >{{idx}} - {{item.name}}</option>
+            </select>
+          </RowCell>
+          <RowCell>
+            <router-link to="/dropdownlists">Manage dropdown lists</router-link>
+          </RowCell>
+        </Row>
+        
       </CardBody>
     </Card>
   </div>
@@ -125,15 +118,15 @@ import Card from "../a/Card.vue";
 import CardBody from "../a/CardBody.vue";
 import ServerInOutPortsSelect from "../a/ServerInOutPortsSelect.vue";
 @Component({
-    components: {
+  components: {
     ServerInOutPortsSelect,
     Card,
     CardBody,
     BtnHref,
     Row,
     RowCell,
-    RowCellRight,
-  },
+    RowCellRight
+  }
 })
 export default class ControlComponent extends Vue {
   @Prop() item!: UserControl;
