@@ -19,7 +19,7 @@ export class UserControl {
     isEditMode = true
     channelId = "1"
     ccId = "7"
-    outputPortId = ""
+    outputPortId = -1
     isShowDropdown = false
     dropdownListId = 0;
 
@@ -32,8 +32,8 @@ export class UserControl {
 
 
     async doSend(){
-        if (this.outputPortId === ""){return;}
-        const port = await Connection.connection.wcmidiout.port(parseInt( this.outputPortId ))
+        if (this.outputPortId === -1){return;}
+        const port = await Connection.connection.wcmidiout.port(this.outputPortId )
         if (this.eventType === EventType.CC){
             await port.sendControlChange(parseInt(this.ccId),parseInt(this.inputVal),[parseInt(this.channelId)])
         }

@@ -1,6 +1,7 @@
 <template>
   <div>
-    <label class="unselectable">
+    <Row class="unselectable">
+ 
       <span @click="doInputVal(-1)">-</span>
       <span class="unselectable">{{item.description}}</span>
       <input type="number" v-model="getVal" v-if="!item.isShowDropdown" />
@@ -14,26 +15,25 @@
       </select>
 
       <span @click="doInputVal(+1)">+</span>
+     
 
-      <div class="w3-right">
+      <RowCellRight>
         <span @click="item.isEditMode = !item.isEditMode">
-          <a
+          <BtnHref
             v-if="!item.isEditMode"
-            href="#"
-            class="router-link-exact-active router-link-active"
-          >Edit</a>
-          <a
+          >Edit</BtnHref>
+          <BtnHref
             v-if="item.isEditMode"
-            href="#"
-            class="router-link-exact-active router-link-active"
-          >Hide details</a>
+          >Hide details</BtnHref>
         </span>
         &nbsp;
         <span @click="doSend">
-          <a href="#" class="router-link-exact-active router-link-active">Send</a>
+          <BtnHref >Send</BtnHref>
         </span>
-      </div>
-    </label>
+      </RowCellRight>
+    </Row>
+
+
     <input
       class="w3-input"
       type="range"
@@ -41,17 +41,13 @@
       v-bind:max="item.maxVal"
       v-model="item.inputVal"
     />
-    <div v-if="item.isEditMode" class="w3-card-4 w3-margin-top w3-container">
+
+
+    <Card v-if="item.isEditMode" :mt="true">
+      <CardBody>
       <p>
         <label>Output</label>
-        <select class="w3-select" v-model="item.outputPortId">
-          <option value selected>Disabled</option>
-          <option
-            v-for="(item, idx) in outPorts"
-            v-bind:key="item.midiOutputId"
-            v-bind:value="idx"
-          >{{idx}} - {{item}}</option>
-        </select>
+        <ServerInOutPortsSelect v-model.number="item.outputPortId" mode="out" />
       </p>
 
       <p>
@@ -88,11 +84,11 @@
       <input class="w3-check" type="checkbox" v-model="item.isShowDropdown" />
       <label>Show Dropdown</label>
 
-      <div class="w3-container" v-if="item.isShowDropdown">
-        <div class="w3-cell">
+      <Row v-if="item.isShowDropdown">
+        <RowCell>
           <label>Selecct list of values</label>
-        </div>
-        <div class="w3-container w3-cell">
+        </RowCell>
+        <RowCell>
           <select class="w3-select" v-model="item.dropdownListId">
             <option
               v-for="(item, idx) in dropdownlists"
@@ -100,12 +96,13 @@
               v-bind:value="idx"
             >{{idx}} - {{item.name}}</option>
           </select>
-        </div>
-        <div class="w3-container w3-cell">
+        </RowCell>
+        <RowCell>
           <router-link to="/dropdownlists">Manage dropdown lists</router-link>
-        </div>
-      </div>
-    </div>
+        </RowCell>
+      </Row>
+      </CardBody>
+    </Card>
   </div>
 </template>
 
@@ -120,7 +117,24 @@ import {
   EventType
 } from "../../src/UserDataConfig/userControl";
 
-@Component({})
+import BtnHref from "../a/BtnHref.vue";
+import Row from "../a/Row.vue";
+import RowCell from "../a/RowCell.vue";
+import RowCellRight from "../a/RowCellRight.vue";
+import Card from "../a/Card.vue";
+import CardBody from "../a/CardBody.vue";
+import ServerInOutPortsSelect from "../a/ServerInOutPortsSelect.vue";
+@Component({
+    components: {
+    ServerInOutPortsSelect,
+    Card,
+    CardBody,
+    BtnHref,
+    Row,
+    RowCell,
+    RowCellRight,
+  },
+})
 export default class ControlComponent extends Vue {
   @Prop() item!: UserControl;
 
