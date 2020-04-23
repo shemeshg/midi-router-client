@@ -2,9 +2,7 @@
 
 ## v0.10.0
 
-[Compiled server and client for OSX:](https://drive.google.com/file/d/11CmUCZI6s4dZSC6PSf5_3JkKPMArVYH8/view?usp=sharing)
-
-[Compiled server and client for Linux:](https://drive.google.com/open?id=1Evk11elK0Bz3tUgQk6zapEgk_O9-AUyF)
+[Compiled server and client for OSX or linux:](https://sourceforge.net/projects/midi-router-client/)
 
 1. Route anywhere to anywhere.
 2. Create virtual port.
@@ -19,8 +17,10 @@
 
 ## Project setup
 
-[Download of project and
-server is here: ](https://github.com/shemeshg/RtMidiWrap)
+For linux server please also
+
+`sudo apt-get install librtmidi-dev`
+
 
 ```bash
 npm install
