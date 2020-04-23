@@ -1,5 +1,7 @@
 # Advanced Midi Router Client
 
+## v0.10.0
+
 [Compiled server and client for OSX:](https://drive.google.com/file/d/11CmUCZI6s4dZSC6PSf5_3JkKPMArVYH8/view?usp=sharing)
 
 [Compiled server and client for Linux:](https://drive.google.com/open?id=1Evk11elK0Bz3tUgQk6zapEgk_O9-AUyF)
@@ -38,7 +40,7 @@ usefull for connecting from tablet/phone
 npm run build
 ```
 
-It is possible to build electron desktop app with 
+It is possible to build electron desktop app with
 
 ```bash
 npm run electron:build
