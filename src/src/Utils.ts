@@ -41,3 +41,13 @@ export function downloadFileAsString(filename:  string, text: string) {
     })
 
 }
+
+export function isElectron(){
+    return window && window.process && window.process.type;
+}
+
+export function quitElectron(){
+    const remote = require('electron').remote
+    let w = remote.getCurrentWindow()
+    w.close()
+}
