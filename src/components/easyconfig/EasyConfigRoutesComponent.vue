@@ -19,7 +19,7 @@
           <RowCell>
             <label>From event</label>
             <SelectedMidiEventType
-              v-model="easyConfigRoute.fromSelectedMidiEventTypeId"
+              v-model.number="easyConfigRoute.fromSelectedMidiEventTypeId"
               @change="fromEventTypeChanged(idx)"
             />
           </RowCell>
@@ -58,7 +58,7 @@
           <RowCell>
             <label>To event</label>
             <SelectedMidiEventType
-              v-model="easyConfigRoute.toSelectedMidiEventTypeId"
+              v-model.number="easyConfigRoute.toSelectedMidiEventTypeId"
               @change="toEventTypeChanged(idx)"
             />
           </RowCell>
