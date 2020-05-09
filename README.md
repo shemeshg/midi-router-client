@@ -53,7 +53,7 @@ npm run lint
 
 ## Built With
 
-See [Configuration Reference](https://cli.vuejs.org/config/).
+See [Vue cli](https://cli.vuejs.org/config/).
 
 ## Authors
 
