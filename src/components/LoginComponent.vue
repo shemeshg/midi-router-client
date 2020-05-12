@@ -55,13 +55,15 @@ export default class Login extends Vue {
   isLoggedIn!: boolean;
   loginStatus!: LoginStatus;
 
-  serverName = Connection.loginStatus.serverName;
-  serverPort = Connection.loginStatus.serverPort;
+  serverName = localStorage.getItem("serverName") || "localhost" ;
+  serverPort = parseInt( (localStorage.getItem("serverPort")  || 12345).toString() );
   errMsg = Connection.loginStatus.errMsg;
 
   async doLogin() {
     await Connection.login(this.serverName, this.serverPort);
     this.errMsg = Connection.loginStatus.errMsg;
+    localStorage.setItem("serverName", this.serverName);
+    localStorage.setItem("serverPort", this.serverPort.toString());
     this.$store.commit("setLoginStatusRedirect", Connection.loginStatus);
   }
 
@@ -83,9 +85,7 @@ export default class Login extends Vue {
     this.$store.commit("setLoginStatusRedirect", Connection.loginStatus);
   }
 
-  get myGet(): number {
-    return 3;
-  }
+
 
   get headrMsg(): string {
     if (this.isLoggedIn) {
