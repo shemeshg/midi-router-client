@@ -15,7 +15,7 @@
   <router-link class="w3-bar-item w3-button" to="/usercontrols" v-if="isLoggedIn">User Controls</router-link> 
   <router-link class="w3-bar-item w3-button" to="/easyconfig" v-if="isLoggedIn">Easyconfig</router-link> 
   <router-link class="w3-bar-item w3-button" to="/about">About</router-link>
-  <a class="w3-bar-item w3-button"  @click="shutdownQuit" v-if="isLoggedIn && isElectron">Quit</a>
+  <a class="w3-bar-item w3-button"  @click="shutdownQuit" v-if="isLoggedIn">Quit</a>
 
 </div>
 
@@ -69,7 +69,10 @@ export default {
     },
     shutdownQuit(){
       Connection.connection.wcuserdata.applicationQuit();
-      Utils.quitElectron();
+      if (Utils.isElectron()){
+        Utils.quitElectron();
+      }
+      
     }
   },
   computed: {
