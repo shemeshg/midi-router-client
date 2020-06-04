@@ -98,7 +98,7 @@ export class MidiRoutePreset {
     midiControlOn: PresetMidiControl = new PresetMidiControl(PresetMidiType.PRESET_ON, this.uuid)
     midiControlOff: PresetMidiControl = new PresetMidiControl(PresetMidiType.PRESET_OFF, this.uuid)
 
-    midiRouteInputs: MidiRouteInput[] = []
+    midiRouteInputs: {[key: string]: MidiRouteInput}   = {}
 
     userControls: UserControl[] = []
     easyConfig = new EasyConfig();

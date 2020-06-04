@@ -40,8 +40,8 @@ export class UserDataConfig {
     virtualInPorts: string[] = []
     //virtualOutPorts: string[] = [];
 
-    private inPorts: string[];
-    constructor(inPorts: string[]) {
+    private inPorts: {[key: number]: string};
+    constructor(inPorts: {[key: number]: string}) {
         this.inPorts = inPorts;
         this.midiRoutePresets[0].isEnabled = true;
     }
@@ -224,9 +224,9 @@ export class UserDataConfig {
         await ch.wcmidiout.restart()
         Connection.loginStatus.inPorts =  await ch.wcmidiin.getPorts()
         Connection.loginStatus.outPorts =  await ch.wcmidiout.getPorts()
-        this.inPorts = Connection.loginStatus.inPorts
-        
-        
+        this.inPorts = Connection.loginStatus.inPorts        
+
+                
 
         for (let i = 0; i < this.virtualInPorts.length; i++) {
             const p = this.virtualInPorts[i];
@@ -237,7 +237,7 @@ export class UserDataConfig {
             
         }
 
-
+  
         const keys = Object.keys(this.inPorts);
         for (let inputIdx = 0; inputIdx < keys.length; inputIdx++) {
             const configPort = this.getMidiRouteInput(inputIdx);

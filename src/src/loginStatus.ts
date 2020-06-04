@@ -5,8 +5,8 @@ export class LoginStatus {
     serverName = ""
     serverPort =  0
     errMsg = ""
-    inPorts: string[] = [];
-    outPorts: string[] = [];
+    inPorts: {[key: number]: string} = [];
+    outPorts: {[key: number]: string} = [];
     userDataConfig!: UserDataConfig;
     constructor(serverName: string, serverPort: number){
         this.serverName = serverName;

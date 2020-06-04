@@ -208,7 +208,7 @@ class MidiInPort {
 export class WcMidiIn {
     // eslint-disable-next-line
     private wcmidiinWs: any;
-    private _cashedOpenedPorts!: { key: number; value: string }[];
+    private _cashedOpenedPorts!: {[key: number]: string};
 
     // eslint-disable-next-line
     constructor(wcmidiout: any) {
@@ -286,7 +286,7 @@ export class WcMidiIn {
         })
     }
 
-    getPorts(): Promise<string[]> {
+    getPorts(): Promise<{[key: number]: string}> {  
         return new Promise((resolve) => {
             this.wcmidiinWs.getPorts((arg: string[]) => {
                 resolve(arg);
@@ -294,9 +294,9 @@ export class WcMidiIn {
         })
     }
 
-    getOpenedPorts(): Promise<{ key: number; value: string }[]> {
+    getOpenedPorts(): Promise<{[key: number]: string}> {
         return new Promise((resolve) => {
-            this.wcmidiinWs.getOpenedPorts((arg: { key: number; value: string }[]) => {
+            this.wcmidiinWs.getOpenedPorts((arg: {[key: number]: string}) => {
                 this._cashedOpenedPorts = arg;
                 resolve(arg);
             })
