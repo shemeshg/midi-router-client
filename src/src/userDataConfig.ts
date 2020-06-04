@@ -131,7 +131,7 @@ export class UserDataConfig {
                 const easyConfigRoutesKeys = Object.keys(jsonPreset.easyConfig.inputZonesAndRoutes)
                 for (let easyConfigInputId = 0; easyConfigInputId < easyConfigRoutesKeys.length; easyConfigInputId++) {
                     const inputID = parseInt(easyConfigRoutesKeys[easyConfigInputId])
-    
+
                     midiRoutePreset.easyConfig.ensureEasyConfigInputExists(inputID)
                     const keyboardSplitAry = jsonPreset.easyConfig.inputZonesAndRoutes[inputID].keyboardSplits
                     for (let spltKdbId = 0; spltKdbId < keyboardSplitAry.length; spltKdbId++) {
@@ -232,17 +232,11 @@ export class UserDataConfig {
             const p = this.virtualInPorts[i];
             
             if (Object.values(this.inPorts).indexOf(p) === -1 ){
-                ch.wcmidiin.openVirtualInOutPort(p);
+                await ch.wcmidiin.openVirtualInOutPort(p);
             }
             
         }
 
-        /*
-        for (let i = 0; i < this.virtualOutPorts.length; i++) {
-            const p = this.virtualOutPorts[i];
-            ch.wcmidiout.openVirtualPort(p);
-        }
-        */
 
         const keys = Object.keys(this.inPorts);
         for (let inputIdx = 0; inputIdx < keys.length; inputIdx++) {
