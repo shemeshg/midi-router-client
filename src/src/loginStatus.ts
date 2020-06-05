@@ -5,8 +5,8 @@ export class LoginStatus {
     serverName = ""
     serverPort =  0
     errMsg = ""
-    inPorts: {[key: number]: string} = [];
-    outPorts: {[key: number]: string} = [];
+    inPorts: {[key: number]: string} = {};
+    outPorts: {[key: number]: string} = {};
     userDataConfig!: UserDataConfig;
     constructor(serverName: string, serverPort: number){
         this.serverName = serverName;
@@ -25,6 +25,27 @@ export class LoginStatus {
         }
     }
 
+    getMidiInputIdByName(midiInputName: string): number{
+        const keys = Object.keys(this.inPorts);
+        let _ret = -1
+        keys.forEach( (el: string) => {
+            if (this.inPorts[ Number( el) ] === midiInputName){
+                _ret = Number(el);
+            } 
+        });
+        return _ret;
+    }
+
+    getMidiOutputIdByName(midiOutputName: string): number{
+        const keys = Object.keys(this.inPorts);
+        let _ret = -1
+        keys.forEach( (el: string) => {
+            if (this.inPorts[ Number( el) ] === midiOutputName){
+                _ret = Number(el);
+            } 
+        });
+        return _ret;
+    }    
 }
 
 

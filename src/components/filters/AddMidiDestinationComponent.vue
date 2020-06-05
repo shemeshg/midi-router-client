@@ -101,8 +101,8 @@ export default class AddMidiDestinationComponent extends Vue {
   }
 
   get midiRouteInput() {
-    return Connection.loginStatus.userDataConfig.getMidiRouteInput(
-      parseInt(this.midiinid)
+    return Connection.loginStatus.userDataConfig.getMidiRouteInput(      
+      Connection.loginStatus.inPorts[ Number(this.midiinid) ]
     );
   }
 

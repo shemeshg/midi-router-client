@@ -81,7 +81,7 @@ export default class MonitorComponent extends Vue {
     this.data = [];
 
     const input = Connection.loginStatus.userDataConfig.getMidiRouteInput(
-      this.inputToMonitor
+      this.inPorts[this.inputToMonitor]
     );
     const chains = input.midiRouterChains;
 

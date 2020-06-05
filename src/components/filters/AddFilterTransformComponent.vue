@@ -172,7 +172,7 @@ export default class AddFilterTransformComponent extends Vue {
 
   get midiRouteInput() {
     return Connection.loginStatus.userDataConfig.getMidiRouteInput(
-      parseInt(this.midiinid)
+      Connection.loginStatus.inPorts[ Number(this.midiinid) ]
     );
   }
 

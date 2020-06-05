@@ -64,8 +64,8 @@ export class KeyboardZone {
     ]
 
   class EasyConfigRoute extends  BaseMidiRouteInput{
-     constructor(midiInputId: number, midiInputName: string){
-       super(midiInputId, midiInputName)
+     constructor(midiInputName: string){
+       super(midiInputName)
      }
 
     
@@ -79,14 +79,22 @@ export class KeyboardZone {
     toSelectedMidiEventTypeId = 0;
     toChannel = -1
     toData1 = -1
-    toDestinationId = -1
+
+    toDestinationName = "";
+    get toDestinationId(){
+      return Connection.loginStatus.getMidiOutputIdByName(this.toDestinationName);
+    }
+
+    set toDestinationId(inputId: number){
+      this.toDestinationName = Connection.loginStatus.outPorts[inputId]
+    }
 
     get getMidiRouterChains(): MidiRouterChain[]{
       // GGGG
       const ret: MidiRouterChain[] = [];
       const isAllValid = this.toDestinationId !== -1
 
-      const inputZonesAndRoute: InputZonesAndRoutes = Connection.loginStatus.userDataConfig.activePreset.easyConfig.inputZonesAndRoutes[this.midiInputId]
+      const inputZonesAndRoute: InputZonesAndRoutes = Connection.loginStatus.userDataConfig.activePreset.easyConfig.inputZonesAndRoutes[this.midiInputName]
       if (!isAllValid){return ret;}
 
       
@@ -136,7 +144,7 @@ export class KeyboardZone {
       }
 
       const midiOutId = this.toDestinationId 
-      const midioutObj = new BaseMidiRouteInput(midiOutId,  Connection.loginStatus.inPorts[ midiOutId ])
+      const midioutObj = new BaseMidiRouteInput(Connection.loginStatus.inPorts[ midiOutId ])
 
       midiRouterChain.addFilterMidiDestination(midioutObj);
       ret.push( midiRouterChain )
@@ -187,14 +195,14 @@ export class KeyboardZone {
 
     easyConfigRoutes: EasyConfigRoute[] = []
 
-    constructor(inputId: number){    
-      super(inputId,Connection.loginStatus.inPorts[inputId])
+    constructor(inputName: string){    
+      super(inputName)
     }
   
     
 
     addRoute(){
-      const _ret = new EasyConfigRoute(this.midiInputId, this.midiInputName)
+      const _ret = new EasyConfigRoute(this.midiInputName)
       this.easyConfigRoutes.push( _ret )
       return _ret
     }
@@ -254,21 +262,21 @@ export class KeyboardZone {
   
      inputZonesAndRoutes: { [value: string]: InputZonesAndRoutes}= {}
      
-     addRoute(intputId: number){
-      this.ensureEasyConfigInputExists(intputId);
+     addRoute(inputName: string){
+      this.ensureEasyConfigInputExists(inputName);
  
-       return this.inputZonesAndRoutes[intputId].addRoute();       
+       return this.inputZonesAndRoutes[inputName].addRoute();       
      }
 
-     addKeyboardSplit(intputId: number, splitPosition: number){
-       this.ensureEasyConfigInputExists(intputId)
+     addKeyboardSplit(inputName: string, splitPosition: number){
+       this.ensureEasyConfigInputExists(inputName)
   
-        this.inputZonesAndRoutes[intputId].addKeyboardSplit(splitPosition)
+        this.inputZonesAndRoutes[inputName].addKeyboardSplit(splitPosition)
      }
   
-     ensureEasyConfigInputExists(intputId: number){
-      if ( this.inputZonesAndRoutes[intputId] === undefined ){ 
-        this.inputZonesAndRoutes[intputId] = new InputZonesAndRoutes(intputId)
+     ensureEasyConfigInputExists(intputName: string){
+      if ( this.inputZonesAndRoutes[intputName] === undefined ){ 
+        this.inputZonesAndRoutes[intputName] = new InputZonesAndRoutes(intputName)
        }   
      }
      

@@ -1,8 +1,11 @@
+import * as Connection from "../../../src/connection";
+
 export class BaseMidiRouteInput {
-    midiInputId: number;
+    get midiInputId(): number{
+        return Connection.loginStatus.getMidiInputIdByName(this.midiInputName)
+    }
     midiInputName: string;
-    constructor(midiInputId: number, midiInputName: string){
-        this.midiInputId = midiInputId;
+    constructor(midiInputName: string){
         this.midiInputName = midiInputName;
     }
 }

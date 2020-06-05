@@ -5,6 +5,7 @@ import { MidiRouterChain } from "./MidiRouterChain"
 import { MIDI_FILTER_ACTION_IF_NOT } from "../../channel/WcMidiIn"
 import {JsRouter} from "./jsRouter"
 import { v4 as uuidv4 } from 'uuid'; 
+import * as Connection from "../../connection";
 
 export enum PresetMidiType {
     PRESET_OFF,
@@ -14,7 +15,15 @@ export enum PresetMidiType {
 export class PresetMidiControl {
     presetUuid: string;
     presetMidiType: PresetMidiType;
-    port = -1;
+    portName = "";
+    get port(){
+        return Connection.loginStatus.getMidiInputIdByName(this.portName);
+      }
+    set port(inputId: number){
+    this.portName = Connection.loginStatus.inPorts[inputId]
+    }
+
+
     eventTypeId = 0;
     channel = -1;
     data1 = -1;
@@ -37,8 +46,9 @@ export class PresetMidiControl {
         return _ret;
     }
 
-    getOnOffMidiRouterChains(inputIdx: number): MidiRouterChain[] {
+    getOnOffMidiRouterChains(portName: string): MidiRouterChain[] {
         const ret: MidiRouterChain[] = [];
+        const inputIdx = Connection.loginStatus.getMidiInputIdByName(portName)
 
         if (this.port === -1 ||inputIdx !== this.port) return ret;
 

@@ -128,13 +128,13 @@ export default class AddNetworkDestinationComponent extends Vue {
 
     for (let i = 0; i < keys.length; i++) {
       const ikey = parseInt(keys[i]);
-      this.remoteMidiPorts.push(new BaseMidiRouteInput(ikey, l.inPorts[ikey]));
+      this.remoteMidiPorts.push( {midiInputId: ikey, midiInputName: l.inPorts[ikey] });
     }
   }
 
   get midiRouteInput() {
     return Connection.loginStatus.userDataConfig.getMidiRouteInput(
-      parseInt(this.midiinid)
+      Connection.loginStatus.inPorts[ Number(this.midiinid) ]
     );
   }
 

@@ -43,11 +43,11 @@ export class JsRouter {
         this.jsToServers = this.jsToServers.filter( (row)=>{return row.id !== uuid})
     }
 
-    getMidiRouterChains(inputIdx: number): MidiRouterChain[] {
+    getMidiRouterChains(inputName: string): MidiRouterChain[] {
         const ret: MidiRouterChain[] = [];        
 
         const routeFromServer = this.jsToServers.filter( (row)=>{return row.jsToServerType === JS_TO_SERVER_TYPE.FROM_SERVER &&
-                                            row.fromInt === inputIdx})
+                                            row.fromName === inputName})
         // the bullshit to correctn
         if (routeFromServer.length === 0 ) return ret;
 
@@ -92,7 +92,8 @@ export class JsRouter {
             // eslint-disable-next-line
             const int: any = WebMidi.getInputById(tos.fromInt.toString());
 
-            const serverPort = await Connection.connection.wcmidiout.port( tos.toInt )
+            const toInt = Connection.loginStatus.getMidiOutputIdByName(tos.toName)
+            const serverPort = await Connection.connection.wcmidiout.port( toInt )
 
             // eslint-disable-next-line
             int.addListener("midimessage","all",(m: any)=>{  

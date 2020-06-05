@@ -268,7 +268,7 @@ export default class MidiInComponent extends Vue {
 
   get midiRouteInput() {
     return Connection.loginStatus.userDataConfig.getMidiRouteInput(
-      parseInt(this.midiId)
+      Connection.loginStatus.inPorts[ Number(this.midiId) ]
     );
   }
 

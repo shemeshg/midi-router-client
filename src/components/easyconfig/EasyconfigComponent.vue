@@ -92,13 +92,14 @@ export default class EasyconfigComponent extends Vue {
   
   addRoute(){
     if (this.routeToAdd === -1 ){return; }
-    this.easyConfig.addRoute( this.routeToAdd) 
+    
+    this.easyConfig.addRoute( Connection.loginStatus.inPorts[ this.routeToAdd ] ) 
     this.$forceUpdate()
   }
 
   addSplitedKeyboard(){
     if (this.inputToAdd === -1 ){return; }
-    this.easyConfig.addKeyboardSplit( this.inputToAdd, 60)
+    this.easyConfig.addKeyboardSplit( Connection.loginStatus.inPorts[  this.inputToAdd ], 60)
     this.$forceUpdate()
   }
 

@@ -36,17 +36,15 @@ export class MidiRouteInput extends BaseMidiRouteInput{
         const keys = Object.keys(inPorts);
         keys.forEach(key => {
             if ( parseInt(key) !== this.midiInputId){
-                ret.push( new BaseMidiRouteInput( parseInt(key), inPorts[parseInt(key)]))
+                ret.push( new BaseMidiRouteInput( inPorts[parseInt(key)]))
             }
         })
         return ret;
     }
 
 
-    constructor(midiInputId: number, midiInputName: string){
-        super(midiInputId, midiInputName);
-
-
+    constructor(midiInputName: string){
+        super(midiInputName);
     }
 
 
@@ -65,7 +63,7 @@ export class MidiRouteInput extends BaseMidiRouteInput{
 
     addClockPropegateInput(midiIn: number){
         const name = this.inPortsWithoutSelf.filter( (row)=>{return row.midiInputId == midiIn})[0].midiInputName
-        const cpi = new BaseMidiRouteInput(midiIn, name)
+        const cpi = new BaseMidiRouteInput(name)
         this.midiRouteClock.propegateInputs.push( cpi );
     }
 }
