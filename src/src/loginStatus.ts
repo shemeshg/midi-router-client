@@ -25,22 +25,24 @@ export class LoginStatus {
         }
     }
 
-    getMidiInputIdByName(midiInputName: string): number{
-        const keys = Object.keys(this.inPorts);
+    getMidiInputIdByName(miditName: string): number{
+        const ports = this.inPorts
+        const keys = Object.keys(ports);
         let _ret = -1
         keys.forEach( (el: string) => {
-            if (this.inPorts[ Number( el) ] === midiInputName){
+            if (ports[ Number( el) ] === miditName){
                 _ret = Number(el);
             } 
         });
         return _ret;
     }
 
-    getMidiOutputIdByName(midiOutputName: string): number{
-        const keys = Object.keys(this.inPorts);
+    getMidiOutputIdByName(miditName: string): number{
+        const ports = this.outPorts
+        const keys = Object.keys(ports);
         let _ret = -1
         keys.forEach( (el: string) => {
-            if (this.inPorts[ Number( el) ] === midiOutputName){
+            if (ports[ Number( el) ] === miditName){
                 _ret = Number(el);
             } 
         });

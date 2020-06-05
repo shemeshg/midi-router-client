@@ -19,7 +19,16 @@ export class UserControl {
     isEditMode = true
     channelId = "1"
     ccId = "7"
-    outputPortId = -1
+
+    outputPortnName = "";
+    get outputPortId(){
+      return Connection.loginStatus.getMidiOutputIdByName(this.outputPortnName);
+    }
+
+    set outputPortId(inputId: number){
+      this.outputPortnName = Connection.loginStatus.outPorts[inputId]
+    }
+
     isShowDropdown = false
     dropdownListId = 0;
 
