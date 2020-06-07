@@ -55,6 +55,9 @@ npm run lint
 
 See [Vue cli](https://cli.vuejs.org/config/).
 
+Icon made by Pixel perfect from www.flaticon.com
+
+
 ## Authors
 
 * **shemeshg**
