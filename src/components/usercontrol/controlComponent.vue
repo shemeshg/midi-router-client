@@ -63,7 +63,8 @@
         <input class="w3-input" type="text" v-model="item.maxVal" />
 
         <input class="w3-check" type="checkbox" v-model="item.is64Mode" />
-        <label>64 + - mode</label>
+        <label> 64 + - mode</label>
+        <hr style="border-bottom: 1px solid #ccc;"/>
 
         <label>Channel</label>
         <input class="w3-input" type="number" v-model="item.channelId" />
@@ -94,6 +95,8 @@
           </RowCell>
         </Row>
         
+        <hr style="border-bottom: 1px solid #ccc;"/>
+
       </CardBody>
     </Card>
   </div>
