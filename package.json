@@ -3,7 +3,7 @@
   "productName": "Midi router client",
   "author": "iuqwer9 <iuqwer9@sourceforge.net> (https://sourceforge.net/u/iuqwer9/profile/)",
   "description": "Midi router client",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
