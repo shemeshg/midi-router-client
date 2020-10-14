@@ -16,14 +16,21 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
+import { defineComponent } from '@vue/composition-api'
 import { dropdownMidiEventType } from "../../src/UserDataConfig/Easyconfig";
 
-@Component({})
-export default class SelectedMidiEventType extends Vue {
-  @Prop() value!: number;
-  dropdownMidiEventType = dropdownMidiEventType;
-}
+export default defineComponent({
+  props: {
+    value: Number,
+  },
+  setup () {
+    return {dropdownMidiEventType};
+  },
+
+})
+
+
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

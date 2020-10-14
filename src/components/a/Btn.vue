@@ -8,14 +8,15 @@
 </template>
 
 <script lang="ts">
+import { defineComponent  } from '@vue/composition-api'
 
-import { Component, Vue, Prop } from "vue-property-decorator";
+export default defineComponent({
+  name: 'Btn',
+  props: {
+    ml: Boolean,
+  },
+});
 
-@Component({
-})
-export default class Btn extends Vue {
-  @Prop() ml!: boolean;
-}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

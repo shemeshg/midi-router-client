@@ -5,13 +5,14 @@
 </template>
 
 <script>
+import { defineComponent } from '@vue/composition-api'
 // @ is an alias to /src
 import UsercontrolsComponent from '@/components/usercontrol/UsercontrolsComponent'
 
-export default {
+export default defineComponent({
   name: 'Usercontrols',
   components: {
     UsercontrolsComponent
   },
-}
+})
 </script>

@@ -7,26 +7,28 @@
       @change="$emit('change', $event.target.value)"
     >
       <option value="-1">-</option>
-      <option v-for="(item) in channels" v-bind:key="item" v-bind:value="item">{{item}}</option>
+      <option v-for="item in channels" v-bind:key="item" v-bind:value="item">
+        {{ item }}
+      </option>
     </select>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
-
-@Component({})
-export default class SelectedMidiChannel extends Vue {
-  @Prop() value!: number;
-
-  get channels() {
-    const ret = [];
+import { defineComponent } from "@vue/composition-api";
+export default defineComponent({
+  props: {
+    value: Number,
+  },
+  setup() {
+    const channels = [];
     for (let i = 1; i <= 16; i++) {
-      ret.push(i);
+      channels.push(i);
     }
-    return ret;
-  }
-}
+
+    return { channels };
+  },
+});
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

@@ -5,12 +5,13 @@
 </template>
 
 <script>
+import { defineComponent } from '@vue/composition-api'
 // @ is an alias to /src
 import JsclientComponent from '@/components/Jsclient/JsclientComponent.vue'
 
-export default {
+export default defineComponent({
   components: {
     JsclientComponent
   }
-}
+})
 </script>

@@ -13,21 +13,23 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
 
-@Component({})
-export default class SelectedMidiData extends Vue {
-  @Prop() value!: number;
-
-  get range127() {
-    const ret = [];
-    for (let i = 0; i <= 127; i++) {
-      ret.push(i);
+import { defineComponent } from "@vue/composition-api";
+export default defineComponent({
+  props: {
+    value: Number,
+  },
+  setup() {
+    const range127 = [];
+      for (let i = 0; i <= 127; i++) {
+      range127.push(i);
     }
-    return ret;
-  }
 
-}
+    return { range127 };
+  },
+});
+
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

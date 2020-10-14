@@ -5,13 +5,14 @@
 </template>
 
 <script>
+import { defineComponent } from '@vue/composition-api'
 // @ is an alias to /src
 import DropdownlistsComponent from '@/components/DropdownlistsComponent.vue'
 
-export default {
+export default defineComponent({
   name: 'Midiin',
   components: {
     DropdownlistsComponent
   },
-}
+})
 </script>

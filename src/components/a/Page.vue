@@ -10,16 +10,21 @@
 
 <script lang="ts">
 import PageHeader from "./PageHeader.vue"
-import { Component, Vue, Prop } from "vue-property-decorator";
 
-@Component({
+import { defineComponent  } from '@vue/composition-api'
+
+export default defineComponent({
   components: {
     PageHeader,
-  }
-})
-export default class Page extends Vue {
-  @Prop() text!: string;
-}
+  },
+  props: {
+    text: String,
+  },
+});
+
+
+
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

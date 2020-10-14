@@ -5,10 +5,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { defineComponent  } from '@vue/composition-api'
 
-@Component({})
-export default class BtnHref extends Vue {}
+export default defineComponent({
+  name: 'BtnHref',
+});
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

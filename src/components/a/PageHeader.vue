@@ -8,13 +8,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { defineComponent  } from '@vue/composition-api'
 
-
-@Component({
-})
-export default class PageHeader extends Vue {
-}
+export default defineComponent({
+});
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

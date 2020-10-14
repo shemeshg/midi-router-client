@@ -20,15 +20,13 @@
 </template>
 
 <script>
+import { defineComponent, computed } from '@vue/composition-api'
 
-
-export default {
-  computed: {
-    // display the item from store state.
-    loginStatus () {
-      return this.$store.state.loginStatus;
-      
-    }
+export default defineComponent({
+  setup (props, { root }) {
+    const loginStatus = computed(() => root.$store.state.loginStatus)
+    return {loginStatus};
   },
-}
+
+})
 </script>

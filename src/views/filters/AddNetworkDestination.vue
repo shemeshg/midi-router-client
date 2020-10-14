@@ -5,13 +5,13 @@
 </template>
 
 <script>
+import { defineComponent } from '@vue/composition-api'
 // @ is an alias to /src
 import AddNetworkDestinationComponent from '@/components/filters/AddNetworkDestinationComponent.vue'
 
-export default {
-  name: 'Midiin',
+export default defineComponent({
   components: {
     AddNetworkDestinationComponent
   },
-}
+})
 </script>
