@@ -14,10 +14,7 @@
         v-for="(inputItem, inputIdx) in inputZonesAndRoutes"
         v-bind:key="inputIdx"
       >
-        <SplitedInputComponent
-          v-bind:inputVal="inputItem"
-          v-if="inputItem.keyboardSplits.length > 0"
-        />
+        <SplitedInputComponent v-bind:inputVal="inputItem" />
       </div>
     </Card>
 
@@ -35,10 +32,7 @@
         v-for="(inputItem, inputIdx) in inputZonesAndRoutes"
         v-bind:key="inputIdx"
       >
-        <EasyConfigRoutesComponent
-          v-bind:inputVal="inputItem"
-          v-if="inputItem.easyConfigRoutes.length > 0"
-        />
+        <EasyConfigRoutesComponent v-bind:inputVal="inputItem" />
       </div>
     </Card>
   </Page>
@@ -87,7 +81,12 @@ export default defineComponent({
       }
 
       easyConfig.addRoute(Connection.loginStatus.inPorts[routeToAdd.value]);
-      root.$forceUpdate();
+
+      const n = routeToAdd.value;
+      routeToAdd.value = -1;
+      root.$nextTick(() => {
+        routeToAdd.value = n;
+      });
     }
 
     function addSplitedKeyboard() {
@@ -98,7 +97,12 @@ export default defineComponent({
         Connection.loginStatus.inPorts[inputToAdd.value],
         60
       );
-      root.$forceUpdate();
+
+      const n = inputToAdd.value;
+      inputToAdd.value = -1;
+      root.$nextTick(() => {
+        inputToAdd.value = n;
+      });
     }
 
     return {

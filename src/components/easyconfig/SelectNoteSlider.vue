@@ -1,16 +1,22 @@
 <template>
   <Row>
     <RowCellRight>
-      <BtnHref @click="$emit('deleteSelf')">Delete</BtnHref>
+      <BtnHref @click="$emit('delete-self')">Delete</BtnHref>
     </RowCellRight>
     <RowCell>
-      <select class="w3-select" name="option" v-model.number="inputVal.splitPosition">
+      <select
+        class="w3-select"
+        name="option"
+        v-model.number="inputVal.splitPosition"
+      >
         <option value></option>
         <option
-          v-for="(item) in noteNames"
+          v-for="item in noteNames"
           v-bind:key="item.id"
           v-bind:value="item.id"
-        >{{item.id}} - {{item.name}}</option>
+        >
+          {{ item.id }} - {{ item.name }}
+        </option>
       </select>
     </RowCell>
     <input
@@ -30,28 +36,35 @@ import RowCell from "../a/RowCell.vue";
 import RowCellRight from "../a/RowCellRight.vue";
 import BtnHref from "../a/BtnHref.vue";
 
-import { Component, Vue, Prop } from "vue-property-decorator";
+import { defineComponent, computed } from "@vue/composition-api";
 import { KeyboardZone } from "../../src/UserDataConfig/Easyconfig";
 
-@Component({
+export default defineComponent({
   components: {
     Row,
     RowCell,
     RowCellRight,
-    BtnHref
-  }
-})
-export default class SelectNoteSliderComponent extends Vue {
-  @Prop() inputVal!: KeyboardZone;
+    BtnHref,
+  },
+  props: {
+    inputVal: {
+      type: KeyboardZone,
+      required: true,
+    },
+  },
+  setup(props) {
+    const noteNames = computed(() => {
+      const ret: { id: number; name: string }[] = [];
+      for (let i = 9; i <= 96; i++) {
+        ret.push({ id: i, name: props.inputVal.getPositionName(i) });
+      }
+      return ret;
+    });
+    return {noteNames}; 
+  },
+});
 
-  get noteNames() {
-    const ret: { id: number; name: string }[] = [];
-    for (let i = 9; i <= 96; i++) {
-      ret.push({ id: i, name: this.inputVal.getPositionName(i) });
-    }
-    return ret;
-  }
-}
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

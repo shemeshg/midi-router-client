@@ -1,6 +1,10 @@
 <template>
-  <div>
-    <CardHeader>{{inputVal.midiInputId}} - {{inputVal.midiInputName}}</CardHeader>
+  <div
+    v-if="easyConfigRoutes.length > 0"
+  >
+    <CardHeader
+      >{{ inputVal.midiInputId }} - {{ inputVal.midiInputName }}</CardHeader
+    >
     <CardBody>
       <div v-for="(easyConfigRoute, idx) in easyConfigRoutes" v-bind:key="idx">
         <Row>
@@ -32,24 +36,40 @@
           </RowCell>
           <RowCell v-if="easyConfigRoute.isShowSplitRanges">
             <label>Zone</label>
-            <select class="w3-select" name="option" v-model.number="easyConfigRoute.splitRangeId">
+            <select
+              class="w3-select"
+              name="option"
+              v-model.number="easyConfigRoute.splitRangeId"
+            >
               <option value="-1">-</option>
-              <option v-for="(item, idx) in zoneNames" v-bind:key="idx" v-bind:value="idx">{{item}}</option>
+              <option
+                v-for="(item, idx) in zoneNames"
+                v-bind:key="idx"
+                v-bind:value="idx"
+              >
+                {{ item }}
+              </option>
             </select>
           </RowCell>
           <RowCell v-if="easyConfigRoute.isShowData1Filed">
-            <label>{{easyConfigRoute.getData1Description}}</label>
+            <label>{{ easyConfigRoute.getData1Description }}</label>
             <SelectedMidiData v-model.number="easyConfigRoute.fromData1" />
           </RowCell>
           <RowCell v-if="easyConfigRoute.isShowSplitRanges">
             <label>Transpose</label>
-            <select class="w3-select" name="option" v-model.number="easyConfigRoute.transpose">
+            <select
+              class="w3-select"
+              name="option"
+              v-model.number="easyConfigRoute.transpose"
+            >
               <option value="-1">-</option>
               <option
-                v-for="(item) in transposeRange"
+                v-for="item in transposeRange"
                 v-bind:key="item"
                 v-bind:value="item"
-              >{{item}}</option>
+              >
+                {{ item }}
+              </option>
             </select>
           </RowCell>
         </Row>
@@ -70,11 +90,11 @@
             />
           </RowCell>
           <RowCell v-if="easyConfigRoute.isShowToData1Filed">
-            <label>{{easyConfigRoute.getToData1Description}}</label>
+            <label>{{ easyConfigRoute.getToData1Description }}</label>
             <SelectedMidiData v-model.number="easyConfigRoute.toData1" />
           </RowCell>
 
-          <hr style="border-top: 1px dotted red;  " />
+          <hr style="border-top: 1px dotted red" />
         </Row>
       </div>
     </CardBody>
@@ -83,7 +103,8 @@
 
 
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
+import { defineComponent, reactive } from "@vue/composition-api";
+
 import { InputZonesAndRoutes } from "../../src/UserDataConfig/Easyconfig";
 
 import CardHeader from "../a/CardHeader.vue";
@@ -98,7 +119,7 @@ import SelectedMidiEventType from "../a/SelectedMidiEventType.vue";
 import SelectedMidiChannel from "../a/SelectedMidiChannel.vue";
 import SelectedMidiData from "../a/SelectedMidiData.vue";
 
-@Component({
+export default defineComponent({
   components: {
     SelectedMidiChannel,
     SelectedMidiEventType,
@@ -109,71 +130,67 @@ import SelectedMidiData from "../a/SelectedMidiData.vue";
     Row,
     RowCell,
     RowCellRight,
-    BtnHref
-  }
-})
-export default class EasyConfigRoutesComponent extends Vue {
-  @Prop() inputVal!: InputZonesAndRoutes;
-  easyConfigRoutes = this.inputVal.easyConfigRoutes;
+    BtnHref,
+  },
+  props: {
+    inputVal: {
+      type: InputZonesAndRoutes,
+      required: true,
+    },
+  },
+  setup(props) {
+    const easyConfigRoutes = reactive(props.inputVal.easyConfigRoutes);
+    const zoneNames = reactive(props.inputVal.zoneNames);
 
-  zoneNames = this.inputVal.zoneNames;
-
-  deleteSelf(idx: number) {
-    this.easyConfigRoutes.splice(idx, 1);
-  }
-
-  toEventTypeChanged(idx: number) {
-    if (this.easyConfigRoutes[idx].fromSelectedMidiEventTypeId == 0) {
-      this.easyConfigRoutes[idx].fromChannel = this.easyConfigRoutes[
-        idx
-      ].toChannel;
+    function deleteSelf(idx: number) {
+      easyConfigRoutes.splice(idx, 1);
     }
-    if (this.easyConfigRoutes[idx].toSelectedMidiEventTypeId == 0) {
-      this.easyConfigRoutes[idx].fromSelectedMidiEventTypeId = 0;
-    }
-  }
 
-  fromEventTypeChanged(idx: number) {
-    if (this.easyConfigRoutes[idx].fromSelectedMidiEventTypeId == 0) {
-      this.easyConfigRoutes[idx].toSelectedMidiEventTypeId = 0;
-    } else {
-      this.easyConfigRoutes[
-        idx
-      ].toSelectedMidiEventTypeId = this.easyConfigRoutes[
-        idx
-      ].fromSelectedMidiEventTypeId;
+    function toEventTypeChanged(idx: number) {
+      if (easyConfigRoutes[idx].fromSelectedMidiEventTypeId == 0) {
+        easyConfigRoutes[idx].fromChannel = easyConfigRoutes[idx].toChannel;
+      }
+      if (easyConfigRoutes[idx].toSelectedMidiEventTypeId == 0) {
+        easyConfigRoutes[idx].fromSelectedMidiEventTypeId = 0;
+      }
     }
-  }
 
-  toChannelChange(idx: number) {
-    if (this.easyConfigRoutes[idx].fromChannel == -1) {
-      this.easyConfigRoutes[idx].fromChannel = this.easyConfigRoutes[
-        idx
-      ].toChannel;
+    function fromEventTypeChanged(idx: number) {
+      if (easyConfigRoutes[idx].fromSelectedMidiEventTypeId == 0) {
+        easyConfigRoutes[idx].toSelectedMidiEventTypeId = 0;
+      } else {
+        easyConfigRoutes[idx].toSelectedMidiEventTypeId =
+          easyConfigRoutes[idx].fromSelectedMidiEventTypeId;
+      }
     }
-    if (this.easyConfigRoutes[idx].toChannel == -1) {
-      this.easyConfigRoutes[idx].fromChannel = -1;
-    }
-  }
 
-  fromChannelChange(idx: number) {
-    if (this.easyConfigRoutes[idx].fromChannel == -1) {
-      this.easyConfigRoutes[idx].toChannel = -1;
-    } else {
-      this.easyConfigRoutes[idx].toChannel = this.easyConfigRoutes[
-        idx
-      ].fromChannel;
+    function toChannelChange(idx: number) {
+      if (easyConfigRoutes[idx].fromChannel == -1) {
+        easyConfigRoutes[idx].fromChannel = easyConfigRoutes[idx].toChannel;
+      }
+      if (easyConfigRoutes[idx].toChannel == -1) {
+        easyConfigRoutes[idx].fromChannel = -1;
+      }
     }
-  }
 
-  get transposeRange() {
-    const ret = [];
+    function fromChannelChange(idx: number) {
+      if (easyConfigRoutes[idx].fromChannel == -1) {
+        easyConfigRoutes[idx].toChannel = -1;
+      } else {
+        easyConfigRoutes[idx].toChannel = easyConfigRoutes[idx].fromChannel;
+      }
+    }
+
+    const transposeRange = [];
     for (let i = -36; i <= 36; i++) {
-      ret.push(i);
+      transposeRange.push(i);
     }
-    return ret;
-  }
-}
+
+    return {easyConfigRoutes, zoneNames, deleteSelf, toEventTypeChanged, fromEventTypeChanged, 
+            toChannelChange, fromChannelChange}
+
+  },
+});
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
