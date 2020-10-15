@@ -5,7 +5,11 @@
         <p>
           <label>Log to</label>
 
-          <select class="w3-select" name="option" v-model.number="destinationId">
+          <select
+            class="w3-select"
+            name="option"
+            v-model.number="destinationId"
+          >
             <option value="0">Client</option>
             <option value="1">Server</option>
           </select>
@@ -27,11 +31,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { mapState } from "vuex";
-import { mapGetters } from "vuex";
+import {
+  defineComponent,
+  ref,
+  computed,
+  onMounted,
+} from "@vue/composition-api";
 
-import { LoginStatus } from "../../src/loginStatus";
 import * as Connection from "../../src/connection";
 
 import Page from "../a/Page.vue";
@@ -39,76 +45,79 @@ import Card from "../a/Card.vue";
 import CardBody from "../a/CardBody.vue";
 import Btn from "../a/Btn.vue";
 
-@Component({
-  computed: {
-    ...mapState(["loginStatus"]),
-    ...mapGetters(["isLoggedIn"])
-  },
+export default defineComponent({
   components: {
     Page,
     Card,
     CardBody,
-    Btn
-  }
-})
-export default class AddConsoleLogComponent extends Vue {
-  destinationId = 0;
-  userdata = "{}";
-  loginStatus!: LoginStatus;
+    Btn,
+  },
+  setup(props, { root }) {
+    const destinationId = ref(0);
+    const userdata = ref("{}");
 
-  get filterid() {
-    return this.$route.params.filterid;
-  }
-  get filterObj() {
-    return this.midiRouteInput.midiRouterChains[
-      parseInt(this.chainid)
-    ].getFilterToConsle(parseInt(this.filterid));
-  }
-  mounted() {
-    if (this.filterid === "-1") {
-      return;
+    const filterid = computed(() => {
+      return root.$route.params.filterid;
+    });
+
+    const midiinid = computed(() => {
+      return root.$route.params.midiinid;
+    });
+
+    const midiRouteInput = computed(() => {
+      return Connection.loginStatus.userDataConfig.getMidiRouteInput(
+        Connection.loginStatus.inPorts[Number(midiinid.value)]
+      );
+    });
+
+    const chainid = computed(() => {
+      return root.$route.params.chainid;
+    });
+
+    function filterObj() {
+      return midiRouteInput.value.midiRouterChains[
+        parseInt(chainid.value)
+      ].getFilterToConsle(parseInt(filterid.value));
     }
-    this.destinationId = this.filterObj.logTo;
-    this.userdata = JSON.stringify(this.filterObj.userdata);
-  }
 
-  doOk() {
-    if (this.filterid === "-1") {
-      this.midiRouteInput.midiRouterChains[
-        parseInt(this.chainid)
-      ].addFilterToConsle(this.destinationId, JSON.parse(this.userdata));
-    } else {
-      this.filterObj.setVal(this.destinationId, JSON.parse(this.userdata));
+
+
+    const headrMsg = computed(() => {
+      return `${midiinid.value}-${chainid.value} Add console log`;
+    });
+
+    function doOk() {
+      if (filterid.value === "-1") {
+        midiRouteInput.value.midiRouterChains[
+          parseInt(chainid.value)
+        ].addFilterToConsle(destinationId.value, JSON.parse(userdata.value));
+      } else {
+        filterObj().setVal(destinationId.value, JSON.parse(userdata.value));
+      }
+      root.$router.push(`/midiin/${midiinid.value}`);
     }
-    this.$router.push(`/midiin/${this.midiinid}`);
-  }
 
-  get midiRouteInput() {
-    return Connection.loginStatus.userDataConfig.getMidiRouteInput(
-      Connection.loginStatus.inPorts[ Number(this.midiinid) ]
-    );
-  }
-
-  doCancel() {
-    if (this.filterid === "-1") {
-      this.$router.push(`/AddChainFilter/${this.midiinid}/${this.chainid}`);
-    } else {
-      this.$router.push(`/midiin/${this.midiinid}`);
+    function doCancel() {
+      if (filterid.value === "-1") {
+        root.$router.push(`/AddChainFilter/${midiinid.value}/${chainid.value}`);
+      } else {
+        root.$router.push(`/midiin/${midiinid.value}`);
+      }
     }
-  }
 
-  get midiinid() {
-    return this.$route.params.midiinid;
-  }
+    onMounted(() => {
+      if (filterid.value === "-1") {
+        return;
+      }
+      destinationId.value = filterObj().logTo;
+      userdata.value = JSON.stringify(filterObj().userdata);
+    });
 
-  get chainid() {
-    return this.$route.params.chainid;
-  }
+    return {doCancel, doOk, headrMsg, midiinid, chainid, 
+        midiRouteInput, filterid, userdata, destinationId}
+  },
+});
 
-  get headrMsg(): string {
-    return `${this.midiinid}-${this.chainid} Add console log`;
-  }
-}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
