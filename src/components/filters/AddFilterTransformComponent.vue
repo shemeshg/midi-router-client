@@ -8,7 +8,11 @@
         </p>
         <p>
           <label>Condition action</label>
-          <select class="w3-select" name="option" v-model.number="conditionAction">
+          <select
+            class="w3-select"
+            name="option"
+            v-model.number="conditionAction"
+          >
             <option value="0">Do not delete</option>
             <option value="1">Delete if not met condition</option>
             <option value="2">Delete if met condition</option>
@@ -78,11 +82,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { mapState } from "vuex";
-import { mapGetters } from "vuex";
+import {
+  defineComponent,
+  ref,
+  computed,
+  onMounted,
+} from "@vue/composition-api";
 
-import { LoginStatus } from "../../src/loginStatus";
 import * as Connection from "../../src/connection";
 
 import Page from "../a/Page.vue";
@@ -91,103 +97,103 @@ import CardBody from "../a/CardBody.vue";
 import CardHeader from "../a/CardHeader.vue";
 import Btn from "../a/Btn.vue";
 
-@Component({
-  computed: {
-    ...mapState(["loginStatus"]),
-    ...mapGetters(["isLoggedIn"])
-  },
+export default defineComponent({
   components: {
     Page,
     Card,
     CardBody,
     CardHeader,
-    Btn
-  }
-})
-export default class AddFilterTransformComponent extends Vue {
-  loginStatus!: LoginStatus;
+    Btn,
+  },
+  setup(props, { root }) {
+    const description = ref("");
+    const conditionAction = ref(0);
+    const filterChannel = ref("[[0,16,0]]");
+    const filterEvents = ref("[[0,16,0]]");
+    const filterData1 = ref("[[0,127,0]]");
+    const filterData2 = ref("[[0,127,0]]");
 
-  description = "";
-  conditionAction = 0;
-  filterChannel = "[[0,16,0]]";
-  filterEvents = "[[0,16,0]]";
-  filterData1 = "[[0,127,0]]";
-  filterData2 = "[[0,127,0]]";
+    const filterid = computed(() => {
+      return root.$route.params.filterid;
+    });
 
-  get filterid() {
-    return this.$route.params.filterid;
-  }
-  get filterObj() {
-    return this.midiRouteInput.midiRouterChains[
-      parseInt(this.chainid)
-    ].getFilterFilterAndTransform(parseInt(this.filterid));
-  }
-  mounted() {
-    if (this.filterid === "-1") {
-      return;
-    }
-    this.conditionAction = this.filterObj.conditionAction;
-    this.description = this.filterObj.name;
-    this.filterChannel = this.filterObj.filterChannel;
-    this.filterEvents = this.filterObj.filterEvents;
-    this.filterData1 = this.filterObj.filterData1;
-    this.filterData2 = this.filterObj.filterData2;
-  }
+    const midiinid = computed(() => {
+      return root.$route.params.midiinid;
+    });
 
-  doOk() {
-    if (this.description === "") {
-      this.description = "Filter and transform";
-    }
-    if (this.filterid === "-1") {
-      this.midiRouteInput.midiRouterChains[
-        parseInt(this.chainid)
-      ].addFilterFilterAndTransform(
-        this.description,
-        this.conditionAction,
-        this.filterChannel,
-        this.filterEvents,
-        this.filterData1,
-        this.filterData2
+    const chainid = computed(() => {
+      return root.$route.params.chainid;
+    });
+
+    const headrMsg = computed(() => {
+      return `${midiinid.value}-${chainid.value} Add filter and transform`;
+    });
+
+    const midiRouteInput = computed(() => {
+      return Connection.loginStatus.userDataConfig.getMidiRouteInput(
+        Connection.loginStatus.inPorts[Number(midiinid.value)]
       );
-    } else {
-      this.filterObj.setVal(
-        this.description,
-        this.conditionAction,
-        this.filterChannel,
-        this.filterEvents,
-        this.filterData1,
-        this.filterData2
-      );
+    });
+
+    const filterObj = computed(() => {
+      return midiRouteInput.value.midiRouterChains[
+        parseInt(chainid.value)
+      ].getFilterFilterAndTransform(parseInt(filterid.value));
+    });
+
+    onMounted(() => {
+      if (filterid.value === "-1") {
+        return;
+      }
+      conditionAction.value = filterObj.value.conditionAction;
+      description.value = filterObj.value.name;
+      filterChannel.value = filterObj.value.filterChannel;
+      filterEvents.value = filterObj.value.filterEvents;
+      filterData1.value = filterObj.value.filterData1;
+      filterData2.value = filterObj.value.filterData2;
+    });
+
+    function doOk() {
+      if (description.value === "") {
+        description.value = "Filter and transform";
+      }
+      if (filterid.value === "-1") {
+        midiRouteInput.value.midiRouterChains[
+          parseInt(chainid.value)
+        ].addFilterFilterAndTransform(
+          description.value,
+          conditionAction.value,
+          filterChannel.value,
+          filterEvents.value,
+          filterData1.value,
+          filterData2.value
+        );
+      } else {
+        filterObj.value.setVal(
+          description.value,
+          conditionAction.value,
+          filterChannel.value,
+          filterEvents.value,
+          filterData1.value,
+          filterData2.value
+        );
+      }
+      root.$router.push(`/midiin/${midiinid.value}`);
     }
-    this.$router.push(`/midiin/${this.midiinid}`);
-  }
 
-  doCancel() {
-    if (this.filterid === "-1") {
-      this.$router.push(`/AddChainFilter/${this.midiinid}/${this.chainid}`);
-    } else {
-      this.$router.push(`/midiin/${this.midiinid}`);
+    function doCancel() {
+      if (filterid.value === "-1") {
+        root.$router.push(`/AddChainFilter/${midiinid.value}/${chainid.value}`);
+      } else {
+        root.$router.push(`/midiin/${midiinid.value}`);
+      }
     }
-  }
 
-  get midiRouteInput() {
-    return Connection.loginStatus.userDataConfig.getMidiRouteInput(
-      Connection.loginStatus.inPorts[ Number(this.midiinid) ]
-    );
-  }
-
-  get midiinid() {
-    return this.$route.params.midiinid;
-  }
-
-  get chainid() {
-    return this.$route.params.chainid;
-  }
-
-  get headrMsg(): string {
-    return `${this.midiinid}-${this.chainid} Add filter and transform`;
-  }
-}
+    return {doCancel,doOk,filterObj,midiRouteInput,headrMsg,
+          chainid,midiinid,filterid,filterData2,filterData1,
+          filterEvents,filterChannel,conditionAction,description}
+  },
+});
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
