@@ -262,6 +262,14 @@ export default defineComponent({
       forceUpdate();
     }
 
+    function _resetInPortsWithoutSelfClockPropegate(){
+      inPortsWithoutSelfClockPropegate.value.splice(0,inPortsWithoutSelfClockPropegate.value.length)
+      _getInPortsWithoutSelfClockPropegate().forEach((row)=>{
+        inPortsWithoutSelfClockPropegate.value.push(row)
+      })
+      propegateInputToAdd.value = ""
+    }
+
     function spliceClockPropegateInput(inputsId: number) {
       for (
         let i = 0;
@@ -273,15 +281,11 @@ export default defineComponent({
           inputsId
         ) {
           midiRouteInput.value.midiRouteClock.propegateInputs.splice(i, 1);
-          forceUpdate();
           continue;
         }
       }
 
-      inPortsWithoutSelfClockPropegate.value.splice(0,inPortsWithoutSelfClockPropegate.value.length)
-      _getInPortsWithoutSelfClockPropegate().forEach((row)=>{
-        inPortsWithoutSelfClockPropegate.value.push(row)
-      })
+      _resetInPortsWithoutSelfClockPropegate();
 
     }
 
@@ -293,11 +297,7 @@ export default defineComponent({
       midiRouteInput.value.addClockPropegateInput(
         parseInt(propegateInputToAdd.value)
       );
-      inPortsWithoutSelfClockPropegate.value.splice(0,inPortsWithoutSelfClockPropegate.value.length)
-      _getInPortsWithoutSelfClockPropegate().forEach((row)=>{
-        inPortsWithoutSelfClockPropegate.value.push(row)
-      })
-      forceUpdate();
+      _resetInPortsWithoutSelfClockPropegate()
     }
 
     function addChain() {
