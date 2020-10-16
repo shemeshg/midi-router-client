@@ -21,7 +21,9 @@
               v-for="itm in remoteMidiPorts"
               v-bind:key="itm.midiInputId"
               v-bind:value="itm.midiInputId"
-            >{{itm.midiInputId}} - {{itm.midiInputName}}</option>
+            >
+              {{ itm.midiInputId }} - {{ itm.midiInputName }}
+            </option>
           </select>
         </p>
       </CardBody>
@@ -37,11 +39,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { mapState } from "vuex";
-import { mapGetters } from "vuex";
+import {
+  defineComponent,
+  ref,
+  computed,
+  onMounted,
+} from "@vue/composition-api";
 
-import { LoginStatus } from "../../src/loginStatus";
 import * as Connection from "../../src/connection";
 import { BaseMidiRouteInput } from "../../src/UserDataConfig/MidiRoutePreset/BaseMidiRouteInput";
 
@@ -50,106 +54,116 @@ import Card from "../a/Card.vue";
 import CardBody from "../a/CardBody.vue";
 import Btn from "../a/Btn.vue";
 
-@Component({
-  computed: {
-    ...mapState(["loginStatus"]),
-    ...mapGetters(["isLoggedIn"])
-  },
+
+export default defineComponent({
   components: {
     Page,
     Card,
     CardBody,
-    Btn
-  }
-})
-export default class AddNetworkDestinationComponent extends Vue {
-  loginStatus!: LoginStatus;
-  serverName = "";
-  portNumber = 12345;
-  destinationMidiId = "";
-  remoteMidiPorts: BaseMidiRouteInput[] = [];
+    Btn,
+  },
+  setup(props, { root }) {
+    const serverName = ref("");
+    const portNumber = ref(12345);
+    const destinationMidiId = ref("");
 
-  get filterid() {
-    return this.$route.params.filterid;
-  }
-  get filterObj() {
-    return this.midiRouteInput.midiRouterChains[
-      parseInt(this.chainid)
-    ].getFilterNetworkDestination(parseInt(this.filterid));
-  }
+    const _bmi: BaseMidiRouteInput[] = [];
+    const remoteMidiPorts = ref(_bmi);
 
-  mounted() {
-    if (this.filterid === "-1") {
-      return;
+    const filterid = computed(() => {
+      return root.$route.params.filterid;
+    });
+
+    const midiinid = computed(() => {
+      return root.$route.params.midiinid;
+    });
+
+    const chainid = computed(() => {
+      return root.$route.params.chainid;
+    });
+
+    const headrMsg = computed(() => {
+      return `${midiinid.value}-${chainid.value} Add Network Destination`;
+    });
+
+    const midiRouteInput = computed(() => {
+      return Connection.loginStatus.userDataConfig.getMidiRouteInput(
+        Connection.loginStatus.inPorts[Number(midiinid.value)]
+      );
+    });
+
+    const filterObj = computed(() => {
+      return midiRouteInput.value.midiRouterChains[
+        parseInt(chainid.value)
+      ].getFilterNetworkDestination(parseInt(filterid.value));
+    });
+
+    async function getRemotePorts() {
+      destinationMidiId.value = "";
+      remoteMidiPorts.value.splice(0, remoteMidiPorts.value.length);
+      const l = await Connection.loginNoSingleTon(
+        serverName.value,
+        portNumber.value
+      );
+
+      const keys = Object.keys(l.inPorts);
+
+      for (let i = 0; i < keys.length; i++) {
+        const ikey = parseInt(keys[i]);
+        remoteMidiPorts.value.push({
+          midiInputId: ikey,
+          midiInputName: l.inPorts[ikey],
+        });
+      }
     }
-    this.serverName = this.filterObj.serverName;
-    this.portNumber = this.filterObj.serverPort;
-    this.destinationMidiId = this.filterObj.baseMidiRouteInput.midiInputId.toString();
-    this.remoteMidiPorts = [this.filterObj.baseMidiRouteInput];
-  }
 
-  doOk() {
-    if (this.destinationMidiId === "") {
-      return;
+    function doOk() {
+      if (destinationMidiId.value === "") {
+        return;
+      }
+
+      const inputObj = remoteMidiPorts.value.filter((row) => {
+        return row.midiInputId === parseInt(destinationMidiId.value);
+      })[0];
+
+      if (filterid.value === "-1") {
+        midiRouteInput.value.midiRouterChains[
+          parseInt(chainid.value)
+        ].addFilterNetworkDestination(
+          serverName.value,
+          portNumber.value,
+          inputObj
+        );
+      } else {
+        filterObj.value.setVal(serverName.value, portNumber.value, inputObj);
+      }
+
+      root.$router.push(`/midiin/${midiinid.value}`);
     }
 
-    const inputObj = this.remoteMidiPorts.filter(row => {
-      return row.midiInputId === parseInt(this.destinationMidiId);
-    })[0];
-
-    if (this.filterid === "-1") {
-      this.midiRouteInput.midiRouterChains[
-        parseInt(this.chainid)
-      ].addFilterNetworkDestination(this.serverName, this.portNumber, inputObj);
-    } else {
-      this.filterObj.setVal(this.serverName, this.portNumber, inputObj);
+    function doCancel() {
+      if (filterid.value === "-1") {
+        root.$router.push(`/AddChainFilter/${midiinid.value}/${chainid.value}`);
+      } else {
+        root.$router.push(`/midiin/${midiinid.value}`);
+      }
     }
 
-    this.$router.push(`/midiin/${this.midiinid}`);
-  }
+    onMounted(() => {
+      if (filterid.value === "-1") {
+        return;
+      }
+      serverName.value = filterObj.value.serverName;
+      portNumber.value = filterObj.value.serverPort;
+      destinationMidiId.value = filterObj.value.baseMidiRouteInput.midiInputId.toString();
+      remoteMidiPorts.value = [filterObj.value.baseMidiRouteInput];
+    });
 
-  doCancel() {
-    if (this.filterid === "-1") {
-      this.$router.push(`/AddChainFilter/${this.midiinid}/${this.chainid}`);
-    } else {
-      this.$router.push(`/midiin/${this.midiinid}`);
-    }
-  }
-
-  async getRemotePorts() {
-    this.destinationMidiId = "";
-    this.remoteMidiPorts = [];
-    const l = await Connection.loginNoSingleTon(
-      this.serverName,
-      this.portNumber
-    );
-
-    const keys = Object.keys(l.inPorts);
-
-    for (let i = 0; i < keys.length; i++) {
-      const ikey = parseInt(keys[i]);
-      this.remoteMidiPorts.push( {midiInputId: ikey, midiInputName: l.inPorts[ikey] });
-    }
-  }
-
-  get midiRouteInput() {
-    return Connection.loginStatus.userDataConfig.getMidiRouteInput(
-      Connection.loginStatus.inPorts[ Number(this.midiinid) ]
-    );
-  }
-
-  get midiinid() {
-    return this.$route.params.midiinid;
-  }
-
-  get chainid() {
-    return this.$route.params.chainid;
-  }
-
-  get headrMsg(): string {
-    return `${this.midiinid}-${this.chainid} Add Network Destination`;
-  }
-}
+    return {doCancel, doOk, getRemotePorts, filterObj, 
+        midiRouteInput, headrMsg, chainid, midiinid, filterid, remoteMidiPorts,
+        destinationMidiId, portNumber, serverName}
+  },
+});
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

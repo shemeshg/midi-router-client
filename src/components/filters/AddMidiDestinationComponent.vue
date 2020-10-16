@@ -25,11 +25,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { mapState } from "vuex";
-import { mapGetters } from "vuex";
+import {
+  defineComponent,
+  ref,
+  computed,
+  onMounted,
+} from "@vue/composition-api";
 
-import { LoginStatus } from "../../src/loginStatus";
 import * as Connection from "../../src/connection";
 
 import ServerInOutPortsSelect from "../a/ServerInOutPortsSelect.vue";
@@ -39,89 +41,97 @@ import CardBody from "../a/CardBody.vue";
 import RowCell from "../a/RowCell.vue";
 import Btn from "../a/Btn.vue";
 
-@Component({
-  computed: {
-    ...mapState(["loginStatus"]),
-    ...mapGetters(["isLoggedIn"])
-  },
+export default defineComponent({
   components: {
     ServerInOutPortsSelect,
     Page,
     Card,
     CardBody,
     RowCell,
-    Btn
-  }
-})
-export default class AddMidiDestinationComponent extends Vue {
-  inputToAdd = -1;
+    Btn,
+  },
+  setup(props, { root }) {
+    const inputToAdd = ref(-1);
 
-  loginStatus!: LoginStatus;
+    const filterid = computed(() => {
+      return root.$route.params.filterid;
+    });
 
-  mounted() {
-    if (this.filterid === "-1") {
-      return;
+    const midiinid = computed(() => {
+      return root.$route.params.midiinid;
+    });
+
+    const chainid = computed(() => {
+      return root.$route.params.chainid;
+    });
+
+    const headrMsg = computed(() => {
+      return `${midiinid.value}-${chainid.value} Add Midi Destination`;
+    });
+
+    const midiRouteInput = computed(() => {
+      return Connection.loginStatus.userDataConfig.getMidiRouteInput(
+        Connection.loginStatus.inPorts[Number(midiinid.value)]
+      );
+    });
+
+    const filterMidiDestination = computed(() => {
+      return midiRouteInput.value.midiRouterChains[
+        parseInt(chainid.value)
+      ].getFilterMidiDestination(parseInt(filterid.value));
+    });
+
+    const inPortsWithoutSelf = computed(() => {
+      return midiRouteInput.value.inPortsWithoutSelf;
+    });
+
+    function doOk() {
+      if (inputToAdd.value === -1) {
+        return;
+      }
+      const inputObj = inPortsWithoutSelf.value.filter((row) => {
+        return row.midiInputId === inputToAdd.value;
+      })[0];
+      if (filterid.value === "-1") {
+        midiRouteInput.value.midiRouterChains[
+          parseInt(chainid.value)
+        ].addFilterMidiDestination(inputObj);
+      } else {
+        filterMidiDestination.value.setVal(inputObj);
+      }
+      root.$router.push(`/midiin/${midiinid.value}`);
     }
-    this.inputToAdd = this.filterMidiDestination.baseMidiRouteInput.midiInputId;
-  }
 
-  get filterMidiDestination() {
-    return this.midiRouteInput.midiRouterChains[
-      parseInt(this.chainid)
-    ].getFilterMidiDestination(parseInt(this.filterid));
-  }
-
-  doOk() {
-    if (this.inputToAdd === -1) {
-      return;
+    function doCancel() {
+      if (filterid.value === "-1") {
+        root.$router.push(`/AddChainFilter/${midiinid.value}/${chainid.value}`);
+      } else {
+        root.$router.push(`/midiin/${midiinid.value}`);
+      }
     }
-    const inputObj = this.inPortsWithoutSelf.filter(row => {
-      return row.midiInputId === this.inputToAdd;
-    })[0];
-    if (this.filterid === "-1") {
-      this.midiRouteInput.midiRouterChains[
-        parseInt(this.chainid)
-      ].addFilterMidiDestination(inputObj);
-    } else {
-      this.filterMidiDestination.setVal(inputObj);
-    }
-    this.$router.push(`/midiin/${this.midiinid}`);
-  }
 
-  doCancel() {
-    if (this.filterid === "-1") {
-      this.$router.push(`/AddChainFilter/${this.midiinid}/${this.chainid}`);
-    } else {
-      this.$router.push(`/midiin/${this.midiinid}`);
-    }
-  }
+    onMounted(() => {
+      if (filterid.value === "-1") {
+        return;
+      }
+      inputToAdd.value =
+        filterMidiDestination.value.baseMidiRouteInput.midiInputId;
+    });
 
-  get inPortsWithoutSelf() {
-    return this.midiRouteInput.inPortsWithoutSelf;
-  }
-
-  get midiRouteInput() {
-    return Connection.loginStatus.userDataConfig.getMidiRouteInput(      
-      Connection.loginStatus.inPorts[ Number(this.midiinid) ]
-    );
-  }
-
-  get filterid() {
-    return this.$route.params.filterid;
-  }
-
-  get midiinid() {
-    return this.$route.params.midiinid;
-  }
-
-  get chainid() {
-    return this.$route.params.chainid;
-  }
-
-  get headrMsg(): string {
-    return `${this.midiinid}-${this.chainid} Add Midi Destination`;
-  }
-}
+    return {
+      doCancel,
+      doOk,
+      inPortsWithoutSelf,
+      filterMidiDestination,
+      midiRouteInput,
+      headrMsg,
+      chainid,
+      midiinid,
+      filterid,
+      inputToAdd,
+    };
+  },
+});
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
