@@ -137,7 +137,7 @@ export default defineComponent({
       midiRouteInput.value.midiRouterChains[
         props.chainIdx
       ].midiRoutersFilters.splice(parseInt(filterSelected.value), 1);
-      filterSelected.value = ""
+      filterSelected.value = "";
       root.$forceUpdate();
     }
 
@@ -185,8 +185,15 @@ export default defineComponent({
       midiRouteInput.value.midiRouterChains[props.chainIdx].midiRoutersFilters;
     });
 
-    return {addChainFilter, editChainFilter,deleteChainFilter, doMoveDown,
-      doMoveUp, midiRouteInput, filterSelected}
+    return {
+      addChainFilter,
+      editChainFilter,
+      deleteChainFilter,
+      doMoveDown,
+      doMoveUp,
+      midiRouteInput,
+      filterSelected,
+    };
   },
 });
 </script>
