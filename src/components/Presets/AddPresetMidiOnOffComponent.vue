@@ -1,15 +1,20 @@
 <template>
   <div>
     <Card :mt="true">
-      <CardHeader>{{description}}</CardHeader>
+      <CardHeader>{{ description }}</CardHeader>
       <CardBody>
         <p>
           <label>Midi input</label>
-          <ServerInOutPortsSelect v-model.number="presetMidiControl.port" mode="in" />
+          <ServerInOutPortsSelect
+            v-model.number="presetMidiControl.port"
+            mode="in"
+          />
         </p>
         <p v-if="presetMidiControl.port !== -1">
           <label>Event</label>
-          <SelectedMidiEventType v-model.number="presetMidiControl.eventTypeId" />
+          <SelectedMidiEventType
+            v-model.number="presetMidiControl.eventTypeId"
+          />
         </p>
         <p v-if="presetMidiControl.port !== -1">
           <label>channel</label>
@@ -29,9 +34,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
-import { mapState } from "vuex";
-import { mapGetters } from "vuex";
+import {
+  defineComponent,
+  computed,
+} from "@vue/composition-api";
 
 import * as Connection from "../../src/connection";
 
@@ -46,11 +52,7 @@ import SelectedMidiEventType from "../a/SelectedMidiEventType.vue";
 import SelectedMidiChannel from "../a/SelectedMidiChannel.vue";
 import SelectedMidiData from "../a/SelectedMidiData.vue";
 
-@Component({
-  computed: {
-    ...mapState(["loginStatus"]),
-    ...mapGetters(["isLoggedIn"])
-  },
+export default defineComponent({
   components: {
     Card,
     CardHeader,
@@ -58,36 +60,44 @@ import SelectedMidiData from "../a/SelectedMidiData.vue";
     ServerInOutPortsSelect,
     SelectedMidiEventType,
     SelectedMidiChannel,
-    SelectedMidiData
-  }
-})
-export default class AddPresetMidiOnOffComponent extends Vue {
-  //@Prop() inputVal!: InputZonesAndRoutes;
-  @Prop() description!: string;
-  @Prop() presetMidiControl!: PresetMidiControl;
+    SelectedMidiData,
+  },
+  props: {
+    description: {
+      type: String,
+      required: true,
+    },
+    presetMidiControl: {
+      type: PresetMidiControl,
+      required: true,
+    },
+  },
+  setup() {
+    const inPorts = computed(() => {
+      return Connection.loginStatus.inPorts;
+    });
 
-  dropdownMidiEventType = dropdownMidiEventType;
+    const channels = computed(() => {
+      const ret = [];
+      for (let i = 1; i <= 16; i++) {
+        ret.push(i);
+      }
+      return ret;
+    });
 
-  get inPorts() {
-    return Connection.loginStatus.inPorts;
-  }
+    const range127 = computed(() => {
+      const ret = [];
+      for (let i = 0; i <= 127; i++) {
+        ret.push(i);
+      }
+      return ret;
+    });
 
-  get channels() {
-    const ret = [];
-    for (let i = 1; i <= 16; i++) {
-      ret.push(i);
-    }
-    return ret;
-  }
+    return { dropdownMidiEventType, range127, channels, inPorts };
+  },
+});
 
-  get range127() {
-    const ret = [];
-    for (let i = 0; i <= 127; i++) {
-      ret.push(i);
-    }
-    return ret;
-  }
-}
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

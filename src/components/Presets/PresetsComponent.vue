@@ -3,21 +3,37 @@
     <Card>
       <CardHeader>Select active preset</CardHeader>
       <CardBody>
-        <p v-for="(itemPreset, indexPreset) in midiRoutePresets" v-bind:key="indexPreset">
-          <input class="w3-radio" type="radio" v-model="activePresetID" :value="indexPreset" />
+        <p
+          v-for="(itemPreset, indexPreset) in midiRoutePresets"
+          v-bind:key="indexPreset"
+        >
+          <input
+            class="w3-radio"
+            type="radio"
+            v-model="activePresetID"
+            :value="indexPreset"
+          />
 
           <label class="switch w3-right">
-            <input type="checkbox" v-model="itemPreset.isEnabled" @change="doUpdate" />
+            <input
+              type="checkbox"
+              v-model="itemPreset.isEnabled"
+              @change="doUpdate"
+            />
             <span class="slider round"></span>
           </label>
 
-          <label>{{indexPreset}} {{itemPreset.name}}</label>
+          <label>{{ indexPreset }} {{ itemPreset.name }}</label>
         </p>
 
         <p>
           <Btn @click="$router.push(`/preset/-1`)">Add</Btn>
-          <Btn :ml="true" @click="$router.push(`/preset/${activePresetID}`)">Edit</Btn>
-          <Btn :ml="true" v-if="midiRoutePresets.length > 1" @click="doDelete()">Delete</Btn>
+          <Btn :ml="true" @click="$router.push(`/preset/${activePresetID}`)"
+            >Edit</Btn
+          >
+          <Btn :ml="true" v-if="midiRoutePresets.length > 1" @click="doDelete()"
+            >Delete</Btn
+          >
 
           <Btn :ml="true" @click="doMoveUp()">
             <i class="fa fa-arrow-up"></i>
@@ -30,14 +46,23 @@
     </Card>
 
     <CardBody>
-      <input class="w3-check w3-margin-left" type="checkbox" v-model="changeAndApplay" />
-      <label>Auto applay select change and file upload</label>
+      <input
+        class="w3-check w3-margin-left"
+        type="checkbox"
+        v-model="changeAndApplay"
+      />
+      <label>Auto applay select change on file upload</label>
     </CardBody>
 
     <Card :mt="true">
       <p>
         <label class="w3-margin-left">Upload config</label>
-        <input class="w3-button w3-teal w3-margin-left" type="file" @change="loadFile" ref="el" />
+        <input
+          class="w3-button w3-teal w3-margin-left"
+          type="file"
+          @change="loadFile"
+          ref="el"
+        />
 
         <Btn :ml="true" @click="saveToFile">Appay and download</Btn>
       </p>
@@ -46,9 +71,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { mapState } from "vuex";
-import { mapGetters } from "vuex";
+import {
+  defineComponent,
+  ref,
+  computed,
+  watch,
+} from "@vue/composition-api";
 
 import * as Connection from "../../src/connection";
 import * as Utils from "../../src/Utils";
@@ -59,94 +87,104 @@ import CardHeader from "../a/CardHeader.vue";
 import CardBody from "../a/CardBody.vue";
 import Btn from "../a/Btn.vue";
 
-@Component({
-  computed: {
-    ...mapState(["loginStatus"]),
-    ...mapGetters(["isLoggedIn"])
-  },
+export default defineComponent({
   components: {
     Page,
     Card,
     CardHeader,
     CardBody,
-    Btn
-  }
-})
-export default class PresetsComponent extends Vue {
-  changeAndApplay = true;
-
-  midiRoutePresets = Connection.loginStatus.userDataConfig.midiRoutePresets;
-  get activePresetID() {
-    return Connection.loginStatus.userDataConfig.activePresetID;
-  }
-
-  set activePresetID(idx: number) {
-    Connection.loginStatus.userDataConfig.activePresetID = idx;
-    if (this.changeAndApplay) {
-      Connection.loginStatus.userDataConfig.applyChanges(Connection.connection);
-    }
-  }
-
-  doUpdate() {
-    if (this.changeAndApplay) {
-      Connection.loginStatus.userDataConfig.applyChanges(Connection.connection);
-    }
-  }
-
-  doDelete() {
-    Connection.loginStatus.userDataConfig.midiRoutePresets.splice(
-      this.activePresetID,
-      1
+    Btn,
+  },
+  setup(props, { root }) {
+    const changeAndApplay = ref(true);
+    const midiRoutePresets = ref(
+      Connection.loginStatus.userDataConfig.midiRoutePresets
     );
-    this.activePresetID = 0;
-  }
 
-  applyChanges() {
-    Connection.loginStatus.userDataConfig.applyChanges(Connection.connection);
-  }
+    const activePresetID = computed(() => {
+      return Connection.loginStatus.userDataConfig.activePresetID;
+    });
+    function _setActivePresetID(idx: number) {
+      Connection.loginStatus.userDataConfig.activePresetID = idx;
+      if (changeAndApplay.value) {
+        Connection.loginStatus.userDataConfig.applyChanges(
+          Connection.connection
+        );
+      }
+    }
+    watch(
+      () => activePresetID.value,
+      (idx: number) => {
+        _setActivePresetID(idx);
+      }
+    );
 
-  async loadFile() {
-    // eslint-disable-next-line
-    const el: any = this.$refs.el;
-    const str = await Utils.readFileAsString(el);
+    function doUpdate() {
+      if (changeAndApplay.value) {
+        Connection.loginStatus.userDataConfig.applyChanges(
+          Connection.connection
+        );
+      }
+    }
 
-    el.value = "";
+    function doDelete() {
+      midiRoutePresets.value.splice(activePresetID.value, 1);
+      _setActivePresetID(0);
+    }
 
-    Connection.loginStatus.resetUserDataConfig(JSON.parse(str));
+    function applyChanges() {
+      Connection.loginStatus.userDataConfig.applyChanges(Connection.connection);
+    }
 
-    if (this.changeAndApplay) {
+    async function loadFile() {
+      // eslint-disable-next-line
+      const el: any = root.$refs.el;
+      const str = await Utils.readFileAsString(el);
+
+      el.value = "";
+
+      Connection.loginStatus.resetUserDataConfig(JSON.parse(str));
+
+      if (changeAndApplay.value) {
+        await Connection.loginStatus.userDataConfig.applyChanges(
+          Connection.connection
+        );
+      }
+    }
+
+    async function saveToFile() {
       await Connection.loginStatus.userDataConfig.applyChanges(
         Connection.connection
       );
+      Utils.downloadFileAsString(
+        "config.midiRouter",
+        JSON.stringify(Connection.loginStatus.userDataConfig)
+      );
     }
-  }
 
-  async saveToFile() {
-    await Connection.loginStatus.userDataConfig.applyChanges(
-      Connection.connection
-    );
-    Utils.downloadFileAsString(
-      "config.midiRouter",
-      JSON.stringify(Connection.loginStatus.userDataConfig)
-    );
-  }
+    function doMoveUp() {
+      Utils.arrayMove(
+        midiRoutePresets.value,
+        activePresetID.value,
+        activePresetID.value - 1
+      );
+    }
 
-  doMoveUp() {
-    Utils.arrayMove(
-      Connection.loginStatus.userDataConfig.midiRoutePresets,
-      this.activePresetID,
-      this.activePresetID - 1
-    );
-  }
+    function doMoveDown() {
+      Utils.arrayMove(
+        midiRoutePresets.value,
+        activePresetID.value,
+        activePresetID.value + 1
+      );
+    }
 
-  doMoveDown() {
-    Utils.arrayMove(
-      Connection.loginStatus.userDataConfig.midiRoutePresets,
-      this.activePresetID,
-      this.activePresetID + 1
-    );
-  }
-}
+    return {doMoveDown, doMoveUp,saveToFile,  loadFile, applyChanges, doDelete, doUpdate,
+           activePresetID, midiRoutePresets, changeAndApplay}
+
+  },
+});
+
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

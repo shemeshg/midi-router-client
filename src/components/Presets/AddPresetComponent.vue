@@ -10,8 +10,14 @@
     </Card>
 
     <h5>Midi controller (optional)</h5>
-    <AddPresetMidiOnOffComponent description="ON" v-bind:presetMidiControl="midiOn"></AddPresetMidiOnOffComponent>
-    <AddPresetMidiOnOffComponent description="OFF" v-bind:presetMidiControl="midiOff"></AddPresetMidiOnOffComponent>
+    <AddPresetMidiOnOffComponent
+      description="ON"
+      v-bind:presetMidiControl="midiOn"
+    ></AddPresetMidiOnOffComponent>
+    <AddPresetMidiOnOffComponent
+      description="OFF"
+      v-bind:presetMidiControl="midiOff"
+    ></AddPresetMidiOnOffComponent>
 
     <Card>
       <CardBody>
@@ -23,14 +29,18 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { mapState } from "vuex";
-import { mapGetters } from "vuex";
+import {
+  defineComponent,
+  ref,
+  computed,
+  onMounted,
+  reactive,
+} from "@vue/composition-api";
 
 import * as Connection from "../../src/connection";
 import {
   PresetMidiControl,
-  PresetMidiType
+  PresetMidiType,
 } from "../../src/UserDataConfig/MidiRoutePreset/MidiRoutePreset";
 
 import AddPresetMidiOnOffComponent from "./AddPresetMidiOnOffComponent.vue";
@@ -39,65 +49,74 @@ import Card from "../a/Card.vue";
 import CardBody from "../a/CardBody.vue";
 import Btn from "../a/Btn.vue";
 
-@Component({
+export default defineComponent({
   components: {
     AddPresetMidiOnOffComponent,
     Page,
     Card,
     CardBody,
-    Btn
+    Btn,
   },
-  computed: {
-    ...mapState(["loginStatus"]),
-    ...mapGetters(["isLoggedIn"])
-  }
-})
-export default class AddPresetComponent extends Vue {
-  presetName = "";
-  midiOn = new PresetMidiControl(PresetMidiType.PRESET_ON, "");
-  midiOff = new PresetMidiControl(PresetMidiType.PRESET_OFF, "");
+  setup(props, { root }) {
+    const presetName = ref("");
+    const _midiOn = new PresetMidiControl(PresetMidiType.PRESET_ON, "");
+    let midiOn = reactive(_midiOn);
+    const _midiOff = new PresetMidiControl(PresetMidiType.PRESET_OFF, "");
+    let midiOff = reactive(_midiOff);
 
-  get routeId() {
-    return this.$route.params.id;
-  }
-  get routeObj() {
-    return Connection.loginStatus.userDataConfig.midiRoutePresets[
-      parseInt(this.routeId)
-    ];
-  }
+    const routeId = computed(() => {
+      return root.$route.params.id;
+    });
+    const routeObj = computed(() => {
+      return Connection.loginStatus.userDataConfig.midiRoutePresets[
+        parseInt(routeId.value)
+      ];
+    });
 
-  mounted() {
-    if (this.routeId === "-1") {
-      return;
+    const headrMsg = computed(() => {
+      return "Edit preset";
+    });
+
+    function doOk() {
+      if (presetName.value === "") {
+        return;
+      }
+      if (routeId.value === "-1") {
+        const newPreset = Connection.loginStatus.userDataConfig.addPreset(
+          presetName.value
+        );
+        newPreset.setVal(presetName.value, midiOn, midiOff);
+      } else {
+        routeObj.value.setVal(presetName.value, midiOn, midiOff);
+      }
+      root.$router.push(`/presets`);
     }
-    this.presetName = this.routeObj.name;
-    this.midiOn = this.routeObj.midiControlOn;
-    this.midiOff = this.routeObj.midiControlOff;
-  }
 
-  doOk() {
-    if (this.presetName === "") {
-      return;
+    function doCancel() {
+      root.$router.push(`/presets`);
     }
-    if (this.routeId === "-1") {
-      const newPreset = Connection.loginStatus.userDataConfig.addPreset(
-        this.presetName
-      );
-      newPreset.setVal(this.presetName, this.midiOn, this.midiOff);
-    } else {
-      this.routeObj.setVal(this.presetName, this.midiOn, this.midiOff);
-    }
-    this.$router.push(`/presets`);
-  }
 
-  doCancel() {
-    this.$router.push(`/presets`);
-  }
+    onMounted(() => {
+      if (routeId.value === "-1") {
+        return;
+      }
+      presetName.value = routeObj.value.name;
+      midiOn = reactive(routeObj.value.midiControlOn);
+      midiOff = reactive(routeObj.value.midiControlOff);
+    });
 
-  get headrMsg() {
-    return "Edit preset";
-  }
-}
+    return {
+      doCancel,
+      doOk,
+      headrMsg,
+      routeObj,
+      routeId,
+      midiOff,
+      midiOn,
+      presetName,
+    };
+  },
+});
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
