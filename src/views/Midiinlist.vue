@@ -21,10 +21,11 @@
 
 <script>
 import { defineComponent, computed } from '@vue/composition-api'
+import * as Connection from "../src/connection";
 
 export default defineComponent({
-  setup (props, { root }) {
-    const loginStatus = computed(() => root.$store.state.loginStatus)
+  setup () {
+    const loginStatus = computed(() => Connection.loginStatus)
     return {loginStatus};
   },
 

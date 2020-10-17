@@ -74,7 +74,6 @@
 import {
   defineComponent,
   ref,
-  computed,
   watch,
 } from "@vue/composition-api";
 
@@ -101,9 +100,7 @@ export default defineComponent({
       Connection.loginStatus.userDataConfig.midiRoutePresets
     );
 
-    const activePresetID = computed(() => {
-      return Connection.loginStatus.userDataConfig.activePresetID;
-    });
+    const activePresetID = ref(Connection.loginStatus.userDataConfig.activePresetID);
     function _setActivePresetID(idx: number) {
       Connection.loginStatus.userDataConfig.activePresetID = idx;
       if (changeAndApplay.value) {

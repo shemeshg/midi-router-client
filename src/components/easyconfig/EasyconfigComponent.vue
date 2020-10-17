@@ -73,7 +73,7 @@ export default defineComponent({
     );
     const inputZonesAndRoutes = easyConfig.inputZonesAndRoutes;
 
-    const loginStatus = computed(() => root.$store.state.loginStatus);
+    const loginStatus = computed(() => Connection.loginStatus);
 
     function addRoute() {
       if (routeToAdd.value === -1) {
