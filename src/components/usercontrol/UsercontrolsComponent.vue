@@ -1,7 +1,8 @@
 <template>
   <Page text="Controls">
     <p v-if="editMode">
-      <BtnHref @click="editMode = !editMode">Exit edit mode</BtnHref>&nbsp; | &nbsp;
+      <BtnHref @click="editMode = !editMode">Exit edit mode</BtnHref>&nbsp; |
+      &nbsp;
       <BtnHref @click="addUserControl">Add</BtnHref>
     </p>
     <p v-if="!editMode">
@@ -10,9 +11,9 @@
     </p>
     <div v-for="(item, index) in userControls" v-bind:key="index">
       <p v-if="editMode">
-        <BtnHref @click="am(index,index -1)">Up</BtnHref>&nbsp; | &nbsp;
-        <BtnHref @click="am(index,index +1)">Down</BtnHref>&nbsp; | &nbsp;
-        <BtnHref @click="userControls.splice(index,1)">Delete</BtnHref>
+        <BtnHref @click="am(index, index - 1)">Up</BtnHref>&nbsp; | &nbsp;
+        <BtnHref @click="am(index, index + 1)">Down</BtnHref>&nbsp; | &nbsp;
+        <BtnHref @click="userControls.splice(index, 1)">Delete</BtnHref>
       </p>
       <ControlComponent v-bind:item="item"></ControlComponent>
       <p>&nbsp;</p>
@@ -22,10 +23,8 @@
 
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { mapState } from "vuex";
-import { mapGetters } from "vuex";
-import { LoginStatus } from "../../src/loginStatus";
+import { computed, defineComponent, ref } from "@vue/composition-api";
+
 import * as Connection from "../../src/connection";
 import { arrayMove } from "../../src/Utils";
 
@@ -34,40 +33,36 @@ import ControlComponent from "@/components/usercontrol/controlComponent.vue";
 import Page from "../a/Page.vue";
 import BtnHref from "../a/BtnHref.vue";
 
-@Component({
-  computed: {
-    ...mapState(["loginStatus"]),
-    ...mapGetters(["isLoggedIn"])
-  },
+export default defineComponent({
   components: {
     ControlComponent,
     Page,
-    BtnHref
-  }
-})
-export default class UsercontrolsComponent extends Vue {
-  loginStatus!: LoginStatus;
+    BtnHref,
+  },
+  setup() {
+    const editMode = ref(false);
 
-  editMode = false;
+    const userControls = computed(() => {
+      return Connection.loginStatus.userDataConfig.activePreset.userControls;
+    });
 
-  addUserControl() {
-    Connection.loginStatus.userDataConfig.activePreset.addUserControl();
-  }
+    const addUserControl = () => {
+      Connection.loginStatus.userDataConfig.activePreset.addUserControl();
+    };
 
-  am(oldIdex: number, newIndex: number) {
-    arrayMove(this.userControls, oldIdex, newIndex);
-  }
+    const am = (oldIdex: number, newIndex: number) => {
+      arrayMove(userControls.value, oldIdex, newIndex);
+    };
 
-  async sendAll() {
-    for (let i = 0; i < this.userControls.length; i++) {
-      await this.userControls[i].doSend();
-    }
-  }
+    const sendAll = async () => {
+      for (let i = 0; i < userControls.value.length; i++) {
+        await userControls.value[i].doSend();
+      }
+    };
 
-  get userControls() {
-    return Connection.loginStatus.userDataConfig.activePreset.userControls;
-  }
-}
+    return { sendAll, am, addUserControl, userControls, editMode };
+  },
+});
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

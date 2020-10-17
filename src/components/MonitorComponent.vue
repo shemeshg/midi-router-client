@@ -25,7 +25,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { mapState } from "vuex";
-import { mapGetters } from "vuex";
+
 
 import { FilterType } from "../src/UserDataConfig/MidiRoutePreset/MidiRoutersFilter";
 import * as Connection from "../src/connection";
@@ -37,8 +37,7 @@ import ServerInOutPortsSelect from "./a/ServerInOutPortsSelect.vue";
 
 @Component({
   computed: {
-    ...mapState(["loginStatus", "dataToClient"]),
-    ...mapGetters(["isLoggedIn"])
+    ...mapState(["dataToClient"]),
   },
   components: {
     Page,

@@ -11,7 +11,12 @@
       </RowCellRight>
     </Row>
 
-    <Card :mt="true" v-for="(item, idx) in dropdownlists" v-bind:key="idx" v-bind:value="idx">
+    <Card
+      :mt="true"
+      v-for="(item, idx) in dropdownlists"
+      v-bind:key="idx"
+      v-bind:value="idx"
+    >
       <CardBody>
         <RowCellRight>
           <BtnHref @click="spliceItem(idx)">Delete</BtnHref>
@@ -22,7 +27,11 @@
         </p>
         <p>
           <label>Values</label>
-          <textarea class="w3-input w3-border" style="resize:none;" v-model="item.data"></textarea>
+          <textarea
+            class="w3-input w3-border"
+            style="resize: none"
+            v-model="item.data"
+          ></textarea>
         </p>
       </CardBody>
     </Card>
@@ -32,9 +41,7 @@
 
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { mapState } from "vuex";
-import { mapGetters } from "vuex";
+import { ref, defineComponent } from "@vue/composition-api";
 
 import * as Connection from "../src/connection";
 import { Dropdownlist } from "../src/UserDataConfig/dropdownlists";
@@ -47,11 +54,7 @@ import Row from "./a/Row.vue";
 import RowCellRight from "./a/RowCellRight.vue";
 import BtnHref from "./a/BtnHref.vue";
 
-@Component({
-  computed: {
-    ...mapState(["loginStatus"]),
-    ...mapGetters(["isLoggedIn"])
-  },
+export default defineComponent({
   components: {
     Page,
     Card,
@@ -59,23 +62,28 @@ import BtnHref from "./a/BtnHref.vue";
     Btn,
     Row,
     RowCellRight,
-    BtnHref
-  }
-})
-export default class DropdownlistsComponent extends Vue {
-  dropdownlists = Connection.loginStatus.userDataConfig.dropdownlists;
-  addItem() {
-    this.dropdownlists.push(new Dropdownlist());
-  }
+    BtnHref,
+  },
+  setup(props, { root }) {
+    const dropdownlists = ref(
+      Connection.loginStatus.userDataConfig.dropdownlists
+    );
 
-  spliceItem(idx: number) {
-    this.dropdownlists.splice(idx, 1);
-  }
+    const addItem = () => {
+      dropdownlists.value.push(new Dropdownlist());
+    };
 
-  doBack() {
-    this.$router.push(`/usercontrols`);
-  }
-}
+    const spliceItem = (idx: number) => {
+      dropdownlists.value.splice(idx, 1);
+    };
+
+    const doBack = () => {
+      root.$router.push(`/usercontrols`);
+    };
+
+    return { doBack, spliceItem, addItem };
+  },
+});
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

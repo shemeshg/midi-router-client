@@ -44,11 +44,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { mapState } from "vuex";
-import { mapGetters } from "vuex";
-
-import { LoginStatus } from "../src/loginStatus";
+import { computed, defineComponent } from "@vue/composition-api";
+import * as Connection from "../src/connection";
 
 import Page from "./a/Page.vue";
 import Card from "./a/Card.vue";
@@ -56,36 +53,36 @@ import CardHeader from "./a/CardHeader.vue";
 import CardBody from "./a/CardBody.vue";
 import Btn from "./a/Btn.vue";
 
-@Component({
-  computed: {
-    ...mapState(["loginStatus"]),
-    ...mapGetters(["isLoggedIn"])
-  },
+
+export default defineComponent({
   components: {
     Page,
     Card,
     CardHeader,
     CardBody,
     Btn
+  },
+  setup(props, { root }) {
+    const midiinid=computed(()=> {
+      return root.$route.params.midiinid;
+    })
+
+    const chainid=computed( ()=> {
+      return root.$route.params.chainid;
+    })
+
+    const headrMsg=computed(()=> {
+      return `${midiinid.value} - ${
+        Connection.loginStatus.inPorts[parseInt(midiinid.value)]
+      } - Chain ${chainid.value}`;
+    })
+
+    return {midiinid,chainid, headrMsg}
   }
 })
-export default class AddChainFilterComponent extends Vue {
-  loginStatus!: LoginStatus;
 
-  get midiinid() {
-    return this.$route.params.midiinid;
-  }
 
-  get chainid() {
-    return this.$route.params.chainid;
-  }
 
-  get headrMsg(): string {
-    return `${this.midiinid} - ${
-      this.loginStatus.inPorts[parseInt(this.midiinid)]
-    } - Chain ${this.chainid}`;
-  }
-}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

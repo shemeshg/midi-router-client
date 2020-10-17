@@ -2,7 +2,7 @@
   <div>
     <Row class="unselectable">
       <span @click="doInputVal(-1)">-</span>
-      <span class="unselectable">{{item.description}}</span>
+      <span class="unselectable">{{ item.description }}</span>
       <input type="number" v-model="getVal" v-if="!item.isShowDropdown" />
 
       <select v-model="item.inputVal" v-if="item.isShowDropdown">
@@ -10,7 +10,9 @@
           v-for="(name, idx) in getDropdownDescriptions"
           v-bind:key="idx"
           v-bind:value="idx"
-        >{{name}}</option>
+        >
+          {{ name }}
+        </option>
       </select>
 
       <span @click="doInputVal(+1)">+</span>
@@ -39,17 +41,22 @@
       <CardBody>
         <p>
           <label>Output</label>
-          <ServerInOutPortsSelect v-model.number="item.outputPortId" mode="out" />
+          <ServerInOutPortsSelect
+            v-model.number="item.outputPortId"
+            mode="out"
+          />
         </p>
 
         <p>
           <label>Event type</label>
           <select class="w3-select" v-model="item.eventType">
             <option
-              v-for="(item) in eventTypes"
+              v-for="item in eventTypes"
               v-bind:key="item.id"
               v-bind:value="item.id"
-            >{{item.name}}</option>
+            >
+              {{ item.name }}
+            </option>
           </select>
         </p>
 
@@ -64,7 +71,7 @@
 
         <input class="w3-check" type="checkbox" v-model="item.is64Mode" />
         <label> 64 + - mode</label>
-        <hr style="border-bottom: 1px solid #ccc;"/>
+        <hr style="border-bottom: 1px solid #ccc" />
 
         <label>Channel</label>
         <input class="w3-input" type="number" v-model="item.channelId" />
@@ -87,16 +94,17 @@
                 v-for="(item, idx) in dropdownlists"
                 v-bind:key="idx"
                 v-bind:value="idx"
-              >{{idx}} - {{item.name}}</option>
+              >
+                {{ idx }} - {{ item.name }}
+              </option>
             </select>
           </RowCell>
           <RowCell>
             <router-link to="/dropdownlists">Manage dropdown lists</router-link>
           </RowCell>
         </Row>
-        
-        <hr style="border-bottom: 1px solid #ccc;"/>
 
+        <hr style="border-bottom: 1px solid #ccc" />
       </CardBody>
     </Card>
   </div>
@@ -104,13 +112,13 @@
 
 
 <script lang="ts">
-import { Component, Vue, Watch, Prop } from "vue-property-decorator";
+import { computed, defineComponent, watch } from "@vue/composition-api";
 
 import * as Connection from "../../src/connection";
 import {
   UserControl,
   eventTypes,
-  EventType
+  EventType,
 } from "../../src/UserDataConfig/userControl";
 
 import BtnHref from "../a/BtnHref.vue";
@@ -120,7 +128,8 @@ import RowCellRight from "../a/RowCellRight.vue";
 import Card from "../a/Card.vue";
 import CardBody from "../a/CardBody.vue";
 import ServerInOutPortsSelect from "../a/ServerInOutPortsSelect.vue";
-@Component({
+
+export default defineComponent({
   components: {
     ServerInOutPortsSelect,
     Card,
@@ -128,69 +137,88 @@ import ServerInOutPortsSelect from "../a/ServerInOutPortsSelect.vue";
     BtnHref,
     Row,
     RowCell,
-    RowCellRight
-  }
-})
-export default class ControlComponent extends Vue {
-  @Prop() item!: UserControl;
+    RowCellRight,
+  },
+  props: {
+    item: {
+      type: UserControl,
+      required: true,
+    },
+  },
+  setup(props) {
+    const dropdownlists = computed(() => {
+      return Connection.loginStatus.userDataConfig.dropdownlists;
+    });
 
-  eventTypes = eventTypes;
-  EventType = EventType;
-
-  doInputVal(n: number) {
-    const newVal = parseInt(this.item.inputVal) + n;
-    if (
-      newVal < parseInt(this.item.minVal) ||
-      newVal > parseInt(this.item.maxVal)
-    ) {
-      return;
-    }
-    this.item.inputVal = newVal.toString();
-  }
-  async doSend() {
-    this.item.doSend();
-  }
-
-  @Watch("item.inputVal", { immediate: true, deep: false })
-  onInputValChanged1() {
-    this.doSend();
-  }
-
-  get dropdownlists() {
-    return Connection.loginStatus.userDataConfig.dropdownlists;
-  }
-
-  get getDropdownDescriptions() {
-    const ary: string[] = [];
-    const names = this.item.dropDownDecriptions.split("\n");
-    for (let i = 0; i <= 127; i++) {
-      if (names[i] !== undefined) {
-        ary.push(names[i]);
-      } else {
-        ary.push(i.toString());
+    const getDropdownDescriptions = computed(() => {
+      const ary: string[] = [];
+      const names = props.item.dropDownDecriptions.split("\n");
+      for (let i = 0; i <= 127; i++) {
+        if (names[i] !== undefined) {
+          ary.push(names[i]);
+        } else {
+          ary.push(i.toString());
+        }
       }
-    }
-    return ary;
-  }
-  get outPorts() {
-    return Connection.loginStatus.outPorts;
-  }
-  get getVal() {
-    if (this.item.is64Mode) {
-      return (parseInt(this.item.inputVal) - 64).toString();
-    }
-    return this.item.inputVal;
-  }
+      return ary;
+    });
 
-  set getVal(n: string) {
-    const val = parseInt(n);
-    if (this.item.is64Mode) {
-      this.item.inputVal = (val + 64).toString();
-    } else {
-      this.item.inputVal = val.toString();
+    const outPorts = computed(() => {
+      return Connection.loginStatus.outPorts;
+    });
+
+    const getVal = computed({
+      get: () => {
+        if (props.item.is64Mode) {
+          return (parseInt(props.item.inputVal) - 64).toString();
+        }
+        return props.item.inputVal;
+      },
+      set: (n: string) => {
+        const val = parseInt(n);
+        if (props.item.is64Mode) {
+          props.item.inputVal = (val + 64).toString();
+        } else {
+          props.item.inputVal = val.toString();
+        }
+      },
+    });
+
+    function doInputVal(n: number) {
+      const newVal = parseInt(props.item.inputVal) + n;
+      if (
+        newVal < parseInt(props.item.minVal) ||
+        newVal > parseInt(props.item.maxVal)
+      ) {
+        return;
+      }
+      props.item.inputVal = newVal.toString();
     }
-  }
-}
+
+    async function doSend() {
+      props.item.doSend();
+    }
+
+    watch(
+      () => props.item.inputVal,
+      () => {
+        doSend();
+      },
+      { immediate: true, deep: false }
+    );
+
+    return {
+      eventTypes,
+      EventType,
+      doSend,
+      doInputVal,
+      getVal,
+      outPorts,
+      getDropdownDescriptions,
+      dropdownlists,
+    };
+  },
+});
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

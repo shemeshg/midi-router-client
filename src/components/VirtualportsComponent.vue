@@ -8,8 +8,12 @@
             <label>Name</label>
           </RowCell>
           <RowCell>
-            
-            <input class="w3-input" type="text" v-model="inPort" @focus="$event.target.select()" />
+            <input
+              class="w3-input"
+              type="text"
+              v-model="inPort"
+              @focus="$event.target.select()"
+            />
           </RowCell>
           <RowCell>
             <Btn :ml="true" @click="addInPort">+</Btn>
@@ -23,11 +27,12 @@
               v-for="(inport, idx) in virtualInPorts"
               v-bind:key="inport"
             >
-              {{inport}}
+              {{ inport }}
               <span
                 @click="inPortSplice(idx)"
                 class="w3-button w3-transparent w3-display-right"
-              >&times;</span>
+                >&times;</span
+              >
             </li>
           </ul>
         </Row>
@@ -39,10 +44,7 @@
 
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { mapState } from "vuex";
-import { mapGetters } from "vuex";
-import { LoginStatus } from "../src/loginStatus";
+import { ref, defineComponent } from "@vue/composition-api";
 
 import * as Connection from "../src/connection";
 
@@ -54,11 +56,7 @@ import Row from "./a/Row.vue";
 import RowCell from "./a/RowCell.vue";
 import Btn from "./a/Btn.vue";
 
-@Component({
-  computed: {
-    ...mapState(["loginStatus"]),
-    ...mapGetters(["isLoggedIn"])
-  },
+export default defineComponent({
   components: {
     Page,
     Card,
@@ -66,41 +64,33 @@ import Btn from "./a/Btn.vue";
     CardBody,
     Row,
     RowCell,
-    Btn
-  }
-})
-export default class VirtualportsComponent extends Vue {
-  loginStatus!: LoginStatus;
+    Btn,
+  },
+  setup() {
+    const inPort = ref("");
 
-  inPort = "";
-  outPort = "";
+    const virtualInPorts = ref(
+      Connection.loginStatus.userDataConfig.virtualInPorts
+    );
 
-  virtualInPorts: string[] =
-    Connection.loginStatus.userDataConfig.virtualInPorts;
+    const inPortSplice = (idx: number) => {
+      Connection.loginStatus.userDataConfig.virtualInPorts.splice(idx, 1);
+    };
 
-  inPortSplice(idx: number) {
-    Connection.loginStatus.userDataConfig.virtualInPorts.splice(idx, 1);
-  }
-
-  addInPort() {
-    if (
-      this.inPort &&
-      Connection.loginStatus.userDataConfig.virtualInPorts.indexOf(
-        this.inPort
-      ) === -1
-    ) {
-      Connection.loginStatus.userDataConfig.virtualInPorts.push(this.inPort);
-    }
-  }
-
-  /*
-    addOutPort(){
-      if (this.outPort && Connection.loginStatus.userDataConfig.virtualOutPorts.indexOf(this.outPort) === -1){
-        Connection.loginStatus.userDataConfig.virtualOutPorts.push(this.outPort);
+    const addInPort = () => {
+      if (
+        inPort.value &&
+        Connection.loginStatus.userDataConfig.virtualInPorts.indexOf(
+          inPort.value
+        ) === -1
+      ) {
+        Connection.loginStatus.userDataConfig.virtualInPorts.push(inPort.value);
       }
-    }
-*/
-}
+    };
+
+    return { addInPort, inPortSplice, virtualInPorts, inPort };
+  },
+});
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
