@@ -31,93 +31,103 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { mapState } from "vuex";
-import { mapGetters } from "vuex";
+import {
+  defineComponent,
+  ref,
+  computed,
+  onMounted,
+} from "@vue/composition-api";
 
 import * as Connection from "../../src/connection";
-import { LoginStatus } from "../../src/loginStatus";
 
 import Page from "../a/Page.vue";
 import Card from "../a/Card.vue";
 import CardBody from "../a/CardBody.vue";
 import Btn from "../a/Btn.vue";
 
-@Component({
-  computed: {
-    ...mapState(["loginStatus"]),
-    ...mapGetters(["isLoggedIn"])
-  },
+export default defineComponent({
   components: {
     Page,
     Card,
     CardBody,
-    Btn
-  }
-})
-export default class AddScheduleComponent extends Vue {
-  loginStatus!: LoginStatus;
-  defferedType = "";
-  defferedTo = 0;
+    Btn,
+  },
+  setup(props, { root }) {
+    const defferedType = ref("");
+    const defferedTo = ref(0);
 
-  get filterid() {
-    return this.$route.params.filterid;
-  }
-  get filterObj() {
-    return this.midiRouteInput.midiRouterChains[
-      parseInt(this.chainid)
-    ].getFilterSchedule(parseInt(this.filterid));
-  }
+    const filterid = computed(() => {
+      return root.$route.params.filterid;
+    });
 
-  mounted() {
-    if (this.filterid === "-1") {
-      return;
+    const midiinid = computed(() => {
+      return root.$route.params.midiinid;
+    });
+
+    const chainid = computed(() => {
+      return root.$route.params.chainid;
+    });
+
+    const midiRouteInput = computed(() => {
+      return Connection.loginStatus.userDataConfig.getMidiRouteInput(
+        Connection.loginStatus.inPorts[Number(midiinid.value)]
+      );
+    });
+
+    const headrMsg = computed(() => {
+      return `${midiinid.value}-${chainid.value} Add Schedule`;
+    });
+
+    const filterObj = computed(() => {
+      return midiRouteInput.value.midiRouterChains[
+        parseInt(chainid.value)
+      ].getFilterSchedule(parseInt(filterid.value));
+    });
+
+    function doOk() {
+      if (defferedType.value === "") {
+        return;
+      }
+
+      if (filterid.value === "-1") {
+        midiRouteInput.value.midiRouterChains[
+          parseInt(chainid.value)
+        ].addFilterSchedule(parseInt(defferedType.value), defferedTo.value);
+      } else {
+        filterObj.value.setVal(parseInt(defferedType.value), defferedTo.value);
+      }
+      root.$router.push(`/midiin/${midiinid.value}`);
     }
-    this.defferedType = this.filterObj.defferedType.toString();
-    this.defferedTo = this.filterObj.defferedTo;
-  }
 
-  doOk() {
-    if (this.defferedType === "") {
-      return;
+    function doCancel() {
+      if (filterid.value === "-1") {
+        root.$router.push(`/AddChainFilter/${midiinid.value}/${chainid.value}`);
+      } else {
+        root.$router.push(`/midiin/${midiinid.value}`);
+      }
     }
 
-    if (this.filterid === "-1") {
-      this.midiRouteInput.midiRouterChains[
-        parseInt(this.chainid)
-      ].addFilterSchedule(parseInt(this.defferedType), this.defferedTo);
-    } else {
-      this.filterObj.setVal(parseInt(this.defferedType), this.defferedTo);
-    }
-    this.$router.push(`/midiin/${this.midiinid}`);
-  }
+    onMounted(() => {
+      if (filterid.value === "-1") {
+        return;
+      }
+      defferedType.value = filterObj.value.defferedType.toString();
+      defferedTo.value = filterObj.value.defferedTo;
+    });
 
-  doCancel() {
-    if (this.filterid === "-1") {
-      this.$router.push(`/AddChainFilter/${this.midiinid}/${this.chainid}`);
-    } else {
-      this.$router.push(`/midiin/${this.midiinid}`);
-    }
-  }
-
-  get midiRouteInput() {
-    return Connection.loginStatus.userDataConfig.getMidiRouteInput(
-      Connection.loginStatus.inPorts[ Number(this.midiinid) ]
-    );
-  }
-
-  get midiinid() {
-    return this.$route.params.midiinid;
-  }
-
-  get chainid() {
-    return this.$route.params.chainid;
-  }
-
-  get headrMsg(): string {
-    return `${this.midiinid}-${this.chainid} Add Schedule`;
-  }
-}
+    return {
+      doCancel,
+      doOk,
+      headrMsg,
+      midiRouteInput,
+      chainid,
+      midiinid,
+      filterid,
+      defferedTo,
+      defferedType,
+    };
+  },
+});
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
