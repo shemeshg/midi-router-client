@@ -26,11 +26,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { mapState } from "vuex";
-import { mapGetters } from "vuex";
+import { computed, ref, defineComponent } from "@vue/composition-api";
 
-import { LoginStatus } from "../src/loginStatus";
 import * as Connection from "../src/connection";
 
 import Page from "./a/Page.vue";
@@ -38,66 +35,74 @@ import Card from "./a/Card.vue";
 import CardBody from "./a/CardBody.vue";
 import Btn from "./a/Btn.vue";
 
-@Component({
-  computed: {
-    ...mapState(["loginStatus"]),
-    ...mapGetters(["isLoggedIn"])
-  },
+
+export default defineComponent({
   components: {
     Page,
     Card,
     CardBody,
     Btn
+  },
+  setup(props, { root }) {
+
+
+
+    const isLoggedIn = computed(() => {
+      return root.$store.getters.isLoggedIn;
+    });
+
+    const loginStatus = computed(() => {
+      return root.$store.state.loginStatus
+    });
+
+    const serverName = ref( localStorage.getItem("serverName") || "localhost" );
+    const serverPort = ref( parseInt( (localStorage.getItem("serverPort")  || 12345).toString() ) );
+    const errMsg = ref( Connection.loginStatus.errMsg );
+
+    const headrMsg= computed (()=> {
+      if (isLoggedIn.value) {
+        return loginStatus.value.serverName + ":" + loginStatus.value.serverPort;
+      } else {
+        if (errMsg.value) {
+          return errMsg.value;
+        }
+        return "Not connected - try again";
+      }
+    })
+
+  const doLogin=async ()=> {
+    await Connection.login(serverName.value, serverPort.value);
+    errMsg.value = Connection.loginStatus.errMsg;
+    localStorage.setItem("serverName", serverName.value);
+    localStorage.setItem("serverPort", serverPort.value.toString());
+    root.$store.commit("setLoginStatusRedirect", Connection.loginStatus);
   }
-})
-export default class Login extends Vue {
-  @Prop() private msg!: string;
-  isLoggedIn!: boolean;
-  loginStatus!: LoginStatus;
 
-  serverName = localStorage.getItem("serverName") || "localhost" ;
-  serverPort = parseInt( (localStorage.getItem("serverPort")  || 12345).toString() );
-  errMsg = Connection.loginStatus.errMsg;
-
-  async doLogin() {
-    await Connection.login(this.serverName, this.serverPort);
-    this.errMsg = Connection.loginStatus.errMsg;
-    localStorage.setItem("serverName", this.serverName);
-    localStorage.setItem("serverPort", this.serverPort.toString());
-    this.$store.commit("setLoginStatusRedirect", Connection.loginStatus);
-  }
-
-  async doShutdown() {
+  const  doShutdown=async () => {
     Connection.connection.wcuserdata.applicationQuit();
     //Connection.loginStatus.isLoggedIn = false;
-    this.$store.commit("setLoginStatusRedirect", Connection.loginStatus);
+    root.$store.commit("setLoginStatusRedirect", Connection.loginStatus);
   }
 
-  async doRestart() {
-    await Connection.connection.wcmidiin.restart();
-    await Connection.connection.wcmidiout.restart();
-    this.doLogout();
-  }
-
-  async doLogout() {
+  const doLogout=async() => {
     await Connection.connection.close();
     //Connection.loginStatus.isLoggedIn = false;
-    this.$store.commit("setLoginStatusRedirect", Connection.loginStatus);
+    root.$store.commit("setLoginStatusRedirect", Connection.loginStatus);
   }
 
-
-
-  get headrMsg(): string {
-    if (this.isLoggedIn) {
-      return this.loginStatus.serverName + ":" + this.loginStatus.serverPort;
-    } else {
-      if (this.errMsg) {
-        return this.errMsg;
-      }
-      return "Not connected - try again";
-    }
+  const doRestart=async() =>{
+    await Connection.connection.wcmidiin.restart();
+    await Connection.connection.wcmidiout.restart();
+    doLogout();
   }
-}
+
+  return {doRestart,doLogout,doShutdown,doLogin,headrMsg,errMsg,
+         serverPort,serverName,loginStatus,isLoggedIn }
+
+  }
+})
+
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

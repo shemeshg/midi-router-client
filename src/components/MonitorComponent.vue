@@ -15,17 +15,15 @@
       <label>per page</label>
     </p>
 
-    <pre>
-{{data.join("\n")}}            
+    <pre
+      >{{ data.join("\n") }}            
     </pre>
   </Page>
 </template>
 
 
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
-import { mapState } from "vuex";
-
+import { computed, ref, defineComponent, watch } from "@vue/composition-api";
 
 import { FilterType } from "../src/UserDataConfig/MidiRoutePreset/MidiRoutersFilter";
 import * as Connection from "../src/connection";
@@ -35,87 +33,94 @@ import Page from "./a/Page.vue";
 import BtnHref from "./a/BtnHref.vue";
 import ServerInOutPortsSelect from "./a/ServerInOutPortsSelect.vue";
 
-@Component({
-  computed: {
-    ...mapState(["dataToClient"]),
-  },
+export default defineComponent({
   components: {
     Page,
     BtnHref,
-    ServerInOutPortsSelect
-  }
-})
-export default class MonitorComponent extends Vue {
-  inputToMonitor = -1;
-  perPage = 2;
-  data: string[] = [];
-  isMonitoring = false;
+    ServerInOutPortsSelect,
+  },
+  setup(props, { root }) {
+    const inputToMonitor = ref(-1);
+    const perPage = ref(2);
 
-  get inPorts() {
-    return Connection.loginStatus.inPorts;
-  }
+    const _data: string[] = [];
+    const data = ref(_data);
+    const isMonitoring = ref(false);
 
-  async inputToMonitorChanged() {
-    if (this.isMonitoring === true) {
-      await this.startMonitoring();
-    }
-  }
+    const inPorts = computed(() => {
+      return Connection.loginStatus.inPorts;
+    });
 
-  @Watch("dataToClient")
-  onPropertyChanged(value: string) {
-    const json = JSON.parse(value);
-    if (json.portNumber === this.inputToMonitor && this.isMonitoring) {
-      const userdata: ToConsoleUserdata = JSON.parse(json.userdata);
-      if (userdata.action === "monitor") this.data.unshift(value);
-      this.data.splice(this.perPage);
-    }
-  }
+    const startMonitoring = async () => {
+      if (inputToMonitor.value === -1) {
+        return;
+      }
 
-  async startMonitoring() {
-    if (this.inputToMonitor === -1) {
-      return;
-    }
+      isMonitoring.value = true;
+      data.value = [];
 
-    this.isMonitoring = true;
-    this.data = [];
+      const input = Connection.loginStatus.userDataConfig.getMidiRouteInput(
+        inPorts.value[inputToMonitor.value]
+      );
+      const chains = input.midiRouterChains;
 
-    const input = Connection.loginStatus.userDataConfig.getMidiRouteInput(
-      this.inPorts[this.inputToMonitor]
-    );
-    const chains = input.midiRouterChains;
-
-    let hasLogToConsole = false;
-    for (let chainId = 0; chainId < chains.length; chainId++) {
-      const filters = chains[chainId].midiRoutersFilters;
-      for (let filterId = 0; filterId < filters.length; filterId++) {
-        if (filters[filterId].filterType === FilterType.TO_CONSOLE) {
-          hasLogToConsole =
-            chains[chainId].getFilterToConsle(filterId).logTo === 0;
+      let hasLogToConsole = false;
+      for (let chainId = 0; chainId < chains.length; chainId++) {
+        const filters = chains[chainId].midiRoutersFilters;
+        for (let filterId = 0; filterId < filters.length; filterId++) {
+          if (filters[filterId].filterType === FilterType.TO_CONSOLE) {
+            hasLogToConsole =
+              chains[chainId].getFilterToConsle(filterId).logTo === 0;
+          }
         }
       }
-    }
-    if (hasLogToConsole) {
-      return;
-    }
-    const configChain = input.addMidiRouterChain("EAsyConfig log client");
-    configChain.isEasyConfig = true;
-    configChain.addFilterToConsle(0, { action: "monitor" });
+      if (hasLogToConsole) {
+        return;
+      }
+      const configChain = input.addMidiRouterChain("EAsyConfig log client");
+      configChain.isEasyConfig = true;
+      configChain.addFilterToConsle(0, { action: "monitor" });
 
-    const midiPort = await Connection.connection.wcmidiin.port(
-      this.inputToMonitor
+      const midiPort = await Connection.connection.wcmidiin.port(
+        inputToMonitor.value
+      );
+      const chain = await midiPort.routingMidiChainsAaddChain();
+      await chain.routingActionAddLogData(0, { action: "monitor" });
+    };
+
+    const inputToMonitorChanged = async () => {
+      if (isMonitoring.value === true) {
+        await startMonitoring();
+      }
+    };
+
+    const stopMonitoring = () => {
+      isMonitoring.value = false;
+    };
+
+    const doClear = () => {
+      data.value = [];
+    };
+
+    watch(
+      () => root.$store.state.dataToClient,
+      (value: string) => {
+        const json = JSON.parse(value);
+        if (json.portNumber === inputToMonitor.value && isMonitoring.value) {
+          const userdata: ToConsoleUserdata = JSON.parse(json.userdata);
+          if (userdata.action === "monitor") data.value.unshift(value);
+          data.value.splice(perPage.value);
+        }
+      }
     );
-    const chain = await midiPort.routingMidiChainsAaddChain();
-    await chain.routingActionAddLogData(0, { action: "monitor" });
-  }
 
-  stopMonitoring() {
-    this.isMonitoring = false;
-  }
+    return {doClear,stopMonitoring,inputToMonitorChanged,startMonitoring,
+          inPorts,isMonitoring,data,perPage,inputToMonitor }
 
-  doClear() {
-    this.data = [];
-  }
-}
+  },
+});
+
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
