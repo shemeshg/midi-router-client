@@ -9,7 +9,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    loginStatus: Connection.loginStatus,
+    loginStatus: new LoginStatus("localhost",12345),
     dataToClient: "",
   },
   mutations: {
