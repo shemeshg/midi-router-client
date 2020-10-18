@@ -54,10 +54,8 @@ export default defineComponent({
       arrayMove(userControls.value, oldIdex, newIndex);
     };
 
-    const sendAll = async () => {
-      for (let i = 0; i < userControls.value.length; i++) {
-        await userControls.value[i].doSend();
-      }
+    const sendAll = () => {
+      return Connection.loginStatus.userDataConfig.activePreset.sendAllUserControls()
     };
 
     return { sendAll, am, addUserControl, userControls, editMode };

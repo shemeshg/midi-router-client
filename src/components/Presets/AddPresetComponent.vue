@@ -9,6 +9,13 @@
       </CardBody>
     </Card>
 
+      <input
+        class="w3-check w3-margin-left"
+        type="checkbox"
+        v-model="isSendAllUserControls"
+      />
+      <label> Send all User Controls position on apply</label>
+
     <h5>Midi controller (optional)</h5>
     <AddPresetMidiOnOffComponent
       description="ON"
@@ -59,6 +66,8 @@ export default defineComponent({
   },
   setup(props, { root }) {
     const presetName = ref("");
+    const isSendAllUserControls = ref(false);
+
     const _midiOn = new PresetMidiControl(PresetMidiType.PRESET_ON, "");
     let midiOn = reactive(_midiOn);
     const _midiOff = new PresetMidiControl(PresetMidiType.PRESET_OFF, "");
@@ -85,9 +94,9 @@ export default defineComponent({
         const newPreset = Connection.loginStatus.userDataConfig.addPreset(
           presetName.value
         );
-        newPreset.setVal(presetName.value, midiOn, midiOff);
+        newPreset.setVal(presetName.value, isSendAllUserControls.value, midiOn, midiOff);
       } else {
-        routeObj.value.setVal(presetName.value, midiOn, midiOff);
+        routeObj.value.setVal(presetName.value, isSendAllUserControls.value, midiOn, midiOff);
       }
       root.$router.push(`/presets`);
     }
@@ -101,6 +110,7 @@ export default defineComponent({
         return;
       }
       presetName.value = routeObj.value.name;
+      isSendAllUserControls.value = routeObj.value.isSendAllUserControls
       midiOn = reactive(routeObj.value.midiControlOn);
       midiOff = reactive(routeObj.value.midiControlOff);
     });
@@ -114,6 +124,7 @@ export default defineComponent({
       midiOff,
       midiOn,
       presetName,
+      isSendAllUserControls,
     };
   },
 });

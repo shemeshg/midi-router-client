@@ -121,6 +121,7 @@ export class UserDataConfig {
             if (this.midiRoutePresets[presetIdx] === undefined) { this.addPreset(""); }
             const midiRoutePreset = this.midiRoutePresets[presetIdx];
             midiRoutePreset.name = jsonPreset.name;
+            midiRoutePreset.isSendAllUserControls = jsonPreset.isSendAllUserControls;
             midiRoutePreset.uuid = jsonPreset.uuid;
             Object.assign(midiRoutePreset.midiControlOn, jsonPreset.midiControlOn)
             Object.assign(midiRoutePreset.midiControlOff, jsonPreset.midiControlOff)
@@ -327,6 +328,11 @@ export class UserDataConfig {
         }
 
         await this.activePreset.jsRouter.applayChanges()
+        
+        if (Connection.loginStatus.userDataConfig.activePreset.isSendAllUserControls){
+            await Connection.loginStatus.userDataConfig.activePreset.sendAllUserControls()
+        }
+        
     }
 
 }

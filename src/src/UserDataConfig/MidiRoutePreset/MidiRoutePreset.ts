@@ -116,13 +116,14 @@ export class MidiRoutePreset {
 
     isEnabled = false;
 
-    
+    isSendAllUserControls = false
 
     constructor(name: string) {
         this.name = name;
     }
-    setVal(name: string, midiControlOn: PresetMidiControl, midiControlOff: PresetMidiControl) {
+    setVal(name: string, isSendAllUserControls: boolean, midiControlOn: PresetMidiControl, midiControlOff: PresetMidiControl) {
         this.name = name;
+        this.isSendAllUserControls = isSendAllUserControls;
         this.midiControlOn = midiControlOn;
         this.midiControlOff = midiControlOff;
         this.midiControlOn.presetUuid = this.uuid;
@@ -133,7 +134,11 @@ export class MidiRoutePreset {
         this.userControls.push(new UserControl())
     }
 
-
+    async sendAllUserControls(){
+        for (let i = 0; i < this.userControls.length; i++) {
+            await this.userControls[i].doSend();
+          }
+    }
 
 }
 

@@ -51,7 +51,7 @@
         type="checkbox"
         v-model="changeAndApplay"
       />
-      <label>Auto applay select change on file upload</label>
+      <label>Auto applay preset on file upload</label>
     </CardBody>
 
     <Card :mt="true">
