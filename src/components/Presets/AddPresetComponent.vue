@@ -15,7 +15,6 @@
         v-model="isSendAllUserControls"
       />
       <label> Send all User Controls position on apply</label>
-
     <h5>Midi controller (optional)</h5>
     <AddPresetMidiOnOffComponent
       description="ON"
@@ -69,10 +68,10 @@ export default defineComponent({
     const isSendAllUserControls = ref(false);
 
     const _midiOn = new PresetMidiControl(PresetMidiType.PRESET_ON, "");
-    let midiOn = reactive(_midiOn);
+    const midiOn = reactive(_midiOn);
     const _midiOff = new PresetMidiControl(PresetMidiType.PRESET_OFF, "");
-    let midiOff = reactive(_midiOff);
-
+    const midiOff = reactive(_midiOff);
+    
     const routeId = computed(() => {
       return root.$route.params.id;
     });
@@ -111,8 +110,27 @@ export default defineComponent({
       }
       presetName.value = routeObj.value.name;
       isSendAllUserControls.value = routeObj.value.isSendAllUserControls
-      midiOn = reactive(routeObj.value.midiControlOn);
-      midiOff = reactive(routeObj.value.midiControlOff);
+      
+      midiOn.presetUuid = routeObj.value.midiControlOn.presetUuid
+      midiOn.presetMidiType = routeObj.value.midiControlOn.presetMidiType
+      midiOn.portName = routeObj.value.midiControlOn.portName
+      midiOn.port = routeObj.value.midiControlOn.port
+      midiOn.eventTypeId = routeObj.value.midiControlOn.eventTypeId
+      midiOn.channel = routeObj.value.midiControlOn.channel
+      midiOn.data1 = routeObj.value.midiControlOn.data1
+      midiOn.data2 = routeObj.value.midiControlOn.data2
+      midiOn.isMidiParamsEqual = routeObj.value.midiControlOn.isMidiParamsEqual
+      
+      midiOff.presetUuid = routeObj.value.midiControlOff.presetUuid
+      midiOff.presetMidiType = routeObj.value.midiControlOff.presetMidiType
+      midiOff.portName = routeObj.value.midiControlOff.portName
+      midiOff.port = routeObj.value.midiControlOff.port
+      midiOff.eventTypeId = routeObj.value.midiControlOff.eventTypeId
+      midiOff.channel = routeObj.value.midiControlOff.channel
+      midiOff.data1 = routeObj.value.midiControlOff.data1
+      midiOff.data2 = routeObj.value.midiControlOff.data2
+      midiOff.isMidiParamsEqual = routeObj.value.midiControlOff.isMidiParamsEqual
+
     });
 
     return {
