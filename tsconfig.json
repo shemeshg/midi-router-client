@@ -3,6 +3,7 @@
     "src/src/channel/types-qwebchannel/index.d.ts"
 ],
   "compilerOptions": {
+    "skipLibCheck": true,
     "target": "esnext",
     "module": "esnext",
     "strict": true,
