@@ -21,7 +21,7 @@
     "@types/uuid": "^7.0.4",
     "@vue/composition-api": "^1.0.0-beta.16",
     "core-js": "^3.6.5",
-    "electron-builder": "^22.9.1",
+    "electron-builder": "^22.11.4",
     "lodash": "^4.17.20",
     "qwebchannel": "^5.9.0",
     "uuid": "^7.0.3",
