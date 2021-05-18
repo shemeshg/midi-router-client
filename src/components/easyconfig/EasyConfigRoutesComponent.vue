@@ -15,7 +15,6 @@
           <ServerInOutPortsSelect
             v-model.number="easyConfigRoute.toDestinationId"
             mode="out"
-            :excludeId="inputVal.midiInputId"
           />
         </Row>
 
@@ -62,7 +61,6 @@
               name="option"
               v-model.number="easyConfigRoute.transpose"
             >
-              <option value="-1">-</option>
               <option
                 v-for="item in transposeRange"
                 v-bind:key="item"
@@ -187,7 +185,7 @@ export default defineComponent({
     }
 
     return {easyConfigRoutes, zoneNames, deleteSelf, toEventTypeChanged, fromEventTypeChanged, 
-            toChannelChange, fromChannelChange}
+            toChannelChange, fromChannelChange, transposeRange}
 
   },
 });

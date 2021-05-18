@@ -8,7 +8,6 @@
           <ServerInOutPortsSelect
             v-model.number="inputToAdd"
             mode="out"
-            :excludeId="midiRouteInput.midiInputId"
           />
         </RowCell>
         <p></p>

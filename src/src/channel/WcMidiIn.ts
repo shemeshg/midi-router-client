@@ -130,7 +130,7 @@ class MidiInPort {
         })
     }
 
-    ignoreTypes(midiSysex = true, midiTime = true, midiSense = true) {
+    ignoreTypes(midiSysex = true, midiTime = true, midiSense = true): Promise<void> {
         return new Promise((resolve) => {
             this.wcmidiinWs.ignoreTypes(this.portNumber, midiSysex, midiTime, midiSense, () => {
                 resolve();
@@ -138,7 +138,7 @@ class MidiInPort {
         })
     }
 
-    addCc14Bit(channel: number, cc: number) {
+    addCc14Bit(channel: number, cc: number): Promise<void>  {
         return new Promise((resolve) => {
             this.wcmidiinWs.addCc14Bit(this.portNumber, channel, cc, () => {
                 resolve();
@@ -149,7 +149,7 @@ class MidiInPort {
 
 
 
-    addPropegateClockPort(portNumberToPropegate: number) {
+    addPropegateClockPort(portNumberToPropegate: number): Promise<void>  {
         return new Promise((resolve) => {
             this.wcmidiinWs.addCc14Bit(this.portNumber, portNumberToPropegate,  () => {
                 resolve();
@@ -177,7 +177,7 @@ class MidiInPort {
 
 
 
-    clearRoutingMidiChains() {
+    clearRoutingMidiChains(): Promise<void>  {
         return new Promise((resolve) => {
             this.wcmidiinWs.clearRoutingMidiChains(this.portNumber, () => {
                 this.routingMidiChains.length = 0;
@@ -186,7 +186,7 @@ class MidiInPort {
         })
     }
     
-    setTimeSig(timeSig=4, timeSigDivBy=4, fromSppPos=0) {
+    setTimeSig(timeSig=4, timeSigDivBy=4, fromSppPos=0): Promise<void>  {
         return new Promise((resolve) => {
             this.wcmidiinWs.setTimeSig(this.portNumber, timeSig, timeSigDivBy, fromSppPos,  () => {
                 resolve();
@@ -278,7 +278,7 @@ export class WcMidiIn {
 
 
 
-    openPort(portNumber: number) {
+    openPort(portNumber: number): Promise<void>  {
         return new Promise((resolve) => {
             this.wcmidiinWs.openPort(portNumber, () => {
                 resolve();
@@ -314,7 +314,7 @@ export class WcMidiIn {
     }
 
 
-    openVirtualPort(portName: string) {
+    openVirtualPort(portName: string): Promise<void>  {
         return new Promise((resolve) => {
             this.wcmidiinWs.openVirtualPort(portName, () => {
                 resolve();

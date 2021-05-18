@@ -114,7 +114,7 @@ export class JsRouter {
         return WebMidi.outputs.map( (r)=>{return {id: Number(r.id), name: r.name}})  
     }
 
-    doOpen(){
+    doOpen(): Promise<void> {
         return new Promise( (resolve, reject)=>{
             if (WebMidi.enabled) {
                 resolve()

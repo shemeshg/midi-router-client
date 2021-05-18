@@ -24,7 +24,7 @@ export class WcUserData {
     }
 
     // eslint-disable-next-line
-    setJon(msg: any) {
+    setJon(msg: any): Promise<void>  {
         return new Promise((resolve) => {
             this.wcuserdataWs.setJon(msg, () => {
                 resolve();
@@ -43,7 +43,7 @@ export class WcUserData {
     }
 
     
-    applicationQuit() {
+    applicationQuit(): Promise<void>  {
         return new Promise((resolve) => {
             this.wcuserdataWs.applicationQuit(() => {
                 resolve();
