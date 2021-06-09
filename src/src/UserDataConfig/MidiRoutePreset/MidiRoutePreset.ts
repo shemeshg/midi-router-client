@@ -105,6 +105,7 @@ export class PresetMidiControl {
 export class MidiRoutePreset {
     name: string;
     uuid = uuidv4();
+    computerUuid = localStorage.computerUuid;
     midiControlOn: PresetMidiControl = new PresetMidiControl(PresetMidiType.PRESET_ON, this.uuid)
     midiControlOff: PresetMidiControl = new PresetMidiControl(PresetMidiType.PRESET_OFF, this.uuid)
 
@@ -128,6 +129,7 @@ export class MidiRoutePreset {
         this.midiControlOff = midiControlOff;
         this.midiControlOn.presetUuid = this.uuid;
         this.midiControlOff.presetUuid = this.uuid;
+        this.computerUuid = localStorage.computerUuid
     }
 
     addUserControl() {

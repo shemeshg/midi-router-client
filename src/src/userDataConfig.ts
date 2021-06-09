@@ -53,6 +53,7 @@ export class UserDataConfig {
             // eslint-disable-next-line 
             const userDataData: any = userData.data;
             const data: PresetMidiControl = JSON.parse(userDataData)
+            const computerUuid = localStorage.computerUuid;
             const selectedPreset = this.midiRoutePresets.filter((row) => { return row.uuid === data.presetUuid })[0]
 
             if (selectedPreset.midiControlOn.isMidiParamsEqual(selectedPreset.midiControlOff)) {
@@ -60,7 +61,9 @@ export class UserDataConfig {
                 if (data.presetMidiType === PresetMidiType.PRESET_OFF) { return; }
 
                 selectedPreset.isEnabled = !selectedPreset.isEnabled;
-                Connection.loginStatus.userDataConfig.applyChanges(Connection.connection);
+                if ( selectedPreset.computerUuid === computerUuid ) {
+                    Connection.loginStatus.userDataConfig.applyChanges(Connection.connection);
+                }                
                 return;
             }
 
@@ -70,7 +73,9 @@ export class UserDataConfig {
             }
 
             selectedPreset.isEnabled = (data.presetMidiType === PresetMidiType.PRESET_ON)
-            Connection.loginStatus.userDataConfig.applyChanges(Connection.connection);
+            if ( selectedPreset.computerUuid === computerUuid ) {
+                Connection.loginStatus.userDataConfig.applyChanges(Connection.connection);
+            }
 
         }
     }
